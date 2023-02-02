@@ -10,13 +10,17 @@ module.exports = {
       colors: {
         "primary-violet": "#B095FF",
         "primary-green": "#62C46E",
-        "basic-gray1": "#999999",
-        "text-gray1": "#6F6F6F",
-        "text-gray2": "#C7C7C7",
-        "border-gray1": "#D9D9D9",
+        "common-black": "#333333",
+        "commom-gray": "#999999",
+        "textColor-gray-100": "#6F6F6F",
+        "textColor-gray-50": "#C7C7C7",
+        "borderColor-gray": "#D9D9D9",
         error: "#FF5252",
+      },
+      fontFamily: {
+        myfont: ["worksans", "sans-serif"],
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar-hide")],
 };
