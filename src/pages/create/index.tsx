@@ -1,7 +1,20 @@
 import type { NextPage } from "next";
+import { ChangeEvent, useState } from "react";
+import CreatePage from "../../containers/create";
 
 const Create: NextPage = () => {
-  return <h1>안녕하세요 게시글 작성 페이지입니다</h1>;
+  const [isText, setIsText] = useState<boolean>(false);
+
+  const textAreaValue = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    event.target.value !== "" ? setIsText(true) : setIsText(false);
+  };
+
+  const props = {
+    isText,
+    textAreaValue,
+  };
+
+  return <CreatePage {...props} />;
 };
 
 export default Create;
