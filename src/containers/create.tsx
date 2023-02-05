@@ -1,29 +1,13 @@
 import { NextPage } from "next";
 import { Icon } from "@iconify/react";
 import { ChangeEvent } from "react";
+import Button from "../components/ui/button";
+import { cls } from "../lib/class";
 
 interface CreateProps {
   isText: boolean;
   textAreaValue: (event: ChangeEvent<HTMLTextAreaElement>) => void;
 }
-
-const cls = (...classnames: string[]) => {
-  return classnames.join(" ");
-};
-
-// const childSelector = (
-//   el: string,
-//   childclasses: string,
-//   ...defaults: string[]
-// ) => {
-//   const newClassName = childclasses
-//     .split(" ")
-//     .map(item => `[&>${el}]:${item}`)
-//     .concat(defaults);
-
-//   console.log(newClassName);
-//   return newClassName.join(" ");
-// };
 
 const CreatePage: NextPage<CreateProps> = ({ isText, textAreaValue }) => {
   return (
@@ -72,9 +56,7 @@ const CreatePage: NextPage<CreateProps> = ({ isText, textAreaValue }) => {
           <Icon icon="material-symbols:arrow-outward" />
         </div>
       </div>
-      <div className="absolute bottom-0 left-0 w-full px-5 pb-5">
-        <button className="h-[50px] w-full bg-black text-white">완료</button>
-      </div>
+      <Button text="완료" />
     </div>
   );
 };
