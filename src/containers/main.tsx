@@ -183,25 +183,6 @@ const MainPage: NextPage = () => {
             바로가기
           </button>
         </div>
-
-        {/* <Link href="/">
-        <h1>홈페이지</h1>
-      </Link>
-      <Link href="/login">
-        <h1>로그인</h1>
-      </Link>
-      <Link href="/sign">
-        <h1>회원가입</h1>
-      </Link>
-      <Link href="/create">
-        <h1>게시글작성</h1>
-      </Link>
-      <Link href="/search">
-        <h1>검색하기</h1>
-      </Link>
-      <Link href="/mypage">
-        <h1>마이페이지</h1>
-      </Link> */}
       </div>
       <button className="sticky bottom-20 left-[310px] flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-primary-violet text-3xl shadow-md">
         <Icon icon="ic:baseline-plus" />
