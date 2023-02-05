@@ -5,11 +5,11 @@ import ButtonItem from "../../components/ui/buttonitem";
 
 const Login: NextPage = () => {
   return (
-    <div className="bg-black">
+    <div className="bg-black px-5 py-10">
       <div className="pb-10 pt-16">
         <Image src={logo} alt="logo" className="m-auto h-28" />
       </div>
-      <div className="px-8 pb-2 [&>input]:h-[52px] [&>input]:border-b [&>input]:px-4">
+      <div className="px-3   pb-2 [&>input]:h-[52px] [&>input]:border-b [&>input]:px-4">
         <input
           type="text"
           name="email"

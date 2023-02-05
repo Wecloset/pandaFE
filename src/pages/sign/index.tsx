@@ -33,12 +33,21 @@ const Sign: NextPage = () => {
       </div>
       <div className="px-3 pb-10 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
         <p className="mb-2 px-2 text-lg">사용하실 닉네임을 입력해주세요.</p>
-        <input
-          type="text"
-          name="nickname"
-          placeholder="닉네임"
-          className=" text-black placeholder:text-textColor-gray-100"
-        />
+        <div className="mx-2 flex">
+          <input
+            type="text"
+            name="nickname"
+            placeholder="닉네임"
+            className=" mr-4 border-b-2 text-black placeholder:text-textColor-gray-100"
+          />
+          <button className="h-10 w-3/5 bg-black text-white">중복확인</button>
+        </div>
+      </div>
+      <div className="inline-flex w-full items-center justify-center">
+        <hr className="my-8 h-px w-80 border-0 bg-black dark:bg-black" />
+        <span className="absolute left-1/2 -translate-x-1/2 bg-white px-3 font-medium text-gray-900 dark:bg-gray-900 dark:text-white">
+          or
+        </span>
       </div>
       <div className="mt-7">
         <div>

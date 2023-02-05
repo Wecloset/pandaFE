@@ -12,7 +12,7 @@ const ButtonItem: NextPage<string | any> = ({
   border,
 }) => {
   return (
-    <div className="w-full px-8 pb-3">
+    <div className="w-full px-4 pb-3">
       <button
         className={`h-[50px] w-full ${border} ${color} ${
           fontColor ?? "text-black"
