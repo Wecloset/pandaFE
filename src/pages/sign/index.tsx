@@ -1,7 +1,61 @@
 import type { NextPage } from "next";
+import { useState } from "react";
 import ButtonItem from "../../components/ui/buttonitem";
 
 const Sign: NextPage = () => {
+  const taglist = {
+    value: [
+      "모노톤",
+      "파스텔톤",
+      "비비드톤",
+      "딥톤",
+      "팝칼라",
+      "10대",
+      "20대",
+      "30대",
+      "40대",
+      "50대 이상",
+      "뉴오커",
+      "레트로",
+      "미니멀",
+      "보헤미안",
+      "비즈니스",
+      "톰보이",
+      "빈티지",
+      "아메카지",
+      "스트릿",
+      "SPA",
+      "고프코어/y2k",
+      "프레피룩",
+      "페미닌",
+      "고스패션",
+      "펑크",
+      "로리타",
+      "히피",
+      "케주얼",
+    ],
+  };
+  const [returnitem, setReturnItem] = useState<string[]>([]);
+  const newArray: any[] = [];
+  const onResetBtn = () => {
+    setReturnItem([]);
+  };
+  let newList = taglist.value;
+  const onClick = (data: string) => {
+    setReturnItem([...returnitem, data]);
+    const deduplication = returnitem.includes(data);
+    if (deduplication) {
+      setReturnItem([...returnitem]);
+    }
+  };
+  const onDelete = (x: string) => {
+    const deleteItem = returnitem.indexOf(x);
+    const cutone = returnitem.slice(0, deleteItem);
+    const cuttwo = returnitem.slice(deleteItem + 1, returnitem.length);
+    newArray.push(...cutone);
+    newArray.push(...cuttwo);
+    setReturnItem(newArray);
+  };
   return (
     <div className="px-5 py-10">
       <div className="px-3 pb-10 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
@@ -41,6 +95,44 @@ const Sign: NextPage = () => {
             className=" mr-4 border-b-2 text-black placeholder:text-textColor-gray-100"
           />
           <button className="h-10 w-3/5 bg-black text-white">중복확인</button>
+        </div>
+      </div>
+      <div className="px-3 pb-6 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
+        <p className="mb-2 px-2 text-lg">키워드를 선택해주세요.</p>
+        <div className="flex justify-between px-2 ">
+          <p className="mb-2 text-xs text-textColor-gray-100">
+            1개 이상의 키워드나 브랜드를 선택해주세요.
+          </p>
+          <p>{`${returnitem.length}/10`}</p>
+        </div>
+        <div>
+          <ul className="my-3 flex w-full flex-wrap gap-2 px-2">
+            {newList.map((ele, index) => {
+              return (
+                <div
+                  className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-solid border-black py-1 px-2 hover:bg-black hover:text-white"
+                  key={index}
+                  onClick={() => onClick(ele)}
+                >
+                  {ele}
+                </div>
+              );
+            })}
+            <button onClick={onResetBtn} className="px-2 text-red-400">
+              Reset
+            </button>
+          </ul>
+          {
+            <>
+              <ul className="my-3 flex w-full flex-wrap gap-2 px-2">
+                {returnitem.map(x => (
+                  <div key={Math.random()} onClick={() => onDelete(x)}>
+                    {x}
+                  </div>
+                ))}
+              </ul>
+            </>
+          }
         </div>
       </div>
       <div className="inline-flex w-full items-center justify-center">
