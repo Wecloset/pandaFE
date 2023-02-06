@@ -3,6 +3,7 @@ import { Icon } from "@iconify/react";
 import { ChangeEvent } from "react";
 import Button from "../components/ui/button";
 import { cls } from "../lib/class";
+import Prev from "../components/ui/prev";
 
 interface CreateProps {
   isText: boolean;
@@ -11,7 +12,8 @@ interface CreateProps {
 
 const CreatePage: NextPage<CreateProps> = ({ isText, textAreaValue }) => {
   return (
-    <div className="px-5 py-10">
+    <div className="px-5">
+      <Prev text="게시글 작성" />
       <div className="mb-6">
         <label className="flex h-[100px] w-[100px] cursor-pointer flex-col items-center justify-center gap-1 border bg-gray-100 text-textColor-gray-100">
           <input type="file" className="hidden" />

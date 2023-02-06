@@ -1,10 +1,12 @@
 import { NextPage } from "next";
 import { Icon } from "@iconify/react";
 import Button from "../components/ui/button";
+import Prev from "../components/ui/prev";
 
 const SearchPage: NextPage = () => {
   return (
-    <div className="px-5 py-10">
+    <div className="px-5 ">
+      <Prev text="검색" />
       <form className="relative">
         <input
           type="text"

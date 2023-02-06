@@ -3,6 +3,8 @@ import { Icon } from "@iconify/react";
 import { cls } from "../lib/class";
 import Link from "next/link";
 import React from "react";
+import Nav from "../components/ui/nav";
+import Footer from "../components/ui/footnav";
 
 interface MarketProps {
   category: string;
@@ -11,8 +13,9 @@ interface MarketProps {
 
 const MarketPage: NextPage<MarketProps> = ({ category, categoryClick }) => {
   return (
-    <div className="py-10">
-      <div className="sticky top-0 z-10 bg-white shadow-md">
+    <div>
+      <Nav />
+      <div>
         <div className="text-common-gray grid h-[45px] grid-cols-4 border-b border-common-black bg-white text-base text-textColor-gray-100">
           <button
             className={cls(
@@ -28,7 +31,7 @@ const MarketPage: NextPage<MarketProps> = ({ category, categoryClick }) => {
           </button>
           <button
             className={cls(
-              "border-r border-b-2 border-r-common-black ",
+              " border-r border-b-2 border-r-common-black ",
               category === "top"
                 ? "border-common-black font-bold text-common-black"
                 : "",

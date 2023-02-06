@@ -1,12 +1,14 @@
 import { NextPage } from "next";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
+import Nav from "../components/ui/nav";
 
 const MainPage: NextPage = () => {
   return (
     <>
-      <div className="h-72 w-full bg-borderColor-gray"></div>
-      <div className="space-y-8 py-10">
+      <Nav />
+      <div className="h-72 w-full bg-borderColor-gray" />
+      <div className="space-y-8 pt-10">
         <div className="space-y-5 px-5">
           <div>
             <h2 className="text-xl">Style for You</h2>
@@ -176,7 +178,7 @@ const MainPage: NextPage = () => {
             </ul>
           </div>
         </div>
-        <div className="h-52 w-full bg-borderColor-gray py-10 text-center text-white">
+        <div className="w-full bg-borderColor-gray py-10 text-center text-white">
           <p className="text-base">매일 수익이 발생하는 옷장공유</p>
           <p className="mt-1 text-2xl">지금 시작해보세요!</p>
           <button className="mt-5 h-12 w-32 cursor-pointer bg-black">
@@ -184,9 +186,11 @@ const MainPage: NextPage = () => {
           </button>
         </div>
       </div>
-      <button className="sticky bottom-20 left-[310px] flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-primary-violet text-3xl shadow-md">
-        <Icon icon="ic:baseline-plus" />
-      </button>
+      <div className="sticky bottom-14 left-[310px] flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-primary-violet text-3xl shadow-md">
+        <Link href="/create">
+          <Icon icon="ic:baseline-plus" />
+        </Link>
+      </div>
     </>
   );
 };

@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import { useState } from "react";
 import ButtonItem from "../../components/ui/buttonitem";
+import Prev from "../../components/ui/prev";
 
 const Sign: NextPage = () => {
   const taglist = {
@@ -57,7 +58,8 @@ const Sign: NextPage = () => {
     setReturnItem(newArray);
   };
   return (
-    <div className="px-5 py-10">
+    <div className="px-5">
+      <Prev text="회원가입" />
       <div className="px-3 pb-10 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
         <p className="mb-2 px-2 text-lg">사용하실 이메일을 입력해주세요.</p>
         <input
@@ -103,7 +105,7 @@ const Sign: NextPage = () => {
           <p className="mb-2 text-xs text-textColor-gray-100">
             1개 이상의 키워드나 브랜드를 선택해주세요.
           </p>
-          <p>{`${returnitem.length}/10`}</p>
+          <p>{`${returnitem.length}/${taglist.value.length}`}</p>
         </div>
         <div>
           <ul className="my-3 flex w-full flex-wrap gap-2 px-2">

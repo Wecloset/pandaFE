@@ -2,6 +2,7 @@ import { NextPage } from "next";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import logo from "../../../public/asset/image/full-logo-white.png";
+import Footer from "../ui/footnav";
 
 const MainLayout: NextPage<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -36,6 +37,7 @@ const MainLayout: NextPage<{ children: React.ReactNode }> = ({ children }) => {
         </div>
         <div className="relative w-[390px] flex-shrink-0 overflow-hidden overflow-y-scroll bg-white scrollbar-hide max-xl:mx-auto">
           {children}
+          <Footer />
         </div>
       </div>
     </div>
