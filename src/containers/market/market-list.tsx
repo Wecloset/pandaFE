@@ -1,18 +1,36 @@
 import { NextPage } from "next";
 import { Icon } from "@iconify/react";
-import { cls } from "../lib/class";
+import { cls } from "../../lib/class";
 import Link from "next/link";
 import React from "react";
+import FilterOverlay from "../../components/market/filter";
 
 interface MarketProps {
   category: string;
   categoryClick: (event: React.MouseEvent) => void;
+  isFilterOpen: boolean;
+  openFilterOverlay: (event: React.MouseEvent) => void;
 }
 
-const MarketPage: NextPage<MarketProps> = ({ category, categoryClick }) => {
+const MarketPage: NextPage<MarketProps> = ({
+  category,
+  categoryClick,
+  isFilterOpen,
+  openFilterOverlay,
+}) => {
   return (
     <div className="py-10">
       <div className="sticky top-0 z-10 bg-white shadow-md">
+        {/* filterOverlay */}
+        <div
+          className={cls(
+            "absolute left-0 z-20 h-screen w-full translate-x-[390px] bg-white transition",
+            isFilterOpen ? "translate-x-0" : "",
+          )}
+        >
+          <FilterOverlay />
+        </div>
+
         <div className="text-common-gray grid h-[45px] grid-cols-4 border-b border-common-black bg-white text-base text-textColor-gray-100">
           <button
             className={cls(
@@ -77,6 +95,7 @@ const MarketPage: NextPage<MarketProps> = ({ category, categoryClick }) => {
               icon="akar-icons:settings-horizontal"
               aria-label="옵션 필터링 목록"
               className="cursor-pointer text-xl"
+              onClick={openFilterOverlay}
             />
           </div>
           <ul className="pt-[18px] [&_svg]:ml-1 [&_svg]:-mt-0.5 [&_svg]:cursor-pointer [&_svg]:text-textColor-gray-50">
@@ -90,7 +109,7 @@ const MarketPage: NextPage<MarketProps> = ({ category, categoryClick }) => {
       <ul className="flex flex-col gap-3 px-5 py-3">
         {Array(10)
           .fill(0)
-          .map((item, idx) => (
+          .map((_, idx) => (
             <li
               key={idx}
               className="relative flex gap-[14px] border border-common-black p-3"
