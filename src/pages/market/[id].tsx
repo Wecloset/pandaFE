@@ -1,10 +1,12 @@
-import { NextPage } from "next";
 import { Icon } from "@iconify/react";
-import ButtonItem from "../../components/ui/buttonitem";
+import { NextPage } from "next";
+import Button from "../../components/button";
+import Header from "../../components/header";
 
-const MarketItemPage: NextPage = () => {
+const Product: NextPage = () => {
   return (
     <>
+      <Header goBack />
       <div className="relative">
         <div className="h-[370px] w-full bg-slate-200" />
         <div className="absolute top-1/2 flex w-full items-center justify-between px-5 text-2xl">
@@ -64,17 +66,16 @@ const MarketItemPage: NextPage = () => {
           </div>
         </div>
       </div>
-      <div className="absolute bottom-0 flex w-full justify-between pl-5">
-        <p className="h-[50px] -translate-y-2 text-2xl font-bold">
+      <div className="absolute bottom-0 flex w-full items-center justify-between pl-5">
+        <p className="text-2xl font-bold">
           {"90000".replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           <span className="text-lg">원</span>
         </p>
         <div className="relative w-64">
-          <ButtonItem text="구매하기" color="bg-black" fontColor="text-white" />
+          <Button text="구매하기" color="bg-black" fontColor="text-white" />
         </div>
       </div>
     </>
   );
 };
-
-export default MarketItemPage;
+export default Product;

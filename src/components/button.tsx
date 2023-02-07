@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import { Icon, IconifyIcon, IconProps } from "@iconify/react";
+import { Icon } from "@iconify/react";
 
 interface buttonInterface {
   text?: string;
@@ -15,7 +15,7 @@ interface buttonInterface {
   padding?: string;
 }
 
-const ButtonItem: NextPage<buttonInterface> = ({
+const Button: NextPage<buttonInterface> = ({
   text,
   color,
   fontColor,
@@ -46,4 +46,4 @@ const ButtonItem: NextPage<buttonInterface> = ({
   );
 };
 
-export default ButtonItem;
+export default Button;

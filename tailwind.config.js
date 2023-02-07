@@ -15,7 +15,7 @@ module.exports = {
         error: "#FF5252",
       },
       backgroundImage: {
-        my_bg: "url('../public/asset/image/main-img.png')",
+        mainImg: "url('../../../public/asset/image/main-img.png')",
       },
       fontFamily: {
         myfont: ["worksans", "sans-serif"],

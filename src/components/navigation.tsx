@@ -2,10 +2,10 @@ import { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const Footer: NextPage = () => {
+const Navigation: NextPage = () => {
   const { pathname } = useRouter();
   return (
-    <footer className="sticky bottom-0 left-0 z-20 h-10 w-full border-t border-gray-200 bg-black  p-4 shadow dark:border-gray-600 dark:bg-gray-800 md:flex md:items-center md:justify-between md:p-6">
+    <footer className="sticky bottom-0 left-0 z-20 flex h-12 w-full items-center justify-between bg-black p-5 text-lg shadow dark:border-gray-600 dark:bg-gray-800">
       <Link href="/">
         <button
           className={`${
@@ -46,4 +46,4 @@ const Footer: NextPage = () => {
   );
 };
 
-export default Footer;
+export default Navigation;

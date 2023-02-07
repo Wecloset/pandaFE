@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import ButtonItem from "./buttonitem";
+import ButtonItem from "./button";
 
 interface ModalInterface {
   title: string;

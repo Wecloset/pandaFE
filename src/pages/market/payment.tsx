@@ -1,36 +1,21 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
-import Link from "next/link";
-import ButtonItem from "../../components/ui/buttonitem";
+import Button from "../../components/button";
+import Header from "../../components/header";
+import PaymentItem from "../../components/market/payment/payment-item";
 
-const PaymentPage: NextPage = () => {
+const Payment: NextPage = () => {
   return (
     <>
-      <div className=" px-5 py-10">
-        <h1 className="mb-[18px] text-base">담은 아이템</h1>
-        <ul>
-          <li className="relative flex gap-[14px]">
-            <Link href="">
-              <div
-                role="img"
-                className="h-[100px] w-[100px] bg-borderColor-gray"
-              >
-                <div className="h-full w-full" />
-              </div>
-            </Link>
-            <dl>
-              <dt>Vivienne Westwood</dt>
-              <dd className="mb-2 text-textColor-gray-100">
-                <Link href="">비비안 웨스트우드 카드지갑</Link>
-              </dd>
-              <dd aria-label="가격" className="mb-[10px] text-base font-bold">
-                185,000
-              </dd>
-            </dl>
-            <button className="border-textColor-gray text-borderColor-gray-100 absolute right-0 bottom-0 h-8 w-16 border text-xs">
-              삭제
-            </button>
-          </li>
+      <Header goBack text="payment" />
+      <div className=" px-5 py-5">
+        <h1 className="mb-3 text-base">담은 아이템</h1>
+        <ul className="h-[600px] space-y-4 divide-y overflow-y-scroll scrollbar-hide">
+          {Array(1)
+            .fill(0)
+            .map((_, idx) => (
+              <PaymentItem key={idx} />
+            ))}
         </ul>
       </div>
       <div className="absolute bottom-0 h-[300px] w-full border-t border-common-black px-5 py-5">
@@ -69,9 +54,14 @@ const PaymentPage: NextPage = () => {
           </div>
         </div>
       </div>
-      <ButtonItem text="결제하기" color="bg-black" fontColor="text-white" />
+      <Button
+        text="결제하기"
+        color="bg-black"
+        fontColor="text-white"
+        position="absolute bottom-0"
+      />
     </>
   );
 };
 
-export default PaymentPage;
+export default Payment;

@@ -5,7 +5,7 @@ import Document, {
   NextScript,
   DocumentContext,
 } from "next/document";
-import MainLayout from "../components/layout/layout";
+import MainLayout from "../styles/global-layout";
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {

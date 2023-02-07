@@ -1,7 +1,9 @@
+import { Icon } from "@iconify/react";
 import type { NextPage } from "next";
 import { useState } from "react";
-import ButtonItem from "../../components/ui/buttonitem";
-import Prev from "../../components/ui/prev";
+import ButtonItem from "../../components/button";
+import Header from "../../components/header";
+import Modal from "../../components/modal";
 
 const Sign: NextPage = () => {
   const taglist = {
@@ -41,7 +43,7 @@ const Sign: NextPage = () => {
   const onResetBtn = () => {
     setReturnItem([]);
   };
-  let newList = taglist.value;
+  const newList = taglist.value;
   const onClick = (data: string) => {
     setReturnItem([...returnitem, data]);
     const deduplication = returnitem.includes(data);
@@ -58,125 +60,127 @@ const Sign: NextPage = () => {
     setReturnItem(newArray);
   };
   return (
-    <div className="px-5">
-      <Prev text="회원가입" />
-      <div className="px-3 py-5 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
-        <p className="mb-2 px-2 text-lg">사용하실 이메일을 입력해주세요.</p>
-        <input
-          type="text"
-          name="email"
-          placeholder="아이디(이메일)"
-          className=" text-black placeholder:text-textColor-gray-100"
-        />
-      </div>
-      <div className="px-3 pb-6 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
-        <p className="mb-2 px-2 text-lg">비밀번호를 입력해주세요.</p>
-        <p className="mb-2 px-2 text-xs text-textColor-gray-100">
-          6자리 이상의 비밀번호를 설정해주세요.
-        </p>
-        <input
-          type="password"
-          name="password"
-          placeholder="비밀번호"
-          className=" text-black placeholder:text-textColor-gray-100"
-        />
-        <input
-          type="password"
-          name="passwordConfirm"
-          placeholder="비밀번호 확인"
-          className=" text-black placeholder:text-textColor-gray-100"
-        />
-      </div>
-      <div className="px-3 pb-10 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
-        <p className="mb-2 px-2 text-lg">사용하실 닉네임을 입력해주세요.</p>
-        <div className="ml-2 flex">
+    <>
+      <Header text="SIGNUP" goBack />
+      <div className="px-5">
+        <div className="px-3 py-5 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
+          <p className="mb-2 px-2 text-lg">사용하실 이메일을 입력해주세요.</p>
           <input
             type="text"
-            name="nickname"
-            placeholder="닉네임"
-            className=" mr-4 pl-2 text-black placeholder:text-textColor-gray-100"
-          />
-          <ButtonItem
-            text="중복확인"
-            width="w-4/5"
-            position="flex justify-end"
-            color="bg-black"
-            fontColor="text-white"
-            padding="p-0"
+            name="email"
+            placeholder="아이디(이메일)"
+            className=" text-black placeholder:text-textColor-gray-100"
           />
         </div>
-      </div>
-      <div className="px-3 pb-6 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
-        <p className="mb-2 px-2 text-lg">키워드를 선택해주세요.</p>
-        <div className="flex justify-between px-2 ">
-          <p className="mb-2 text-xs text-textColor-gray-100">
-            1개 이상의 키워드나 브랜드를 선택해주세요.
+        <div className="px-3 pb-6 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
+          <p className="mb-2 px-2 text-lg">비밀번호를 입력해주세요.</p>
+          <p className="mb-2 px-2 text-xs text-textColor-gray-100">
+            6자리 이상의 비밀번호를 설정해주세요.
           </p>
-          <p>{`${returnitem.length}/${taglist.value.length}`}</p>
+          <input
+            type="password"
+            name="password"
+            placeholder="비밀번호"
+            className=" text-black placeholder:text-textColor-gray-100"
+          />
+          <input
+            type="password"
+            name="passwordConfirm"
+            placeholder="비밀번호 확인"
+            className=" text-black placeholder:text-textColor-gray-100"
+          />
         </div>
-        <div>
-          <ul className="my-3 flex w-full flex-wrap gap-2 px-2">
-            {newList.map((ele, index) => {
-              return (
-                <div
-                  className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-solid border-black py-1 px-2 hover:bg-black hover:text-white"
-                  key={index}
-                  onClick={() => onClick(ele)}
-                >
-                  {ele}
-                </div>
-              );
-            })}
-            <button onClick={onResetBtn} className="px-2 text-red-400">
-              Reset
-            </button>
-          </ul>
-          {
-            <>
-              <ul className="my-3 flex w-full flex-wrap gap-2 px-2">
-                {returnitem.map(x => (
-                  <div key={Math.random()} onClick={() => onDelete(x)}>
-                    {x}
+        <div className="px-3 pb-10 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
+          <p className="mb-2 px-2 text-lg">사용하실 닉네임을 입력해주세요.</p>
+          <div className="ml-2 flex">
+            <input
+              type="text"
+              name="nickname"
+              placeholder="닉네임"
+              className=" mr-4 pl-2 text-black placeholder:text-textColor-gray-100"
+            />
+            <ButtonItem
+              text="중복확인"
+              width="w-4/5"
+              position="flex justify-end"
+              color="bg-black"
+              fontColor="text-white"
+              padding="p-0"
+            />
+          </div>
+        </div>
+        <div className="px-3 pb-6 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
+          <p className="mb-2 px-2 text-lg">키워드를 선택해주세요.</p>
+          <div className="flex justify-between px-2 ">
+            <p className="mb-2 text-xs text-textColor-gray-100">
+              1개 이상의 키워드나 브랜드를 선택해주세요.
+            </p>
+            <p>{`${returnitem.length}/${taglist.value.length}`}</p>
+          </div>
+          <div>
+            <ul className="my-3 flex w-full flex-wrap gap-2 px-2">
+              {newList.map((ele, index) => {
+                return (
+                  <div
+                    className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-solid border-black py-1 px-2 hover:bg-black hover:text-white"
+                    key={index}
+                    onClick={() => onClick(ele)}
+                  >
+                    {ele}
                   </div>
-                ))}
-              </ul>
-            </>
-          }
+                );
+              })}
+              <button onClick={onResetBtn} className="px-2 text-2xl">
+                <Icon icon="carbon:reset" />
+              </button>
+            </ul>
+            {
+              <>
+                <ul className="my-3 flex w-full flex-wrap gap-2 px-2">
+                  {returnitem.map(x => (
+                    <div key={Math.random()} onClick={() => onDelete(x)}>
+                      {x}
+                    </div>
+                  ))}
+                </ul>
+              </>
+            }
+          </div>
         </div>
-      </div>
-      <div className="inline-flex w-full items-center justify-center">
-        <hr className="my-8 h-px w-80 border-0 bg-black dark:bg-black" />
-        <span className="absolute left-1/2 -translate-x-1/2 bg-white px-3 font-medium text-gray-900 dark:bg-gray-900 dark:text-white">
-          or
-        </span>
-      </div>
-      <div className="mt-7">
-        <div>
+        <div className="inline-flex w-full items-center justify-center">
+          <hr className="my-8 h-px w-80 border-0 bg-black dark:bg-black" />
+          <span className="absolute left-1/2 -translate-x-1/2 bg-white px-3 font-medium text-gray-900 dark:bg-gray-900 dark:text-white">
+            or
+          </span>
+        </div>
+        <div className="mt-7">
+          <div>
+            <ButtonItem
+              text="Continue With Google"
+              color="bg-white"
+              icon="ph:google-logo"
+              logo="flex items-center"
+              textWidth="w-4/5"
+              border="rounded border-solid border-2 border-black	"
+            />
+          </div>
+
           <ButtonItem
-            text="Continue With Google"
-            color="bg-white"
-            icon="ph:google-logo"
+            text="Continue With Kakao"
+            color="bg-primary-yellow"
+            icon="ri:kakao-talk-fill"
             logo="flex items-center"
             textWidth="w-4/5"
-            border="rounded border-solid border-2 border-black	"
+            border="rounded  border-solid border-2 border-black	"
+          />
+          <ButtonItem
+            text="다음"
+            color="bg-commom-gray"
+            hover="hover:bg-primary-green"
           />
         </div>
-
-        <ButtonItem
-          text="Continue With Kakao"
-          color="bg-primary-yellow"
-          icon="ri:kakao-talk-fill"
-          logo="flex items-center"
-          textWidth="w-4/5"
-          border="rounded  border-solid border-2 border-black	"
-        />
-        <ButtonItem
-          text="다음"
-          color="bg-commom-gray"
-          hover="hover:bg-primary-green"
-        />
       </div>
-    </div>
+    </>
   );
 };
 
