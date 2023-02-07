@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import { useState } from "react";
-import MarketPage from "../../containers/market";
+import MarketPage from "../../containers/market-list";
 
 const Market: NextPage = () => {
   const [category, setCategory] = useState<string>("all");
