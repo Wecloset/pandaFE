@@ -37,7 +37,7 @@ const Sign: NextPage = () => {
     ],
   };
   const [returnitem, setReturnItem] = useState<string[]>([]);
-  const newArray: any[] = [];
+  const newArray: string[] = [];
   const onResetBtn = () => {
     setReturnItem([]);
   };
@@ -60,7 +60,7 @@ const Sign: NextPage = () => {
   return (
     <div className="px-5">
       <Prev text="회원가입" />
-      <div className="px-3 pb-10 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
+      <div className="px-3 py-5 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
         <p className="mb-2 px-2 text-lg">사용하실 이메일을 입력해주세요.</p>
         <input
           type="text"
@@ -89,14 +89,21 @@ const Sign: NextPage = () => {
       </div>
       <div className="px-3 pb-10 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
         <p className="mb-2 px-2 text-lg">사용하실 닉네임을 입력해주세요.</p>
-        <div className="mx-2 flex">
+        <div className="ml-2 flex">
           <input
             type="text"
             name="nickname"
             placeholder="닉네임"
-            className=" mr-4 border-b-2 text-black placeholder:text-textColor-gray-100"
+            className=" mr-4 pl-2 text-black placeholder:text-textColor-gray-100"
           />
-          <button className="h-10 w-3/5 bg-black text-white">중복확인</button>
+          <ButtonItem
+            text="중복확인"
+            width="w-4/5"
+            position="flex justify-end"
+            color="bg-black"
+            fontColor="text-white"
+            padding="p-0"
+          />
         </div>
       </div>
       <div className="px-3 pb-6 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">

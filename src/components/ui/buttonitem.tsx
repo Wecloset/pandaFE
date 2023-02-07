@@ -1,7 +1,21 @@
 import { NextPage } from "next";
-import { Icon } from "@iconify/react";
+import { Icon, IconifyIcon, IconProps } from "@iconify/react";
 
-const ButtonItem: NextPage<string | any> = ({
+interface buttonInterface {
+  text?: string;
+  color?: string;
+  fontColor?: string;
+  icon?: string | any;
+  logo?: string;
+  textWidth?: string;
+  hover?: string;
+  border?: string;
+  position?: string;
+  width?: string;
+  padding?: string;
+}
+
+const ButtonItem: NextPage<buttonInterface> = ({
   text,
   color,
   fontColor,
@@ -10,11 +24,16 @@ const ButtonItem: NextPage<string | any> = ({
   textWidth,
   hover,
   border,
+  position,
+  width,
+  padding,
 }) => {
   return (
-    <div className="w-full px-4 pb-3">
+    <div
+      className={`w-full ${padding ? padding : "px-4"} pb-3 ${position} mt-3`}
+    >
       <button
-        className={`h-[50px] w-full ${border} ${color} ${
+        className={`h-[50px] ${width ? width : "w-full"} ${border} ${color} ${
           fontColor ?? "text-black"
         }  ${logo} ${hover}`}
       >

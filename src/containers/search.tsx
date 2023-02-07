@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import { Icon } from "@iconify/react";
-import Button from "../components/ui/button";
 import Prev from "../components/ui/prev";
+import ButtonItem from "../components/ui/buttonitem";
 
 const SearchPage: NextPage = () => {
   return (
@@ -46,7 +46,12 @@ const SearchPage: NextPage = () => {
           </li>
         </ul>
       </div>
-      <Button text="검색" />
+      <ButtonItem
+        text="검색"
+        color="bg-black"
+        fontColor="text-white"
+        position="absolute bottom-0 left-0"
+      />
     </div>
   );
 };

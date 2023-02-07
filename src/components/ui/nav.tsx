@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import logo from "../../../public/asset/image/logo.png";
 
-const Nav: NextPage<string | any> = () => {
+const Nav: NextPage = () => {
   return (
     <div className="sticky top-0 z-10 flex items-center justify-between border-b-2 border-black bg-white px-5 py-5">
       <Link href="/">

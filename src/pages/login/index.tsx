@@ -5,7 +5,7 @@ import ButtonItem from "../../components/ui/buttonitem";
 
 const Login: NextPage = () => {
   return (
-    <div className="bg-black px-5 py-10">
+    <div className="h-full bg-black px-5">
       <div className="pb-10 pt-16">
         <Image src={logo} alt="logo" className="m-auto h-28" />
       </div>
@@ -32,25 +32,20 @@ const Login: NextPage = () => {
         <ButtonItem text="회원가입" fontColor="text-white" />
       </div>
       <div className="h-36" />
-      <div className="mt-7">
-        <div>
-          <ButtonItem
-            text="Continue With Google"
-            color="bg-white"
-            icon="ph:google-logo"
-            logo="flex items-center"
-            textWidth="w-4/5"
-          />
-        </div>
-
-        <ButtonItem
-          text="Continue With Kakao"
-          color="bg-primary-yellow"
-          icon="ri:kakao-talk-fill"
-          logo="flex items-center"
-          textWidth="w-4/5"
-        />
-      </div>
+      <ButtonItem
+        text="Continue With Google"
+        color="bg-white"
+        icon="ph:google-logo"
+        logo="flex items-center"
+        textWidth="w-4/5"
+      />
+      <ButtonItem
+        text="Continue With Kakao"
+        color="bg-primary-yellow"
+        icon="ri:kakao-talk-fill"
+        logo="flex items-center"
+        textWidth="w-4/5"
+      />
     </div>
   );
 };

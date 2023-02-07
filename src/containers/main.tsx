@@ -2,6 +2,8 @@ import { NextPage } from "next";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
 import Nav from "../components/ui/nav";
+import Footer from "../components/ui/footnav";
+import ButtonItem from "../components/ui/buttonitem";
 
 const MainPage: NextPage = () => {
   return (
@@ -181,18 +183,25 @@ const MainPage: NextPage = () => {
         <div className="w-full bg-borderColor-gray py-10 text-center text-white">
           <p className="text-base">매일 수익이 발생하는 옷장공유</p>
           <p className="mt-1 text-2xl">지금 시작해보세요!</p>
-          <button className="mt-5 h-12 w-32 cursor-pointer bg-black">
-            바로가기
-          </button>
+          <ButtonItem
+            text="바로가기"
+            fontColor="text-white"
+            color="bg-black"
+            width="w-32"
+          />
         </div>
       </div>
-      <div className="sticky bottom-14 left-[310px] flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-primary-violet text-3xl shadow-md">
-        <Link href="/create">
-          <Icon icon="ic:baseline-plus" />
-        </Link>
-      </div>
+      <Footer />
     </>
   );
 };
 
 export default MainPage;
+
+/*
+<div className="sticky bottom-14 left-[310px] flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-primary-violet text-3xl shadow-md">
+<Link href="/create">
+  <Icon icon="ic:baseline-plus" />
+</Link>
+</div>
+*/

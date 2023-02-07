@@ -2,7 +2,11 @@ import { NextPage } from "next";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 
-const Prev: NextPage<string | any> = ({ text }) => {
+interface prevInterface {
+  text: string;
+}
+
+const Prev: NextPage<prevInterface> = ({ text }) => {
   return (
     <div className="sticky top-0 z-10 flex items-center bg-white px-3 py-5 ">
       <Link href="/" className="text-2xl">

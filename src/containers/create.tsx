@@ -1,9 +1,9 @@
 import { NextPage } from "next";
 import { Icon } from "@iconify/react";
 import { ChangeEvent } from "react";
-import Button from "../components/ui/button";
 import { cls } from "../lib/class";
 import Prev from "../components/ui/prev";
+import ButtonItem from "../components/ui/buttonitem";
 
 interface CreateProps {
   isText: boolean;
@@ -58,7 +58,12 @@ const CreatePage: NextPage<CreateProps> = ({ isText, textAreaValue }) => {
           <Icon icon="material-symbols:arrow-outward" />
         </div>
       </div>
-      <Button text="완료" />
+      <ButtonItem
+        text="완료"
+        color="bg-black"
+        fontColor="text-white"
+        position="absolute bottom-0 left-0"
+      />
     </div>
   );
 };
