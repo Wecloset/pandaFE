@@ -8,7 +8,7 @@ interface MainDataProps {
 
 const MainList: NextPage<MainDataProps> = ({ data }) => {
   return (
-    <ul className="flex items-center gap-[10px]">
+    <ul className="flex items-center gap-[10px] ">
       {data.map((item: MainData) => (
         <li key={item.id}>
           <Link href="">
