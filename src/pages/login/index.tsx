@@ -7,6 +7,7 @@ import graphic1 from "../../../public/asset/image/graphic1.svg";
 import graphic2 from "../../../public/asset/image/graphic2.svg";
 import graphic3 from "../../../public/asset/image/graphic3.svg";
 import graphic4 from "../../../public/asset/image/graphic4.svg";
+import Input from "../../components/input";
 
 const Login: NextPage = () => {
   return (
@@ -19,23 +20,22 @@ const Login: NextPage = () => {
         <div className="mt-10 pb-10">
           <Image src={logo} alt="logo" className="m-auto h-28" />
         </div>
-        <div className="space-y-2 px-3 pb-2 text-base [&>input]:h-[52px] [&>input]:border-b [&>input]:px-4">
-          <input
-            type="text"
-            name="email"
-            placeholder="이메일"
-            autoComplete="off"
-            className="bg-transparent text-white placeholder:text-white focus:border-primary-green "
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="비밀번호"
-            className="bg-transparent text-white placeholder:text-white focus:border-primary-green"
-          />
-        </div>
+        <Input
+          type="text"
+          name="email"
+          placeholder="이메일"
+          isSecond
+          secondtype="password"
+          secondname="password"
+          secondplaceholder="비밀번호"
+          classname="bg-transparent text-white placeholder:text-white focus:border-primary-green "
+        />
         <div className="mt-6">
-          <ButtonItem text="로그인" color="bg-commom-gray" />
+          <ButtonItem
+            text="로그인"
+            color="bg-commom-gray"
+            hover="hover:bg-primary-green"
+          />
           <Link
             href="/sign"
             className="mx-auto mt-3 block w-14 text-white hover:underline"

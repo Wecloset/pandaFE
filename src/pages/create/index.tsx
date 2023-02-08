@@ -67,7 +67,7 @@ const Create: NextPage = () => {
           text="완료"
           color="bg-black"
           fontColor="text-white"
-          position="absolute bottom-0 left-0"
+          position="bottom-0 left-0"
         />
       </div>
     </>

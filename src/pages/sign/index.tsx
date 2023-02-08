@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 import { useState } from "react";
 import ButtonItem from "../../components/button";
 import Header from "../../components/header";
-import Modal from "../../components/modal";
+import Input from "../../components/input";
 
 const Sign: NextPage = () => {
   const taglist = {
@@ -63,33 +63,25 @@ const Sign: NextPage = () => {
     <>
       <Header text="SIGNUP" goBack />
       <div className="px-5">
-        <div className="px-3 py-5 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
-          <p className="mb-2 px-2 text-lg">사용하실 이메일을 입력해주세요.</p>
-          <input
-            type="text"
-            name="email"
-            placeholder="아이디(이메일)"
-            className=" text-black placeholder:text-textColor-gray-100"
-          />
-        </div>
-        <div className="px-3 pb-6 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
-          <p className="mb-2 px-2 text-lg">비밀번호를 입력해주세요.</p>
-          <p className="mb-2 px-2 text-xs text-textColor-gray-100">
-            6자리 이상의 비밀번호를 설정해주세요.
-          </p>
-          <input
-            type="password"
-            name="password"
-            placeholder="비밀번호"
-            className=" text-black placeholder:text-textColor-gray-100"
-          />
-          <input
-            type="password"
-            name="passwordConfirm"
-            placeholder="비밀번호 확인"
-            className=" text-black placeholder:text-textColor-gray-100"
-          />
-        </div>
+        <Input
+          title="사용하실 이메일을 입력해주세요."
+          type="text"
+          name="email"
+          placeholder="아이디(이메일)"
+          classname="text-black placeholder:text-textColor-gray-100"
+        />
+        <Input
+          title="비밀번호를 입력해주세요."
+          isSubtitle
+          subtitle="6자리 이상의 비밀번호를 설정해주세요."
+          type="password"
+          name="password"
+          placeholder="비밀번호"
+          isSecond
+          secondplaceholder="비밀번호를 확인해주세요"
+          classname="text-black placeholder:text-textColor-gray-100"
+        />
+
         <div className="px-3 pb-10 [&>input]:h-[48px] [&>input]:border-b [&>input]:px-4">
           <p className="mb-2 px-2 text-lg">사용하실 닉네임을 입력해주세요.</p>
           <div className="ml-2 flex">

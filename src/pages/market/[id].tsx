@@ -66,7 +66,7 @@ const Product: NextPage = () => {
           </div>
         </div>
       </div>
-      <div className="absolute bottom-0 flex w-full items-center justify-between pl-5">
+      <div className=" bottom-0 flex w-full items-center justify-between pl-5">
         <p className="text-2xl font-bold">
           {"90000".replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           <span className="text-lg">원</span>
