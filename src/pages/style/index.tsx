@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import { styleListData } from "../../api/fake-data";
+import { styleListData } from "../api/fake-data";
 import Header from "../../components/header";
 import Navigation from "../../components/navigation";
 import StyleItem from "../../components/style/style-item";
