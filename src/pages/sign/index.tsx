@@ -39,6 +39,18 @@ const Sign: NextPage = () => {
     ],
   };
   const [returnitem, setReturnItem] = useState<string[]>([]);
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [nick, setNick] = useState<string>("");
+  const onChangeEmail = (e: any) => {
+    setEmail(e.target.value);
+  };
+  const onChangePassword = (e: any) => {
+    setPassword(e.target.value);
+  };
+  const onChangeNickName = (e: any) => {
+    setNick(e.target.value);
+  };
   const newArray: string[] = [];
   const onResetBtn = () => {
     setReturnItem([]);
@@ -63,6 +75,10 @@ const Sign: NextPage = () => {
     <>
       <Header text="SIGNUP" goBack />
       <div className="px-5">
+        <input type="text" name="email" onChange={onChangeEmail} />
+        <input type="password" name="password" onChange={onChangePassword} />
+        <input type="text" name="nickname" onChange={onChangeNickName} />
+        <button>버튼</button>
         <Input
           title="사용하실 이메일을 입력해주세요."
           type="text"
@@ -78,6 +94,7 @@ const Sign: NextPage = () => {
           name="password"
           placeholder="비밀번호"
           isSecond
+          secondtype="password"
           secondplaceholder="비밀번호를 확인해주세요"
           classname="text-black placeholder:text-textColor-gray-100"
         />
