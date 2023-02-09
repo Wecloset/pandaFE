@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 import { useState } from "react";
 import Header from "../../components/header";
 import { cls } from "../../lib/class";
-import productData from "../../api/fake-data";
+import productData from "../api/fake-data";
 import Link from "next/link";
 
 const MyPage: NextPage = () => {

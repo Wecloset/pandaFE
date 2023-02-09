@@ -5,7 +5,7 @@ import { cls } from "../../lib/class";
 import { MainData } from "../../types/data-type";
 
 import Header from "../../components/header";
-import productData from "../../api/fake-data";
+import productData from "../api/fake-data";
 import FilterOverlay from "../../components/market/market-filter";
 import MarketItem from "../../components/market/market-item";
 import Navigation from "../../components/navigation";
