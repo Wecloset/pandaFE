@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import productData from "./api/fake-data";
+import productData from "../lib/fake-data";
 import Header from "../components/header";
 import Navigation from "../components/navigation";
 import MainList from "../components/main/main-list";
