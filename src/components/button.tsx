@@ -29,9 +29,7 @@ const Button: NextPage<buttonInterface> = ({
   padding,
 }) => {
   return (
-    <div
-      className={`w-full ${padding ? padding : "px-4"} pb-3 ${position} mt-3`}
-    >
+    <div className={`w-full ${padding ? padding : "px-4"} pb-3 ${position}`}>
       <button
         className={`h-[50px] ${width ? width : "w-full"} ${border} ${color} ${
           fontColor ?? "text-black"
