@@ -18,6 +18,7 @@ model User {
   product     Product[]
   followings  User[]    @relation("followRelation")
   followers   User[]    @relation("followRelation")
+  Fav         Fav[]
 }
 
 model Product {
@@ -25,30 +26,52 @@ model Product {
   title       String
   price       Int
   createdDate DateTime  @default(now())
-  summary     String?
+  description String?   @db.MediumText
+  imgurl      Img[]
   rental      Boolean   @default(false)
   category    String
   brand       String
-  like        Int       @default(0)
   view        Int       @default(0)
   user        User      @relation(fields: [userId], references: [id])
   userId      Int
-  Look        Look?     @relation(fields: [lookId], references: [id])
+  look        Look?     @relation(fields: [lookId], references: [id])
   lookId      Int?
   hashTag     HashTag[]
+  favorite    Fav[]
+}
+
+model Look {
+  id          Int       @id @default(autoincrement())
+  description String?   @db.MediumText
+  createdDate DateTime  @default(now())
+  imgurl      Img[]
+  product     Product[]
+  hashTag     HashTag[]
+  favorite    Fav[]
+}
+
+model Img {
+  id        Int      @id @default(autoincrement())
+  img       String   @db.LongText
+  Product   Product? @relation(fields: [productId], references: [id])
+  productId Int?
+  Look      Look?    @relation(fields: [lookId], references: [id])
+  lookId    Int?
 }
 
 model HashTag {
   id      Int       @id @default(autoincrement())
   tag     String    @unique
-  Product Product[]
-  Look    Look[]
+  product Product[]
+  look    Look[]
 }
 
-model Look {
-  id          Int       @id @default(autoincrement())
-  summary     String?
-  createdDate DateTime  @default(now())
-  product     Product[]
-  hashTag     HashTag[]
+model Fav {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  product   Product? @relation(fields: [productId], references: [id])
+  productId Int?
+  Look      Look?    @relation(fields: [lookId], references: [id])
+  lookId    Int?
 }
