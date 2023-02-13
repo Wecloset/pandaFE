@@ -120,9 +120,15 @@ const SignForm: NextPage = () => {
             {newList.map((ele, index) => {
               return (
                 <div
-                  className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-solid border-black py-1 px-2 hover:bg-black hover:text-white"
+                  className={`flex cursor-pointer items-center gap-3 rounded-xl border-2 border-solid border-black py-1 px-2 ${
+                    returnitem.includes(ele) ? "bg-black text-white" : ""
+                  } `}
                   key={index}
-                  onClick={() => onClick(ele)}
+                  onClick={
+                    returnitem.includes(ele)
+                      ? () => onDelete(ele)
+                      : () => onClick(ele)
+                  }
                 >
                   {ele}
                 </div>
@@ -132,17 +138,6 @@ const SignForm: NextPage = () => {
               <Icon icon="carbon:reset" />
             </button>
           </ul>
-          {
-            <>
-              <ul className="my-3 flex w-full flex-wrap gap-2 px-2">
-                {returnitem.map(x => (
-                  <div key={Math.random()} onClick={() => onDelete(x)}>
-                    {x}
-                  </div>
-                ))}
-              </ul>
-            </>
-          }
         </div>
       </div>
       <input
