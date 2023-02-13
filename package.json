@@ -3,7 +3,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "db": "npx prisma db push",
+    "pscale": "pscale connect panda-project dev",
+    "studio": "npx prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^4.10.0",

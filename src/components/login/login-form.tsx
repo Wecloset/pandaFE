@@ -1,3 +1,4 @@
+import axios from "axios";
 import { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -9,7 +10,11 @@ interface LoginProps {
   password: string;
 }
 
-const LoginForm: NextPage = () => {
+interface LoginListProps {
+  list: string[] | undefined;
+}
+
+const LoginForm: NextPage<LoginListProps> = ({ list }) => {
   const router = useRouter();
   const {
     register,
@@ -17,7 +22,13 @@ const LoginForm: NextPage = () => {
     formState: { errors },
   } = useForm<LoginProps>({});
   const onSubmit = handleSubmit(data => {
-    console.log(data);
+    axios.post("/api/login", {
+      headers: { "Content-Type": "application/json" },
+      data: {
+        userData: list,
+        submit: data,
+      },
+    });
     router.push("/");
   });
   return (

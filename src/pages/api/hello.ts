@@ -2,21 +2,31 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import client from "../../lib/client";
 
-type Data = {
-  name: string;
-};
-
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>,
+  res: NextApiResponse,
 ) {
-  await client.user.create({
-    data: {
-      email: "rlorxl3@test.com",
-      nickname: "rlorxl3",
-      password: "fjdksla",
-    },
-  });
-
-  res.status(200).json({ name: "John Doe" });
+  const { email, password, nickname, tags, id } = req.body.data;
+  if (req.method === "GET") {
+    //Read
+    res.json({ ok: true });
+  }
+  if (req.method === "POST") {
+    const signUser = await client.user.create({
+      data: {
+        nickname,
+        email,
+        password,
+      },
+    });
+    res.json(signUser);
+  }
+  if (req.method === "PUT") {
+    //Update
+    res.json({ ok: true });
+  }
+  if (req.method === "DELETE") {
+    //Delete
+    res.json({ ok: true });
+  }
 }

@@ -1,14 +1,23 @@
 import type { NextPage } from "next";
 import Image from "next/image";
 import logo from "../../../public/asset/image/full-logo.png";
-import ButtonItem from "../../components/button";
 import graphic1 from "../../../public/asset/image/graphic1.svg";
 import graphic2 from "../../../public/asset/image/graphic2.svg";
 import graphic3 from "../../../public/asset/image/graphic3.svg";
 import graphic4 from "../../../public/asset/image/graphic4.svg";
 import LoginForm from "../../components/login/login-form";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Button from "../../components/button";
 
 const Login: NextPage = () => {
+  const [userlist, setUserList] = useState<string[] | undefined>([]);
+  console.log(userlist);
+  useEffect(() => {
+    axios.get("/api/login").then(res => {
+      setUserList(res.data);
+    });
+  }, []);
   return (
     <div className="relative h-screen w-full bg-black">
       <Image src={graphic1} alt="" className="absolute -top-3 -left-3 w-1/2" />
@@ -29,8 +38,8 @@ const Login: NextPage = () => {
             priority
           />
         </div>
-        <LoginForm />
-        <ButtonItem
+        <LoginForm list={userlist} />
+        <Button
           text="Continue With Google"
           color="bg-white"
           icon="ph:google-logo"
@@ -39,7 +48,7 @@ const Login: NextPage = () => {
           padding="px-8"
           position="absolute left-0 bottom-[60px]"
         />
-        <ButtonItem
+        <Button
           text="Continue With Kakao"
           color="bg-primary-yellow"
           icon="ri:kakao-talk-fill"
