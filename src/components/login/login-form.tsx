@@ -65,10 +65,12 @@ const LoginForm: NextPage = () => {
       {errors?.password?.type === "pattern" && (
         <p className="mb-2 px-2 text-error">잘못된 비밀번호 형식입니다.</p>
       )}
-      <input
+      <button
         type="submit"
-        className="mt-3 h-12 bg-commom-gray hover:bg-primary-green"
-      />
+        className="mt-3 h-12 w-full bg-commom-gray hover:bg-primary-green"
+      >
+        로그인
+      </button>
       <button
         type="button"
         className="mt-3 h-12 w-full bg-transparent text-white "
