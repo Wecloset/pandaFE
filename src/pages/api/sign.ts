@@ -2,10 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import client from "../../lib/client";
 import createHashedPassword from "../../lib/hash";
 
-export default async function userSign(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+const userSign = async (req: NextApiRequest, res: NextApiResponse) => {
   const { email, password, nickname } = req.body.data;
   if (req.method === "POST") {
     const signUser = await client.user.create({
@@ -17,4 +14,6 @@ export default async function userSign(
     });
     res.json(signUser);
   }
-}
+};
+
+export default userSign;

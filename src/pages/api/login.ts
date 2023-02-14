@@ -1,16 +1,8 @@
-import { copyFile } from "fs";
 import type { NextApiRequest, NextApiResponse } from "next";
 import client from "../../lib/client";
 import createHashedPassword from "../../lib/hash";
 
-export default async function userLogin(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  if (req.method === "GET") {
-    const LoginUserData = await client.user.findMany();
-    res.json(LoginUserData);
-  }
+const userLogin = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const { submit } = req.body.data;
     const CheckUser = await client.user.findMany({
@@ -32,4 +24,6 @@ export default async function userLogin(
     }
     res.json(CheckUser);
   }
-}
+};
+
+export default userLogin;

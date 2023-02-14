@@ -14,7 +14,7 @@ interface SignProps {
 
 const SignForm: NextPage = () => {
   const router = useRouter();
-  const [pass, setPass] = useState(false);
+  const [pass, setPass] = useState<boolean>(false);
   const {
     register,
     getValues,

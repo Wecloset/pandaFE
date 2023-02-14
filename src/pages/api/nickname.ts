@@ -1,10 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import client from "../../lib/client";
-
-export default async function userSign(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+const nickCheck = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const { data } = req.body;
     const CheckNickName = await client.user.findMany({
@@ -26,4 +22,6 @@ export default async function userSign(
     }
     res.json(CheckNickName);
   }
-}
+};
+
+export default nickCheck;
