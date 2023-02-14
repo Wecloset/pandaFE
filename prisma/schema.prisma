@@ -19,6 +19,7 @@ model User {
   followings  User[]    @relation("followRelation")
   followers   User[]    @relation("followRelation")
   Fav         Fav[]
+  hashTag     HashTag[]
 }
 
 model Product {
@@ -64,6 +65,8 @@ model HashTag {
   tag     String    @unique
   product Product[]
   look    Look[]
+  User    User?     @relation(fields: [userId], references: [id])
+  userId  Int?
 }
 
 model Fav {

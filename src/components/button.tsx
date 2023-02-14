@@ -13,6 +13,8 @@ interface buttonInterface {
   position?: string;
   width?: string;
   padding?: string;
+  divWidth?: string;
+  height?: string;
 }
 
 const Button: NextPage<buttonInterface> = ({
@@ -26,14 +28,20 @@ const Button: NextPage<buttonInterface> = ({
   border,
   position,
   width,
+  divWidth,
   padding,
+  height,
 }) => {
   return (
-    <div className={`w-full ${padding ? padding : "px-4"} pb-3 ${position}`}>
+    <div
+      className={`${divWidth ? divWidth : "w-full"} ${
+        padding ? padding : "px-4"
+      } pb-3 ${position}`}
+    >
       <button
-        className={`h-[50px] ${width ? width : "w-full"} ${border} ${color} ${
-          fontColor ?? "text-black"
-        }  ${logo} ${hover}`}
+        className={`${height ? height : "h-[50px]"} ${
+          width ? width : "w-full"
+        } ${border} ${color} ${fontColor ?? "text-black"}  ${logo} ${hover}`}
       >
         <div className="flex w-1/5 justify-center">
           <Icon icon={icon} width="20" />
