@@ -14,6 +14,7 @@ interface SignProps {
 
 const SignForm: NextPage = () => {
   const router = useRouter();
+  const [pass, setPass] = useState(false);
   const {
     register,
     getValues,
@@ -25,8 +26,27 @@ const SignForm: NextPage = () => {
       headers: { "Content-Type": "application/json" },
       data,
     });
-    router.push("/signtag");
+    router.replace("/signtag");
   });
+
+  const onDuplication = async () => {
+    const { nickname } = getValues();
+    nickname === ""
+      ? window.alert("닉네임을 최소 한글자 이상 입력해주세요")
+      : await axios
+          .post("/api/nickname", {
+            headers: { "Content-Type": "application/json" },
+            data: nickname,
+          })
+          .then(res => {
+            !res.data.error && window.alert(`${res.data.message}`);
+            setPass(true);
+          })
+          .catch(error => {
+            window.alert(`${error.response.data.message}`);
+            setPass(false);
+          });
+  };
   return (
     <form onSubmit={onSubmit} className="px-5">
       <p className="mt-5 px-2 text-lg">사용하실 이메일을 입력해주세요</p>
@@ -84,28 +104,30 @@ const SignForm: NextPage = () => {
       )}
       <p className="mb-2 px-2 text-error">{errors?.passwordConfirm?.message}</p>
       <p className="mt-5 px-2 text-lg">사용하실 닉네임을 입력해주세요</p>
-      <div className="flex">
+      <div className="flex justify-between">
         <input
-          {...register("nickname", { required: true })}
+          {...register("nickname", { required: true, minLength: 1 })}
           placeholder="닉네임"
           className={`${
             errors.nickname && "border-b-error"
-          } h-11 w-3/5 border-b-2 px-3 py-5 text-black placeholder:text-textColor-gray-100`}
+          } mb-2 h-11 w-3/5 border-b-2 px-3 py-5 text-black placeholder:text-textColor-gray-100`}
         />
-        {/* <Button
-          text="중복확인"
-          color="bg-black"
-          fontColor="text-white"
-          hover="hover:bg-primary-green"
-          divWidth="w-2/5"
-          padding="pl-4"
-          height="h-10"
-        />*/}
+        <button
+          type="button"
+          className=" h-11 w-1/3 bg-black text-white hover:bg-primary-green"
+          onClick={onDuplication}
+        >
+          중복확인
+        </button>
       </div>
       {errors?.nickname?.type === "required" && (
         <p className="mb-2 px-2 text-error">닉네임 입력해주세요</p>
       )}
+      {errors?.nickname?.type === "minLength" && (
+        <p className="mb-2 px-2 text-error">닉네임은 최소 1글자 이상입니다</p>
+      )}
       <input
+        disabled={!pass}
         type="submit"
         className="mt-5 mb-10 h-12 bg-commom-gray hover:bg-primary-green"
       />

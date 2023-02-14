@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import client from "../../lib/client";
+import createHashedPassword from "../../lib/hash";
 
 export default async function userSign(
   req: NextApiRequest,
@@ -11,7 +12,7 @@ export default async function userSign(
       data: {
         nickname,
         email,
-        password,
+        password: createHashedPassword(password),
       },
     });
     res.json(signUser);

@@ -14,7 +14,7 @@ const SignTag: NextPage = () => {
     axios.get("/api/signtag").then(res => {
       setUser(res.data[res.data.length - 1]);
     });
-  }, [returnitem]);
+  }, []);
   const newArray: string[] = [];
   const onResetBtn = () => {
     setReturnItem([]);
@@ -45,10 +45,9 @@ const SignTag: NextPage = () => {
         },
       })
       .then(res => {
-        res.status === 200 && router.push("/login");
+        res.status === 200 && router.replace("/login");
       });
   };
-
   return (
     <>
       <Header text="TAGSELECT" goBack noGoBack />
@@ -90,7 +89,7 @@ const SignTag: NextPage = () => {
         onClick={onSubmitTag}
       >
         <button className="mt-5 h-14 w-full bg-black px-10 text-white hover:bg-primary-green">
-          중복확인
+          완료
         </button>
       </div>
     </>
