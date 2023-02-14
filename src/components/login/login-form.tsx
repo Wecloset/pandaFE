@@ -10,11 +10,7 @@ interface LoginProps {
   password: string;
 }
 
-interface LoginListProps {
-  list: string[] | undefined;
-}
-
-const LoginForm: NextPage<LoginListProps> = ({ list }) => {
+const LoginForm: NextPage = () => {
   const router = useRouter();
   const {
     register,
@@ -22,14 +18,22 @@ const LoginForm: NextPage<LoginListProps> = ({ list }) => {
     formState: { errors },
   } = useForm<LoginProps>({});
   const onSubmit = handleSubmit(data => {
-    axios.post("/api/login", {
-      headers: { "Content-Type": "application/json" },
-      data: {
-        userData: list,
-        submit: data,
-      },
-    });
-    router.push("/");
+    axios
+      .post("/api/login", {
+        headers: { "Content-Type": "application/json" },
+        data: {
+          submit: data,
+        },
+      })
+      .then(res => {
+        if (!res.data.error) {
+          window.alert("로그인이 완료되었습니다."), router.push("/");
+        }
+      })
+      .catch(error => {
+        window.alert(`${error.response.data.message}`);
+        return;
+      });
   });
   return (
     <form onSubmit={onSubmit} className="px-3 py-5">
