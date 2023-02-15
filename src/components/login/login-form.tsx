@@ -3,6 +3,7 @@ import { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
+import createHashedPassword from "../../lib/hash";
 import { regExgPw, regExpEm } from "../../lib/regInput";
 
 interface LoginProps {
@@ -22,17 +23,17 @@ const LoginForm: NextPage = () => {
       .post("/api/login", {
         headers: { "Content-Type": "application/json" },
         data: {
-          submit: data,
+          email: data.email,
+          password: createHashedPassword(data.password),
         },
       })
       .then(res => {
         if (!res.data.error) {
-          window.alert("로그인이 완료되었습니다."), router.push("/");
+          window.alert("로그인이 완료되었습니다."), router.replace("/");
         }
       })
       .catch(error => {
         window.alert(`${error.response.data.message}`);
-        return;
       });
   });
   return (

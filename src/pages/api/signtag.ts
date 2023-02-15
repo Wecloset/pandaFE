@@ -1,10 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import client from "../../lib/client";
 
-export default async function userSignTag(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+const userSignTag = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
     const signUserData = await client.user.findMany();
     res.json(signUserData);
@@ -19,4 +16,6 @@ export default async function userSignTag(
     });
     res.json(signUser);
   }
-}
+};
+
+export default userSignTag;

@@ -6,41 +6,53 @@ import Header from "../../components/header";
 import axios from "axios";
 import { useRouter } from "next/router";
 
+interface userProps {
+  createdDate: string;
+  email: string;
+  id: number;
+  nickname: string;
+  password: string;
+}
+
 const SignTag: NextPage = () => {
   const router = useRouter();
-  const [returnitem, setReturnItem] = useState<string[]>([]);
-  const [user, setUser]: any = useState();
+  const [selectedTag, setSelectedTag] = useState<string[]>([]);
+  const [user, setUser] = useState<userProps | undefined>(undefined);
   useEffect(() => {
     axios.get("/api/signtag").then(res => {
-      setUser(res.data[res.data.length - 1]);
+      setUser(
+        res.data.length === 0
+          ? res.data[res.data.length]
+          : res.data[res.data.length - 1],
+      );
     });
   }, []);
   const newArray: string[] = [];
   const onResetBtn = () => {
-    setReturnItem([]);
+    setSelectedTag([]);
   };
-  const newList = taglist.value;
+  const allSelectedTag = taglist.value;
   const onClick = (data: string) => {
-    setReturnItem([...returnitem, data]);
-    const deduplication = returnitem.includes(data);
+    setSelectedTag([...selectedTag, data]);
+    const deduplication = selectedTag.includes(data);
     if (deduplication) {
-      setReturnItem([...returnitem]);
+      setSelectedTag([...selectedTag]);
     }
   };
   const onDelete = (x: string) => {
-    const deleteItem = returnitem.indexOf(x);
-    const cutone = returnitem.slice(0, deleteItem);
-    const cuttwo = returnitem.slice(deleteItem + 1, returnitem.length);
+    const deleteItem = selectedTag.indexOf(x);
+    const cutone = selectedTag.slice(0, deleteItem);
+    const cuttwo = selectedTag.slice(deleteItem + 1, selectedTag.length);
     newArray.push(...cutone);
     newArray.push(...cuttwo);
-    setReturnItem(newArray);
+    setSelectedTag(newArray);
   };
   const onSubmitTag = async () => {
     await axios
       .post("/api/signtag", {
         headers: { "Content-Type": "application/json" },
         data: {
-          tags: returnitem.toString(),
+          tags: selectedTag.toString(),
           userData: user?.id,
         },
       })
@@ -57,19 +69,19 @@ const SignTag: NextPage = () => {
           <p className="mb-2 text-xs text-textColor-gray-100">
             1개 이상의 키워드나 브랜드를 선택해주세요.
           </p>
-          <p>{`${returnitem.length}/${taglist.value.length}`}</p>
+          <p>{`${selectedTag.length}/${taglist.value.length}`}</p>
         </div>
         <div>
           <ul className="my-3 flex w-full flex-wrap gap-2 px-2">
-            {newList.map((ele, index) => {
+            {allSelectedTag.map((ele, index) => {
               return (
                 <div
                   className={`flex cursor-pointer items-center gap-3 rounded-xl border-2 border-solid border-black py-1 px-2 ${
-                    returnitem.includes(ele) ? "bg-black text-white" : ""
+                    selectedTag.includes(ele) ? "bg-black text-white" : ""
                   } `}
                   key={index}
                   onClick={
-                    returnitem.includes(ele)
+                    selectedTag.includes(ele)
                       ? () => onDelete(ele)
                       : () => onClick(ele)
                   }
