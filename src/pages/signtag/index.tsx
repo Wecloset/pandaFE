@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { taglist } from "../../lib/tag-data";
 import { Icon } from "@iconify/react";
 import Header from "../../components/header";
-import axios from "axios";
 import { useRouter } from "next/router";
+import { axiosGet, axiosPost } from "../../lib/services";
 
 interface userProps {
   createdDate: string;
@@ -19,7 +19,7 @@ const SignTag: NextPage = () => {
   const [selectedTag, setSelectedTag] = useState<string[]>([]);
   const [user, setUser] = useState<userProps | undefined>(undefined);
   useEffect(() => {
-    axios.get("/api/signtag").then(res => {
+    axiosGet("/api/signtag").then(res => {
       setUser(
         res.data.length === 0
           ? res.data[res.data.length]
@@ -47,18 +47,13 @@ const SignTag: NextPage = () => {
     newArray.push(...cuttwo);
     setSelectedTag(newArray);
   };
-  const onSubmitTag = async () => {
-    await axios
-      .post("/api/signtag", {
-        headers: { "Content-Type": "application/json" },
-        data: {
-          tags: selectedTag.toString(),
-          userData: user?.id,
-        },
-      })
-      .then(res => {
-        res.status === 200 && router.replace("/login");
-      });
+  const onSubmitTag = () => {
+    axiosPost("/api/signtag", {
+      tags: selectedTag.toString(),
+      userData: user?.id,
+    }).then(res => {
+      res.status === 200 && router.replace("/login");
+    });
   };
   return (
     <>
