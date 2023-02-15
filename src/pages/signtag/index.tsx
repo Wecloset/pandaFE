@@ -6,13 +6,25 @@ import Header from "../../components/header";
 import axios from "axios";
 import { useRouter } from "next/router";
 
+interface userProps {
+  createdDate: string;
+  email: string;
+  id: number;
+  nickname: string;
+  password: string;
+}
+
 const SignTag: NextPage = () => {
   const router = useRouter();
   const [selectedTag, setSelectedTag] = useState<string[]>([]);
-  const [user, setUser]: any = useState();
+  const [user, setUser] = useState<userProps | undefined>(undefined);
   useEffect(() => {
     axios.get("/api/signtag").then(res => {
-      setUser(res.data[res.data.length - 1]);
+      setUser(
+        res.data.length === 0
+          ? res.data[res.data.length]
+          : res.data[res.data.length - 1],
+      );
     });
   }, []);
   const newArray: string[] = [];

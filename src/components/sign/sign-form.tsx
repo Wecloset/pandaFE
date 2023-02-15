@@ -3,6 +3,7 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import createHashedPassword from "../../lib/hash";
 import { regExgPw, regExpEm } from "../../lib/regInput";
 
 interface SignProps {
@@ -22,11 +23,16 @@ const SignForm: NextPage = () => {
     formState: { errors },
   } = useForm<SignProps>({});
   const onSubmit = handleSubmit(data => {
-    axios.post("/api/sign", {
-      headers: { "Content-Type": "application/json" },
-      data,
-    });
-    router.replace("/signtag");
+    axios
+      .post("/api/sign", {
+        headers: { "Content-Type": "application/json" },
+        data: {
+          email: data.email,
+          password: createHashedPassword(data.password),
+          nickname: data.nickname,
+        },
+      })
+      .then(res => res.status === 200 && router.replace("/signtag"));
   });
 
   const onDuplication = async () => {
@@ -65,7 +71,7 @@ const SignForm: NextPage = () => {
       )}
       <p className="mb-1 mt-5  px-2 text-lg">비밀번호를 입력해주세요.</p>
       <p className="mb-2 px-2 text-xs text-textColor-gray-100">
-        6자리 이상의 비밀번호를 설정해주세요
+        숫자,문자,특수문자를 혼합한 6자리 이상 비밀번호를 설정해주세요
       </p>
       <input
         type="password"
@@ -106,7 +112,7 @@ const SignForm: NextPage = () => {
       <p className="mt-5 px-2 text-lg">사용하실 닉네임을 입력해주세요</p>
       <div className="flex justify-between">
         <input
-          {...register("nickname", { required: true, minLength: 1 })}
+          {...register("nickname", { minLength: 1 })}
           placeholder="닉네임"
           className={`${
             errors.nickname && "border-b-error"
@@ -120,9 +126,6 @@ const SignForm: NextPage = () => {
           중복확인
         </button>
       </div>
-      {errors?.nickname?.type === "required" && (
-        <p className="mb-2 px-2 text-error">닉네임 입력해주세요</p>
-      )}
       {errors?.nickname?.type === "minLength" && (
         <p className="mb-2 px-2 text-error">닉네임은 최소 1글자 이상입니다</p>
       )}
