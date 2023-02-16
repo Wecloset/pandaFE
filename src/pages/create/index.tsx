@@ -1,4 +1,4 @@
-import type { GetStaticProps, NextPage } from "next";
+import type { NextPage } from "next";
 import React, { ChangeEvent, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useForm, FieldErrors } from "react-hook-form";
@@ -7,7 +7,7 @@ import Header from "../../components/header";
 import { cls } from "../../lib/class";
 import uploadImage from "../../lib/upload-image";
 import Image from "next/image";
-import client from "../../lib/client";
+import axios from "axios";
 
 interface CreateState {
   image: string;
@@ -21,12 +21,7 @@ interface credentialProps {
   region: string;
   accessKey: string;
   secretKey: string;
-  prisma: any;
 }
-
-// interface Imagesrc {
-//   [key: string]: string;
-// }
 
 interface ImageInfo {
   name: string;
@@ -52,26 +47,16 @@ const Create: NextPage<credentialProps> = ({
   };
 
   const createProduct = async (data: any, imageurlList: string[]) => {
-    const userId = 84; // 임시 id
-    const { title, price, desc, tag } = data;
+    const payload = {
+      data,
+      imageurlList,
+    };
 
-    // const prisma = new PrismaClient();
-
-    // const tag;
-    const newProduct = await client.product.create({
-      data: {
-        userId,
-        title,
-        price,
-        description: desc,
-        imgurl: {
-          create: imageurlList.map(image => ({ img: image })),
-        },
-        category: "category",
-        brand: "brand",
-        hashTag: {},
-      },
+    const response = await axios.post("/api/products", {
+      headers: { "Content-Type": "application/json" },
+      payload,
     });
+    console.log(response);
   };
 
   const valid = async (data: CreateState) => {
@@ -82,7 +67,7 @@ const Create: NextPage<credentialProps> = ({
 
     imgsrc.forEach(item => {
       // s3 upload
-      // upload(item.file);
+      upload(item.file);
 
       // create image list
       const ext = item.file.type.split("/")[1];
@@ -96,7 +81,7 @@ const Create: NextPage<credentialProps> = ({
   };
 
   const inValid = (error: FieldErrors) => {
-    console.log(error);
+    // console.log(error);
     alert(error.desc?.message || error.title?.message || error.price?.message);
   };
 
@@ -117,11 +102,6 @@ const Create: NextPage<credentialProps> = ({
           file: file,
         };
         setImgsrc(prev => [...prev, obj]);
-        // map[file.name] = result;
-        // console.log(map);
-        // setTest(prev => [...prev, fileRef.current]);
-        // imgsrcRef.current.push(map);
-        // console.log(imgsrcRef.current);
       };
     });
   };
@@ -254,22 +234,6 @@ const Create: NextPage<credentialProps> = ({
       </div>
     </>
   );
-};
-
-export const getStaticProps: GetStaticProps = async () => {
-  const REGION = process.env.AWS_REGION ? process.env.AWS_REGION : null;
-  const ACCESS_KEY = process.env.AWS_KEY ? process.env.AWS_KEY : null;
-  const SECRECT_KEY = process.env.AWS_SECRET_KEY
-    ? process.env.AWS_SECRET_KEY
-    : null;
-
-  return {
-    props: {
-      region: REGION,
-      accessKey: ACCESS_KEY,
-      secretKey: SECRECT_KEY,
-    },
-  };
 };
 
 export default Create;

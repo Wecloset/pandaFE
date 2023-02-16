@@ -1,4 +1,4 @@
-import type { NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import productData from "../lib/fake-data";
 import Header from "../components/header";
 import Navigation from "../components/navigation";
