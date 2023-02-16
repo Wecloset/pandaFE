@@ -1,9 +1,4 @@
-import {
-  PutObjectCommand,
-  DeleteObjectCommand,
-  S3Client,
-} from "@aws-sdk/client-s3";
-import { v1, v4, v5 } from "uuid";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 interface credentialProps {
   region: string;
@@ -20,10 +15,10 @@ const uploadImage = ({ region, accessKey, secretKey }: credentialProps) => {
     },
   });
 
-  const fetchImage = async (file: any) => {
-    console.log(file);
+  const upload = async (file: File) => {
+    const encodedName = Buffer.from(file.name).toString("base64");
     const ext = file.type.split("/")[1];
-    const key = `products/${v4().replaceAll("-", "")}.${ext}`;
+    const key = `products/${encodedName.substring(0, 11)}.${ext}`;
 
     const bucketParams = {
       Bucket: "panda-products",
@@ -41,27 +36,7 @@ const uploadImage = ({ region, accessKey, secretKey }: credentialProps) => {
     }
   };
 
-  // const deleteImage = async (file: any) => {
-  //   // const ext = file.type.split("/")[1];
-  //   // const key = `panda-products.s3.${region}.amazon.aws.com/products/${v4().replaceAll(
-  //   //   "-",
-  //   //   "",
-  //   // )}.${ext}`;
-
-  //   const bucketParams = {
-  //     Bucket: "panda-products",
-  //     Key: "panda-products.s3.ap-northeast-2.amazonaws.com/products/e30f53a2a862479f87ce26e36859fece.jpeg",
-  //   };
-
-  //   try {
-  //     const data = await s3Client.send(new DeleteObjectCommand(bucketParams));
-  //     console.log("Success. Object deleted.", data);
-  //   } catch (err) {
-  //     console.log("Error", err);
-  //   }
-  // };
-
-  return [fetchImage];
+  return [upload];
 };
 
 export default uploadImage;
