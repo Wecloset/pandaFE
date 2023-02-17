@@ -1,13 +1,15 @@
-import type { NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import React, { ChangeEvent, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useForm, FieldErrors } from "react-hook-form";
 import Button from "../../components/button";
 import Header from "../../components/header";
 import { cls } from "../../lib/class";
-import uploadImage from "../../lib/upload-image";
 import Image from "next/image";
 import axios from "axios";
+import useUpload from "../../hooks/useUpload";
+import { createImageUrl } from "../../lib/image-url";
+import { tabData } from "../../lib/fake-data";
 
 interface CreateState {
   image: string;
@@ -17,30 +19,34 @@ interface CreateState {
   tag: string;
 }
 
-interface credentialProps {
+interface CredentialProps {
   region: string;
   accessKey: string;
   secretKey: string;
 }
 
-interface ImageInfo {
-  name: string;
-  dataUrl: string;
-  file: File;
+interface TabItem {
+  [key: string]: { name: string; current: boolean; list: string[] };
 }
 
-const Create: NextPage<credentialProps> = ({
+const Create: NextPage<CredentialProps> = ({
   region,
   accessKey,
   secretKey,
 }) => {
   const credentials = { region, accessKey, secretKey };
-  const [upload] = uploadImage(credentials);
-
+  // console.log(region, accessKey, secretKey);
+  const { uploadImage, deleteImage, encodeFile, imgsrc } =
+    useUpload(credentials);
   const { register, handleSubmit } = useForm<CreateState>({ mode: "onSubmit" });
 
   const [isText, setIsText] = useState<boolean>(false);
-  const [imgsrc, setImgsrc] = useState<ImageInfo[]>([]);
+  const [isTabOpen, setIsTabOpen] = useState<boolean>(false);
+  const [tabItem, setTabItem] = useState<TabItem>({
+    category: { name: "카테고리", current: false, list: tabData.category },
+    brand: { name: "브랜드", current: false, list: tabData.brand },
+    rental: { name: "대여 가능", current: false, list: tabData.rental },
+  });
 
   const textAreaValue = (event: ChangeEvent<HTMLTextAreaElement>) => {
     event.target.value !== "" ? setIsText(true) : setIsText(false);
@@ -60,60 +66,59 @@ const Create: NextPage<credentialProps> = ({
   };
 
   const valid = async (data: CreateState) => {
-    // 1. s3업로드할 File 넘겨주기
-    // 2. prisma에 올릴 이미지 리스트 만들고
-    // 3. prisma 업로드
     const imageurlList: string[] = [];
-
+    console.log(data);
     imgsrc.forEach(item => {
       // s3 upload
-      upload(item.file);
+      uploadImage(item.file);
 
-      // create image list
-      const ext = item.file.type.split("/")[1];
-      const encodedName = Buffer.from(item.file.name).toString("base64");
-      const key = `products/${encodedName.substring(0, 11)}.${ext}`; // https://panda-products.s3.ap-northeast-2.amazonaws.com/products/MjU3NzcxMDU.jpeg
-      const imageurl = `https://panda-products.s3.ap-northeast-2.amazonaws.com/${key}`;
+      const imageurl = createImageUrl(item.file);
       imageurlList.push(imageurl);
     });
-
     createProduct(data, imageurlList);
   };
 
   const inValid = (error: FieldErrors) => {
-    // console.log(error);
     alert(error.desc?.message || error.title?.message || error.price?.message);
   };
 
-  const encodeFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const imageFile = event.target.files;
-
-    if (!imageFile || imageFile.length < 0) return;
-
-    [...imageFile].forEach(file => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-
-      reader.onload = () => {
-        const result = reader.result as string;
-        const obj = {
-          name: file.name,
-          dataUrl: result,
-          file: file,
-        };
-        setImgsrc(prev => [...prev, obj]);
-      };
-    });
+  const openTab = (name: string) => {
+    const newTabItem: TabItem = {};
+    for (const key in tabItem) {
+      const val =
+        tabItem[key].name === name
+          ? { ...tabItem[key], current: true }
+          : { ...tabItem[key], current: false };
+      newTabItem[key] = val;
+    }
+    setTabItem(newTabItem);
+    setIsTabOpen(true);
   };
 
-  const deleteImage = (selectedImage: string) => {
-    setImgsrc(prev => prev.filter(item => item.dataUrl !== selectedImage));
+  const selectTabItem = (
+    event: React.MouseEvent<HTMLLIElement>,
+    name: string,
+  ) => {
+    const target = event.target as HTMLLIElement;
+    const newTabItem: TabItem = {};
+    for (const key in tabItem) {
+      const val =
+        tabItem[key].name === name
+          ? { ...tabItem[key], name: target.textContent as string }
+          : tabItem[key];
+      newTabItem[key] = val;
+    }
+    setTabItem(newTabItem);
+    setIsTabOpen(false);
   };
 
   return (
     <>
       <Header goBack />
-      <div className="px-5 py-5">
+      {isTabOpen && (
+        <div className="absolute z-10 h-[calc(100%-300px)] w-full bg-black pt-10 opacity-50" />
+      )}
+      <div className=" px-5 py-5">
         <form onSubmit={handleSubmit(valid, inValid)}>
           <div className="mb-6 flex">
             <label className="mr-2 mt-2 flex h-[100px] w-[100px] flex-shrink-0 cursor-pointer flex-col items-center justify-center gap-1 border bg-gray-100 text-textColor-gray-100">
@@ -217,23 +222,73 @@ const Create: NextPage<credentialProps> = ({
             position="absolute bottom-0 left-0"
           />
         </form>
-        <div className="[&>*]:flex [&>*]:h-[52px] [&>*]:items-center [&>*]:justify-between [&>*]:border-b [&>*]:px-4">
-          <div>
-            <span>카테고리</span>
-            <Icon icon="material-symbols:arrow-outward" />
-          </div>
-          <div>
-            <span>브랜드</span>
-            <Icon icon="material-symbols:arrow-outward" />
-          </div>
-          <div>
-            <span>대여 가능</span>
-            <Icon icon="material-symbols:arrow-outward" />
-          </div>
+        <div className=" [&>*]:flex [&>*]:h-[52px] [&>*]:items-center [&>*]:justify-between [&>*]:border-b [&>*]:px-4">
+          {Object.values(tabItem).map(({ name }, i) => (
+            <div key={`tab${i}`} onClick={() => openTab(name)}>
+              <span>{name}</span>
+              <Icon icon="material-symbols:arrow-outward" />
+            </div>
+          ))}
         </div>
+        {/* Select Tab */}
+        {isTabOpen &&
+          Object.values(tabItem).map(({ name, current }, i) =>
+            current === true ? (
+              <div
+                key={i}
+                className="absolute left-0 z-40 h-16 w-full -translate-y-20 justify-center border border-b-common-black bg-white p-5"
+              >
+                <span className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
+                  {name}
+                </span>
+                <Icon
+                  icon="carbon:close"
+                  className="absolute top-4 right-5 z-50 h-7 w-7 cursor-pointer"
+                  onClick={() => setIsTabOpen(false)}
+                />
+              </div>
+            ) : null,
+          )}
+        {isTabOpen &&
+          Object.values(tabItem).map(
+            ({ name, current, list }, i) =>
+              current === true && (
+                <div key={i}>
+                  <div className="absolute left-0 bottom-0 z-30 h-[350px] w-full bg-white p-5 pt-16">
+                    <ul className="h-[265px] w-full overflow-y-scroll [&>li]:text-textColor-gray-100">
+                      {list.map((listItem, i) => (
+                        <li
+                          key={i}
+                          className="cursor-pointer p-2 hover:bg-[#f7f7f7] hover:text-common-black"
+                          onClick={e => selectTabItem(e, name)}
+                        >
+                          {listItem}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ),
+          )}
       </div>
     </>
   );
+};
+
+export const getStaticProps: GetStaticProps = async () => {
+  const REGION = process.env.AWS_REGION ? process.env.AWS_REGION : null;
+  const ACCESS_KEY = process.env.AWS_KEY ? process.env.AWS_KEY : null;
+  const SECRECT_KEY = process.env.AWS_SECRET_KEY
+    ? process.env.AWS_SECRET_KEY
+    : null;
+
+  return {
+    props: {
+      region: REGION,
+      accessKey: ACCESS_KEY,
+      secretKey: SECRECT_KEY,
+    },
+  };
 };
 
 export default Create;
