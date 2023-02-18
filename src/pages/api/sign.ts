@@ -12,7 +12,13 @@ const userSign = async (req: NextApiRequest, res: NextApiResponse) => {
         password: createHashedPassword(password),
       },
     });
-    res.json(signUser);
+    signUser
+      ? res.status(200).json({
+          message: "회원 정보가 저장되었습니다.",
+        })
+      : res.status(400).json({
+          message: "회원정보가 잘못되었습니다",
+        });
   }
 };
 

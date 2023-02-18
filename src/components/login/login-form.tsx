@@ -18,19 +18,17 @@ const LoginForm: NextPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginProps>({});
+
   const onSubmit = handleSubmit(data => {
-    axiosPost("/api/login", {
-      email: data.email,
-      password: createHashedPassword(data.password),
-    })
-      .then(res => {
-        if (!res.data.error) {
-          window.alert("로그인이 완료되었습니다."), router.replace("/");
-        }
-      })
-      .catch(error => {
-        window.alert(`${error.response.data.message}`);
-      });
+    axiosPost(
+      "/api/login",
+      {
+        email: data.email,
+        password: createHashedPassword(data.password),
+      },
+      router,
+      "/",
+    );
   });
   return (
     <form onSubmit={onSubmit} className="px-3 py-5">

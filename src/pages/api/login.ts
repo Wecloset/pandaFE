@@ -12,14 +12,11 @@ const userLogin = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
     if (CheckUser.length === 0) {
-      return res.status(404).json({
+      res.status(400).json({
         message: "회원정보가 없습니다.",
-        error: true,
       });
     } else {
-      return res
-        .status(200)
-        .json({ message: "로그인이 완료되었습니다.", error: false });
+      res.status(200).json({ message: "로그인이 완료되었습니다." });
     }
   }
 };

@@ -1,3 +1,4 @@
+import axios from "axios";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -15,7 +16,9 @@ interface SignProps {
 
 const SignForm: NextPage = () => {
   const router = useRouter();
+
   const [pass, setPass] = useState<boolean>(false);
+
   const {
     register,
     getValues,
@@ -24,29 +27,36 @@ const SignForm: NextPage = () => {
   } = useForm<SignProps>({});
 
   const onSubmit = handleSubmit(data => {
-    axiosPost("/api/sign", {
-      email: data.email,
-      password: createHashedPassword(data.password),
-      nickname: data.nickname,
-    }).then(res => res.status === 200 && router.replace("/signtag"));
+    axiosPost(
+      "/api/sign",
+      {
+        email: data.email,
+        password: createHashedPassword(data.password),
+        nickname: data.nickname,
+      },
+      router,
+      "/signtag",
+    );
   });
 
   const onDuplication = async () => {
     const { nickname } = getValues();
-    nickname === ""
-      ? window.alert("닉네임을 최소 한글자 이상 입력해주세요")
-      : axiosPost("/api/nickname", {
-          nickname,
-        })
-          .then(res => {
-            !res.data.error && window.alert(`${res.data.message}`);
-            setPass(true);
-          })
-          .catch(error => {
-            window.alert(`${error.response.data.message}`);
-            setPass(false);
-          });
+
+    axios
+      .post("/api/nickname", {
+        headers: { "Content-Type": "application/json" },
+        data: nickname,
+      })
+      .then(res => {
+        res.status === 200 && window.alert(res.data.message);
+        setPass(true);
+      })
+      .catch(error => {
+        window.alert(`${error.response.data.message}`);
+        setPass(false);
+      });
   };
+
   return (
     <form onSubmit={onSubmit} className="px-5">
       <p className="mt-5 px-2 text-lg">사용하실 이메일을 입력해주세요</p>

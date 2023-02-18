@@ -47,13 +47,17 @@ const SignTag: NextPage = () => {
     newArray.push(...cuttwo);
     setSelectedTag(newArray);
   };
+
   const onSubmitTag = () => {
-    axiosPost("/api/signtag", {
-      tags: selectedTag.toString(),
-      userData: user?.id,
-    }).then(res => {
-      res.status === 200 && router.replace("/login");
-    });
+    axiosPost(
+      "/api/signtag",
+      {
+        tags: selectedTag.toString(),
+        userData: user?.id,
+      },
+      router,
+      "/login",
+    );
   };
   return (
     <>
