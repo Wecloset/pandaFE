@@ -1,12 +1,12 @@
 import type { NextPage } from "next";
 import Image from "next/image";
 import logo from "../../../public/asset/image/full-logo.png";
-import ButtonItem from "../../components/button";
 import graphic1 from "../../../public/asset/image/graphic1.svg";
 import graphic2 from "../../../public/asset/image/graphic2.svg";
 import graphic3 from "../../../public/asset/image/graphic3.svg";
 import graphic4 from "../../../public/asset/image/graphic4.svg";
 import LoginForm from "../../components/login/login-form";
+import Button from "../../components/button";
 
 const Login: NextPage = () => {
   return (
@@ -14,12 +14,7 @@ const Login: NextPage = () => {
       <Image src={graphic1} alt="" className="absolute -top-3 -left-3 w-1/2" />
       <Image src={graphic2} alt="" className="absolute top-20 right-0 w-1/4" />
       <Image src={graphic3} alt="" className="absolute top-1/2 right-0 w-1/2" />
-      <Image
-        src={graphic4}
-        alt=""
-        className="absolute bottom-0 -left-10"
-        priority
-      />
+      <Image src={graphic4} alt="" className="absolute bottom-0 -left-10" />
       <div className="absolute top-1/2 z-10 h-4/5 w-full -translate-y-1/2 px-5">
         <div className="mt-10 pb-10">
           <Image
@@ -30,7 +25,7 @@ const Login: NextPage = () => {
           />
         </div>
         <LoginForm />
-        <ButtonItem
+        <Button
           text="Continue With Google"
           color="bg-white"
           icon="ph:google-logo"
@@ -39,7 +34,7 @@ const Login: NextPage = () => {
           padding="px-8"
           position="absolute left-0 bottom-[60px]"
         />
-        <ButtonItem
+        <Button
           text="Continue With Kakao"
           color="bg-primary-yellow"
           icon="ri:kakao-talk-fill"

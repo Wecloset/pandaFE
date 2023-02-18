@@ -1,7 +1,9 @@
+import axios from "axios";
 import { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
+import createHashedPassword from "../../lib/hash";
 import { regExgPw, regExpEm } from "../../lib/regInput";
 
 interface LoginProps {
@@ -17,8 +19,22 @@ const LoginForm: NextPage = () => {
     formState: { errors },
   } = useForm<LoginProps>({});
   const onSubmit = handleSubmit(data => {
-    console.log(data);
-    router.push("/");
+    axios
+      .post("/api/login", {
+        headers: { "Content-Type": "application/json" },
+        data: {
+          email: data.email,
+          password: createHashedPassword(data.password),
+        },
+      })
+      .then(res => {
+        if (!res.data.error) {
+          window.alert("로그인이 완료되었습니다."), router.replace("/");
+        }
+      })
+      .catch(error => {
+        window.alert(`${error.response.data.message}`);
+      });
   });
   return (
     <form onSubmit={onSubmit} className="px-3 py-5">
@@ -50,10 +66,12 @@ const LoginForm: NextPage = () => {
       {errors?.password?.type === "pattern" && (
         <p className="mb-2 px-2 text-error">잘못된 비밀번호 형식입니다.</p>
       )}
-      <input
+      <button
         type="submit"
-        className="mt-3 h-12 bg-commom-gray hover:bg-primary-green"
-      />
+        className="mt-3 h-12 w-full bg-commom-gray hover:bg-primary-green"
+      >
+        로그인
+      </button>
       <button
         type="button"
         className="mt-3 h-12 w-full bg-transparent text-white "

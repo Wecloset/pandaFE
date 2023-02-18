@@ -8,9 +8,10 @@ import { useRouter } from "next/router";
 interface HeaderProps {
   goBack?: boolean;
   text?: string;
+  noGoBack?: boolean;
 }
 
-const Header: NextPage<HeaderProps> = ({ goBack, text }) => {
+const Header: NextPage<HeaderProps> = ({ goBack, text, noGoBack }) => {
   const router = useRouter();
   return (
     <>
@@ -30,19 +31,27 @@ const Header: NextPage<HeaderProps> = ({ goBack, text }) => {
         </div>
       ) : (
         <div className="sticky top-0 z-10 flex h-[60px] items-center border-b border-common-black bg-white px-3">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="text-2xl"
-          >
-            <Icon
-              icon="material-symbols:arrow-back-rounded"
-              aria-label="뒤로가기"
-            />
-          </button>
-          <p className="flex w-4/5 select-none justify-center text-base font-bold">
-            {text?.toUpperCase()}
-          </p>
+          {!noGoBack ? (
+            <>
+              <button
+                type="button"
+                onClick={() => router.back()}
+                className="text-2xl"
+              >
+                <Icon
+                  icon="material-symbols:arrow-back-rounded"
+                  aria-label="뒤로가기"
+                />
+              </button>
+              <p className="flex w-4/5 select-none justify-center text-base font-bold">
+                {text?.toUpperCase()}
+              </p>
+            </>
+          ) : (
+            <p className="flex w-full select-none justify-center text-base font-bold">
+              {text?.toUpperCase()}
+            </p>
+          )}
         </div>
       )}
     </>
