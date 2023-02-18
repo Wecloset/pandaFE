@@ -50,7 +50,6 @@ const useUpload = ({ region, accessKey, secretKey }: credentialProps) => {
 
   const encodeFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const imageFile = event.target.files;
-
     if (!imageFile || imageFile.length < 0) return;
 
     [...imageFile].forEach(file => {
@@ -62,8 +61,9 @@ const useUpload = ({ region, accessKey, secretKey }: credentialProps) => {
         const obj = {
           name: file.name,
           dataUrl: result,
-          file: file,
+          file,
         };
+
         setImgsrc(prev => [...prev, obj]);
       };
     });

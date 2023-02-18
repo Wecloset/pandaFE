@@ -19,7 +19,7 @@ model User {
   followings  User[]    @relation("followRelation")
   followers   User[]    @relation("followRelation")
   Fav         Fav[]
-  hashTag     HashTag[]
+  HashTag     HashTag[]
 }
 
 model Product {
@@ -41,14 +41,13 @@ model Product {
   favorite    Fav[]
 }
 
-model Look {
-  id          Int       @id @default(autoincrement())
-  description String?   @db.MediumText
-  createdDate DateTime  @default(now())
-  imgurl      Img[]
-  product     Product[]
-  hashTag     HashTag[]
-  favorite    Fav[]
+model HashTag {
+  id      Int       @id @default(autoincrement())
+  tag     String    @unique
+  product Product[]
+  look    Look[]
+  User    User?     @relation(fields: [userId], references: [id])
+  userId  Int?
 }
 
 model Img {
@@ -60,13 +59,14 @@ model Img {
   lookId    Int?
 }
 
-model HashTag {
-  id      Int       @id @default(autoincrement())
-  tag     String    @unique
-  product Product[]
-  look    Look[]
-  User    User?     @relation(fields: [userId], references: [id])
-  userId  Int?
+model Look {
+  id          Int       @id @default(autoincrement())
+  description String?   @db.MediumText
+  createdDate DateTime  @default(now())
+  imgurl      Img[]
+  product     Product[]
+  hashTag     HashTag[]
+  favorite    Fav[]
 }
 
 model Fav {
