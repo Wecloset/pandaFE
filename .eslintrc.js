@@ -28,5 +28,5 @@ module.exports = {
     react: {
       version: "detect", // 현재 사용하고 있는 react 버전을 eslint-plugin-react가 자동으로 감지합니다.
     },
-  },
+  },  
 };
