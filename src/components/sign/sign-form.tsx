@@ -3,8 +3,10 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { errorLine, errorMessage } from "../../lib/error";
 import createHashedPassword from "../../lib/hash";
 import { regExgPw, regExpEm } from "../../lib/regInput";
+import { axiosPost } from "../../lib/services";
 
 interface SignProps {
   email: string;
@@ -15,60 +17,56 @@ interface SignProps {
 
 const SignForm: NextPage = () => {
   const router = useRouter();
+
   const [pass, setPass] = useState<boolean>(false);
+
   const {
     register,
     getValues,
     handleSubmit,
     formState: { errors },
   } = useForm<SignProps>({});
+
   const onSubmit = handleSubmit(data => {
-    axios
-      .post("/api/sign", {
-        headers: { "Content-Type": "application/json" },
-        data: {
-          email: data.email,
-          password: createHashedPassword(data.password),
-          nickname: data.nickname,
-        },
-      })
-      .then(res => res.status === 200 && router.replace("/signtag"));
+    axiosPost(
+      "/api/sign",
+      {
+        email: data.email,
+        password: createHashedPassword(data.password),
+        nickname: data.nickname,
+      },
+      router,
+      "/signtag",
+    );
   });
 
   const onDuplication = async () => {
     const { nickname } = getValues();
-    nickname === ""
-      ? window.alert("닉네임을 최소 한글자 이상 입력해주세요")
-      : await axios
-          .post("/api/nickname", {
-            headers: { "Content-Type": "application/json" },
-            data: nickname,
-          })
-          .then(res => {
-            !res.data.error && window.alert(`${res.data.message}`);
-            setPass(true);
-          })
-          .catch(error => {
-            window.alert(`${error.response.data.message}`);
-            setPass(false);
-          });
+    axios
+      .post("/api/nickname", {
+        headers: { "Content-Type": "application/json" },
+        data: nickname,
+      })
+      .then(res => {
+        res.status === 200 && window.alert(res.data.message);
+        setPass(true);
+      })
+      .catch(error => {
+        window.alert(`${error.response.data.message}`);
+        setPass(false);
+      });
   };
+
   return (
     <form onSubmit={onSubmit} className="px-5">
       <p className="mt-5 px-2 text-lg">사용하실 이메일을 입력해주세요</p>
       <input
         {...register("email", { required: true, pattern: regExpEm })}
         placeholder="아이디(이메일)"
-        className={`${
-          errors.email && "border-b-error"
-        } mb-2  h-9 border-b-2 px-3 text-black placeholder:text-textColor-gray-100`}
+        className={errorLine(errors.email)}
       />
-      {errors?.email?.type === "required" && (
-        <p className="mb-2 px-2 text-error">이메일을 입력해주세요</p>
-      )}
-      {errors?.email?.type === "pattern" && (
-        <p className="mb-2 px-2 text-error">잘못된 이메일 형식입니다.</p>
-      )}
+      {errorMessage(errors?.email?.type, "required", "이메일을 입력해주세요")}
+      {errorMessage(errors?.email?.type, "pattern", "잘못된 이메일 형식입니다")}
       <p className="mb-1 mt-5  px-2 text-lg">비밀번호를 입력해주세요.</p>
       <p className="mb-2 px-2 text-xs text-textColor-gray-100">
         숫자,문자,특수문자를 혼합한 6자리 이상 비밀번호를 설정해주세요
@@ -78,15 +76,17 @@ const SignForm: NextPage = () => {
         {...register("password", { required: true, pattern: regExgPw })}
         placeholder="비밀번호"
         autoComplete="false"
-        className={`${
-          errors.password && "border-b-error"
-        } mb-2  h-9 border-b-2 px-3 text-black placeholder:text-textColor-gray-100`}
+        className={errorLine(errors.password)}
       />
-      {errors?.password?.type === "required" && (
-        <p className="mb-2 px-2 text-error">비밀번호를 입력해주세요</p>
+      {errorMessage(
+        errors?.password?.type,
+        "required",
+        "비밀번호를 입력해주세요",
       )}
-      {errors?.password?.type === "pattern" && (
-        <p className="mb-2 px-2 text-error">잘못된 비밀번호 형식입니다.</p>
+      {errorMessage(
+        errors?.password?.type,
+        "pattern",
+        "잘못된 비밀번호 형식입니다",
       )}
       <input
         type="password"
@@ -101,12 +101,12 @@ const SignForm: NextPage = () => {
         })}
         placeholder="비밀번호 확인"
         autoComplete="false"
-        className={`${
-          errors.passwordConfirm && "border-b-error"
-        } mb-2 h-9 border-b-2 px-3 text-black placeholder:text-textColor-gray-100`}
+        className={errorLine(errors.passwordConfirm)}
       />
-      {errors?.passwordConfirm?.type === "required" && (
-        <p className="mb-2 px-2 text-error">비밀번호를 다시 입력해주세요</p>
+      {errorMessage(
+        errors?.passwordConfirm?.type,
+        "required",
+        "비밀번호를 다시 입력해주세요",
       )}
       <p className="mb-2 px-2 text-error">{errors?.passwordConfirm?.message}</p>
       <p className="mt-5 px-2 text-lg">사용하실 닉네임을 입력해주세요</p>
@@ -114,9 +114,7 @@ const SignForm: NextPage = () => {
         <input
           {...register("nickname", { minLength: 1 })}
           placeholder="닉네임"
-          className={`${
-            errors.nickname && "border-b-error"
-          } mb-2 h-11 w-3/5 border-b-2 px-3 py-5 text-black placeholder:text-textColor-gray-100`}
+          className={errorLine(errors.nickname)}
         />
         <button
           type="button"
@@ -126,9 +124,6 @@ const SignForm: NextPage = () => {
           중복확인
         </button>
       </div>
-      {errors?.nickname?.type === "minLength" && (
-        <p className="mb-2 px-2 text-error">닉네임은 최소 1글자 이상입니다</p>
-      )}
       <input
         disabled={!pass}
         type="submit"
