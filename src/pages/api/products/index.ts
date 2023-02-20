@@ -3,10 +3,14 @@ import client from "../../../lib/client";
 
 const productHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method == "POST") {
+    console.log(req.body.payload);
     const { data, imageurlList, tabItem } = req.body.payload;
 
-    const userId = 84; // 테스트 id
-    const tagList = data.tag.split(" ").map((tag: string) => tag.replace("#", ""));
+    const tagList = data.tag
+      .split(" ")
+      .map((tag: string) => tag.replace("#", ""));
+
+    const userId = 101; // 테스트 id
 
     try {
       const newProduct = await client.product.create({

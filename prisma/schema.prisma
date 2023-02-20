@@ -44,7 +44,7 @@ model Product {
 
 model HashTag {
   id      Int       @id @default(autoincrement())
-  tag     String    @unique
+  tag     String
   product Product[]
   look    Look[]
   User    User?     @relation(fields: [userId], references: [id])
@@ -72,6 +72,7 @@ model Look {
 
 model Fav {
   id        Int      @id @default(autoincrement())
+  fav       Int
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
   product   Product? @relation(fields: [productId], references: [id])
