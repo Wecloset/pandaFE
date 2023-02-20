@@ -14,12 +14,13 @@ model User {
   createdDate DateTime  @default(now())
   email       String    @unique
   password    String
-  nickname    String    @unique
   product     Product[]
   followings  User[]    @relation("followRelation")
   followers   User[]    @relation("followRelation")
   Fav         Fav[]
   HashTag     HashTag[]
+  profileImg  String?
+  nickname    String?   @unique
 }
 
 model Product {
