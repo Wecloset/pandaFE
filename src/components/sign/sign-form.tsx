@@ -10,15 +10,12 @@ import { axiosPost } from "../../lib/services";
 
 interface SignProps {
   email: string;
-  nickname: string;
   password: string;
   passwordConfirm: string;
 }
 
 const SignForm: NextPage = () => {
   const router = useRouter();
-
-  const [pass, setPass] = useState<boolean>(false);
 
   const {
     register,
@@ -33,29 +30,11 @@ const SignForm: NextPage = () => {
       {
         email: data.email,
         password: createHashedPassword(data.password),
-        nickname: data.nickname,
       },
       router,
       "/signtag",
     );
   });
-
-  const onDuplication = async () => {
-    const { nickname } = getValues();
-    axios
-      .post("/api/nickname", {
-        headers: { "Content-Type": "application/json" },
-        data: nickname,
-      })
-      .then(res => {
-        res.status === 200 && window.alert(res.data.message);
-        setPass(true);
-      })
-      .catch(error => {
-        window.alert(`${error.response.data.message}`);
-        setPass(false);
-      });
-  };
 
   return (
     <form onSubmit={onSubmit} className="px-5">
@@ -109,23 +88,8 @@ const SignForm: NextPage = () => {
         "비밀번호를 다시 입력해주세요",
       )}
       <p className="mb-2 px-2 text-error">{errors?.passwordConfirm?.message}</p>
-      <p className="mt-5 px-2 text-lg">사용하실 닉네임을 입력해주세요</p>
-      <div className="flex justify-between">
-        <input
-          {...register("nickname", { minLength: 1 })}
-          placeholder="닉네임"
-          className={errorLine(errors.nickname)}
-        />
-        <button
-          type="button"
-          className=" h-11 w-1/3 bg-black text-white hover:bg-primary-green"
-          onClick={onDuplication}
-        >
-          중복확인
-        </button>
-      </div>
+
       <input
-        disabled={!pass}
         type="submit"
         className="mt-5 mb-10 h-12 bg-commom-gray hover:bg-primary-green"
       />

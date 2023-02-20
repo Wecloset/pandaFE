@@ -25,9 +25,14 @@ interface TabItem {
   [key: string]: { name: string; current: boolean; list: string[] };
 }
 
-const Create: NextPage<CredentialProps> = ({ region, accessKey, secretKey }) => {
+const Create: NextPage<CredentialProps> = ({
+  region,
+  accessKey,
+  secretKey,
+}) => {
   const credentials = { region, accessKey, secretKey };
-  const { uploadImage, deleteImage, encodeFile, imgsrc } = useUpload(credentials);
+  const { uploadImage, deleteImage, encodeFile, imgsrc } =
+    useUpload(credentials);
   const { register, handleSubmit } = useForm<CreateState>({
     mode: "onSubmit",
   });
@@ -77,18 +82,27 @@ const Create: NextPage<CredentialProps> = ({ region, accessKey, secretKey }) => 
   const openTab = (name: string) => {
     const newTabItem: TabItem = {};
     for (const key in tabItem) {
-      const val = tabItem[key].name === name ? { ...tabItem[key], current: true } : { ...tabItem[key], current: false };
+      const val =
+        tabItem[key].name === name
+          ? { ...tabItem[key], current: true }
+          : { ...tabItem[key], current: false };
       newTabItem[key] = val;
     }
     setTabItem(newTabItem);
     setIsTabOpen(true);
   };
 
-  const selectTabItem = (event: React.MouseEvent<HTMLLIElement>, name: string) => {
+  const selectTabItem = (
+    event: React.MouseEvent<HTMLLIElement>,
+    name: string,
+  ) => {
     const target = event.target as HTMLLIElement;
     const newTabItem: TabItem = {};
     for (const key in tabItem) {
-      const val = tabItem[key].name === name ? { ...tabItem[key], name: target.textContent as string } : tabItem[key];
+      const val =
+        tabItem[key].name === name
+          ? { ...tabItem[key], name: target.textContent as string }
+          : tabItem[key];
       newTabItem[key] = val;
     }
     setTabItem(newTabItem);
@@ -98,7 +112,9 @@ const Create: NextPage<CredentialProps> = ({ region, accessKey, secretKey }) => 
   return (
     <>
       <Header goBack />
-      {isTabOpen && <div className="absolute z-10 h-[calc(100%-300px)] w-full bg-black pt-10 opacity-50" />}
+      {isTabOpen && (
+        <div className="absolute z-10 h-[calc(100%-300px)] w-full bg-black pt-10 opacity-50" />
+      )}
       <div className=" px-5 py-5">
         <form onSubmit={handleSubmit(valid, inValid)}>
           <div className="mb-6 flex">
@@ -124,8 +140,17 @@ const Create: NextPage<CredentialProps> = ({ region, accessKey, secretKey }) => 
                 <ul className="flex gap-2 ">
                   {imgsrc.length > 0 &&
                     imgsrc.map((item, i) => (
-                      <li key={i} className="relative h-[100px] w-[100px] flex-shrink-0 border border-borderColor-gray">
-                        <Image src={item.dataUrl} alt={`업로드이미지${i}`} width={100} height={100} className="peer" />
+                      <li
+                        key={i}
+                        className="relative h-[100px] w-[100px] flex-shrink-0 border border-borderColor-gray"
+                      >
+                        <Image
+                          src={item.dataUrl}
+                          alt={`업로드이미지${i}`}
+                          width={100}
+                          height={100}
+                          className="peer"
+                        />
                         <Icon
                           icon="ri:close-circle-fill"
                           className="absolute -top-2 -right-1 z-50 hidden rounded-full bg-white text-xl hover:block hover:cursor-pointer peer-hover:block"
@@ -161,12 +186,17 @@ const Create: NextPage<CredentialProps> = ({ region, accessKey, secretKey }) => 
                 })}
                 name="desc"
                 rows={10}
-                className={cls("peer w-full resize-none", isText ? "is-valid" : "")}
+                className={cls(
+                  "peer w-full resize-none",
+                  isText ? "is-valid" : "",
+                )}
                 onChange={textAreaValue}
               />
               <div className="pointer-events-none absolute top-5 left-5 bg-transparent text-commom-gray peer-focus:hidden peer-[.is-valid]:hidden">
                 <p>아이템에 대한 설명을 작성해주세요.</p>
-                <p className="mt-3">작성예시. 제품상태, 사이즈, 소재 등 자세히</p>
+                <p className="mt-3">
+                  작성예시. 제품상태, 사이즈, 소재 등 자세히
+                </p>
               </div>
             </div>
             <input
@@ -178,7 +208,12 @@ const Create: NextPage<CredentialProps> = ({ region, accessKey, secretKey }) => 
               className="border"
             />
           </div>
-          <Button text="완료" color="bg-black" fontColor="text-white" position="absolute bottom-0 left-0" />
+          <Button
+            text="완료"
+            color="bg-black"
+            fontColor="text-white"
+            position="absolute bottom-0 left-0"
+          />
         </form>
         <div className=" [&>*]:flex [&>*]:h-[52px] [&>*]:items-center [&>*]:justify-between [&>*]:border-b [&>*]:px-4">
           {Object.values(tabItem).map(({ name }, i) => (
@@ -196,7 +231,9 @@ const Create: NextPage<CredentialProps> = ({ region, accessKey, secretKey }) => 
                 key={i}
                 className="absolute left-0 z-40 h-16 w-full -translate-y-20 justify-center border border-b-common-black bg-white p-5"
               >
-                <span className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">{name}</span>
+                <span className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
+                  {name}
+                </span>
                 <Icon
                   icon="carbon:close"
                   className="absolute top-4 right-5 z-50 h-7 w-7 cursor-pointer"
@@ -234,7 +271,9 @@ const Create: NextPage<CredentialProps> = ({ region, accessKey, secretKey }) => 
 export const getStaticProps: GetStaticProps = async () => {
   const REGION = process.env.AWS_REGION ? process.env.AWS_REGION : null;
   const ACCESS_KEY = process.env.AWS_KEY ? process.env.AWS_KEY : null;
-  const SECRECT_KEY = process.env.AWS_SECRET_KEY ? process.env.AWS_SECRET_KEY : null;
+  const SECRECT_KEY = process.env.AWS_SECRET_KEY
+    ? process.env.AWS_SECRET_KEY
+    : null;
 
   return {
     props: {
