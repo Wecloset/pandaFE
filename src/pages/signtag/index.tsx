@@ -10,7 +10,6 @@ interface userProps {
   createdDate: string;
   email: string;
   id: number;
-  nickname: string;
   password: string;
 }
 
@@ -56,12 +55,12 @@ const SignTag: NextPage = () => {
         userData: user?.id,
       },
       router,
-      "/login",
+      "/signprofile",
     );
   };
   return (
     <>
-      <Header text="TAGSELECT" goBack noGoBack />
+      <Header text="SIGNUP" goBack noGoBack />
       <div className=" px-5">
         <p className="mt-5 mb-1 px-2 text-lg">키워드를 선택해주세요.</p>
         <div className="flex justify-between px-2 ">

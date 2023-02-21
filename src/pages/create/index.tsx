@@ -253,7 +253,6 @@ const Create: NextPage<CredentialProps> = ({
               </div>
             ))}
           </div>
-
           <div className="mt-40">
             <Button text="완료" color="bg-black" fontColor="text-white" />
           </div>

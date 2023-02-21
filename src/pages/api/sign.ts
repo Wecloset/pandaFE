@@ -3,22 +3,19 @@ import client from "../../lib/client";
 import createHashedPassword from "../../lib/hash";
 
 const userSign = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { email, password, nickname } = req.body.data;
+  const { email, password } = req.body;
   if (req.method === "POST") {
-    const signUser = await client.user.create({
-      data: {
-        nickname,
-        email,
-        password: createHashedPassword(password),
-      },
-    });
-    signUser
-      ? res.status(200).json({
-          message: "회원 정보가 저장되었습니다.",
-        })
-      : res.status(400).json({
-          message: "회원정보가 잘못되었습니다",
-        });
+    try {
+      await client.user.create({
+        data: {
+          email,
+          password: createHashedPassword(password),
+        },
+      });
+      res.status(201).json({ message: "회원정보 저장 완료되었습니다" });
+    } catch {
+      res.status(500).json({ message: "회원가입을 실패했습니다" });
+    }
   }
 };
 

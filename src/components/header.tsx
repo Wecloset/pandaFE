@@ -30,7 +30,7 @@ const Header: NextPage<HeaderProps> = ({ goBack, text, noGoBack }) => {
           </div>
         </div>
       ) : (
-        <div className="sticky top-0 z-10 flex h-[60px] items-center border-b border-common-black bg-white px-3">
+        <div className="sticky top-0 z-10 flex h-[60px] items-center  bg-white px-3">
           {!noGoBack ? (
             <>
               <button
