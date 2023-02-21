@@ -159,7 +159,8 @@ export const styleListData = [
 ];
 
 export const tabData = {
-  category: [
+  category: ["상의", "하의", "아우터", "가방", "기타"],
+  style: [
     "뉴요커",
     "레트로",
     "캐주얼",

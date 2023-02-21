@@ -15,6 +15,7 @@ interface buttonInterface {
   padding?: string;
   divWidth?: string;
   height?: string;
+  disabled?: boolean;
 }
 
 const Button: NextPage<buttonInterface> = ({
@@ -31,6 +32,7 @@ const Button: NextPage<buttonInterface> = ({
   divWidth,
   padding,
   height,
+  disabled,
 }) => {
   return (
     <div
@@ -41,7 +43,10 @@ const Button: NextPage<buttonInterface> = ({
       <button
         className={`${height ? height : "h-[50px]"} ${
           width ? width : "w-full"
-        } ${border} ${color} ${fontColor ?? "text-black"}  ${logo} ${hover}`}
+        } ${border} ${color} ${fontColor ?? "text-black"} ${logo} ${hover} ${
+          disabled ? "cursor-not-allowed disabled:bg-commom-gray" : ""
+        }`}
+        disabled={disabled ? true : false}
       >
         <div className="flex w-1/5 justify-center">
           <Icon icon={icon} width="20" />
