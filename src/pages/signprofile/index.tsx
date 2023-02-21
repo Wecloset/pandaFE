@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import useUpload from "../../hooks/useUpload";
 import { createImageUrl } from "../../lib/image-url";
 import { axiosGet, axiosPost } from "../../lib/services";
+import { useMutation, useQuery } from "react-query";
 
 interface CredentialProps {
   region: string;
@@ -34,14 +35,14 @@ const SignProfile: NextPage<CredentialProps> = ({
   secretKey,
 }) => {
   const [user, setUser] = useState<userProps | undefined>(undefined);
+  const getUser = async () => {
+    const { data } = await axios.get("/api/signtag");
+    return data;
+  };
+  const { isLoading, data, isError } = useQuery("user", getUser);
   useEffect(() => {
-    axiosGet("/api/signtag").then(res => {
-      setUser(
-        res.data.length === 0
-          ? res.data[res.data.length]
-          : res.data[res.data.length - 1],
-      );
-    });
+    !isLoading &&
+      setUser(data.length === 0 ? data[data.length] : data[data.length - 1]);
   }, []);
 
   const router = useRouter();
@@ -60,21 +61,21 @@ const SignProfile: NextPage<CredentialProps> = ({
 
   const onDuplication = async () => {
     const nickname = getValues("nickname");
-    await axios
-      .post("/api/nickname", {
-        headers: { "Content-Type": "application/json" },
-        data: {
-          nickname,
-        },
-      })
-      .then(res => {
-        res.status === 200 && window.alert(res.data.message);
+
+    const createNickName = async () => {
+      const { data: response } = await axios.post("/api/nickname", nickname);
+      return response;
+    };
+    const { mutate, isLoading } = useMutation(createNickName, {
+      onSuccess: ({ message }) => {
+        alert(message);
         setPass(true);
-      })
-      .catch(error => {
-        window.alert(`${error.response.data.message}`);
+      },
+      onError: ({ response }) => {
+        alert(response.data.message);
         setPass(false);
-      });
+      },
+    });
   };
 
   const addProfile = (data: ProfileProps) => {

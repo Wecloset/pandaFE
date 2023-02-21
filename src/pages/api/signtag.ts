@@ -6,21 +6,19 @@ const userSignTag = async (req: NextApiRequest, res: NextApiResponse) => {
     const signUserData = await client.user.findMany();
     res.json(signUserData);
   }
+  const { userData, tags } = req.body;
   if (req.method === "POST") {
-    const { userData, tags } = req.body.data;
-    const signTagUser = await client.hashTag.create({
-      data: {
-        userId: userData,
-        tag: tags,
-      },
-    });
-    signTagUser
-      ? res.status(200).json({
-          message: "회원가입이 완료되었습니다.",
-        })
-      : res.status(400).json({
-          message: "관심 태그 설정이 잘못되었습니다",
-        });
+    try {
+      await client.hashTag.create({
+        data: {
+          userId: userData,
+          tag: tags,
+        },
+      });
+      res.status(201).json({ message: "태그 저장이 완료되었습니다" });
+    } catch {
+      res.status(500).json({ message: "태그 저장에 실패했습니다" });
+    }
   }
 };
 

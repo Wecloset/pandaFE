@@ -1,12 +1,11 @@
 import axios from "axios";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useMutation } from "react-query";
 import { errorLine, errorMessage } from "../../lib/error";
-import createHashedPassword from "../../lib/hash";
 import { regExgPw, regExpEm } from "../../lib/regInput";
-import { axiosPost } from "../../lib/services";
+import LoadingSpinner from "../loading-spinner";
 
 interface SignProps {
   email: string;
@@ -24,20 +23,25 @@ const SignForm: NextPage = () => {
     formState: { errors },
   } = useForm<SignProps>({});
 
-  const onSubmit = handleSubmit(data => {
-    axiosPost(
-      "/api/sign",
-      {
-        email: data.email,
-        password: createHashedPassword(data.password),
-      },
-      router,
-      "/signtag",
-    );
-  });
+  const createUser = async (userData: SignProps) => {
+    const { data: response } = await axios.post("/api/sign", userData);
+    return response;
+  };
 
+  const { mutate, isLoading } = useMutation(createUser, {
+    onSuccess: ({ message }) => {
+      alert(message);
+      router.replace("/signtag");
+    },
+    onError: ({ response }) => {
+      alert(response.data.message);
+    },
+  });
   return (
-    <form onSubmit={onSubmit} className="px-5">
+    <form
+      onSubmit={handleSubmit(submitData => mutate({ ...submitData }))}
+      className="px-5"
+    >
       <p className="mt-5 px-2 text-lg">사용하실 이메일을 입력해주세요</p>
       <input
         {...register("email", { required: true, pattern: regExpEm })}
@@ -88,11 +92,14 @@ const SignForm: NextPage = () => {
         "비밀번호를 다시 입력해주세요",
       )}
       <p className="mb-2 px-2 text-error">{errors?.passwordConfirm?.message}</p>
-
-      <input
-        type="submit"
-        className="mt-5 mb-10 h-12 bg-commom-gray hover:bg-primary-green"
-      />
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <input
+          type="submit"
+          className="mt-5 mb-10 h-12 bg-commom-gray hover:bg-primary-green"
+        />
+      )}
     </form>
   );
 };
