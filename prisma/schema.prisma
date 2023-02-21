@@ -32,6 +32,7 @@ model Product {
   imgurl      Img[]
   rental      Boolean   @default(false)
   category    String
+  style       String
   brand       String
   view        Int       @default(0)
   user        User      @relation(fields: [userId], references: [id])

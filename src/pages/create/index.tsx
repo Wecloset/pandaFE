@@ -43,6 +43,7 @@ const Create: NextPage<CredentialProps> = ({
   const [isTabOpen, setIsTabOpen] = useState<boolean>(false);
   const [tabItem, setTabItem] = useState<TabItem>({
     category: { name: "카테고리", current: false, list: tabData.category },
+    style: { name: "스타일", current: false, list: tabData.style },
     brand: { name: "브랜드", current: false, list: tabData.brand },
     rental: { name: "대여 가능", current: false, list: tabData.rental },
   });
@@ -147,13 +148,11 @@ const Create: NextPage<CredentialProps> = ({
     setIsTabOpen(false);
   };
 
-  // const isButtonActive = title !== "" && price !== "" && desc !== "" && imgsrc.length > 0;
-
   return (
     <>
       <Header goBack />
       {isTabOpen && (
-        <div className="absolute z-10 h-[calc(100%-300px)] w-full bg-black pt-10 opacity-50" />
+        <div className="fixed z-10 h-[calc(100%-300px)] w-full bg-black pt-10 opacity-50" />
       )}
       <div className=" px-5 py-5">
         <form onSubmit={handleSubmit(valid, inValid)}>
@@ -182,13 +181,11 @@ const Create: NextPage<CredentialProps> = ({
                         key={i}
                         className="relative h-[100px] w-[100px] flex-shrink-0 border border-borderColor-gray"
                       >
-                        <div className="peer h-[100px] w-[100px]">
-                          <Image
+                        <div className="peer">
+                          <img
                             src={item.dataUrl}
                             alt={`업로드이미지${i}`}
-                            width={100}
-                            height={100}
-                            className="h-auto w-auto object-cover"
+                            className="h-[100px] w-[100px] object-cover"
                           />
                         </div>
                         <Icon
@@ -248,75 +245,75 @@ const Create: NextPage<CredentialProps> = ({
               className="border"
             />
           </div>
-          <Button
-            text="완료"
-            color="bg-black"
-            fontColor="text-white"
-            position="absolute bottom-0 left-0"
-            // disabled={!isButtonActive}
-          />
-        </form>
-        <div className="[&>*]:flex [&>*]:h-[52px] [&>*]:items-center [&>*]:justify-between [&>*]:border-b [&>*]:px-4">
-          {Object.values(tabItem).map(({ name }, i) => (
-            <div key={`tab${i}`} onClick={() => openTab(name)}>
-              <span>{name}</span>
-              <Icon icon="material-symbols:arrow-outward" />
-            </div>
-          ))}
-        </div>
-        {/* Select Tab */}
-        {isTabOpen &&
-          Object.entries(tabItem).map(([key, { current }], i) =>
-            current === true ? (
-              <div
-                key={i}
-                className="absolute left-0 z-40 h-16 w-full -translate-y-20 justify-center border border-b-common-black bg-white p-5"
-              >
-                <span className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
-                  {key}
-                </span>
-                <Icon
-                  icon="carbon:close"
-                  className="absolute top-4 right-5 z-50 h-7 w-7 cursor-pointer"
-                  onClick={() => setIsTabOpen(false)}
-                />
+          <div className="[&>*]:flex [&>*]:h-[52px] [&>*]:items-center [&>*]:justify-between [&>*]:border-b [&>*]:px-4">
+            {Object.values(tabItem).map(({ name }, i) => (
+              <div key={`tab${i}`} onClick={() => openTab(name)}>
+                <span>{name}</span>
+                <Icon icon="material-symbols:arrow-outward" />
               </div>
-            ) : null,
-          )}
-        {isTabOpen &&
-          Object.entries(tabItem).map(
-            ([key, { name, current, list }]) =>
-              current === true && (
-                <div key={key}>
-                  <div className="absolute left-0 bottom-0 z-30 h-[350px] w-full bg-white p-5 pt-16">
-                    <ul className="h-[265px] w-full overflow-y-scroll [&>li]:text-textColor-gray-100">
-                      {key === "brand" && (
-                        <form className="relative mb-16" onSubmit={brandSubmit}>
-                          <input
-                            type="text"
-                            placeholder="해당하는 브랜드가 없는 경우 추가해주세요."
-                            className="absolute left-0 rounded-md bg-gray-100 p-4 pr-14"
-                            ref={brandRef}
-                          />
-                          <button className="text-md absolute right-3 top-4 font-bold hover:cursor-pointer">
-                            완료
-                          </button>
-                        </form>
-                      )}
-                      {list.map((listItem, i) => (
-                        <li
-                          key={i}
-                          className="cursor-pointer p-2 hover:bg-[#f7f7f7] hover:text-common-black"
-                          onClick={e => selectTabItem(e, name)}
-                        >
-                          {listItem}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+            ))}
+          </div>
+
+          <div className="mt-40">
+            <Button text="완료" color="bg-black" fontColor="text-white" />
+          </div>
+        </form>
+        {/* Select Tab */}
+        <div className="fixed bottom-0 z-30 w-[390px] -translate-x-5">
+          {isTabOpen &&
+            Object.entries(tabItem).map(([key, { current }], i) =>
+              current === true ? (
+                <div
+                  key={i}
+                  className="h-16 w-full justify-center border border-b-common-black bg-white p-5"
+                >
+                  <span>{key}</span>
+                  <Icon
+                    icon="carbon:close"
+                    className="absolute top-4 right-5 z-50 h-7 w-7 cursor-pointer"
+                    onClick={() => setIsTabOpen(false)}
+                  />
                 </div>
-              ),
-          )}
+              ) : null,
+            )}
+          {isTabOpen &&
+            Object.entries(tabItem).map(
+              ([key, { name, current, list }]) =>
+                current === true && (
+                  <div key={key}>
+                    <div className=" h-[350px] w-full bg-white p-5">
+                      <ul className="h-[295px] w-full overflow-y-scroll [&>li]:text-textColor-gray-100">
+                        {key === "brand" && (
+                          <form
+                            className="relative mb-16"
+                            onSubmit={brandSubmit}
+                          >
+                            <input
+                              type="text"
+                              placeholder="해당하는 브랜드가 없는 경우 입력해주세요."
+                              className="absolute left-0 rounded-md bg-gray-100 p-4 pr-14"
+                              ref={brandRef}
+                            />
+                            <button className="text-md absolute right-3 top-4 font-bold hover:cursor-pointer">
+                              완료
+                            </button>
+                          </form>
+                        )}
+                        {list.map((listItem, i) => (
+                          <li
+                            key={i}
+                            className="cursor-pointer p-2 hover:bg-[#f7f7f7] hover:text-common-black"
+                            onClick={e => selectTabItem(e, name)}
+                          >
+                            {listItem}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ),
+            )}
+        </div>
       </div>
     </>
   );

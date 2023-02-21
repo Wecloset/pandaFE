@@ -25,6 +25,7 @@ const productHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             })),
           },
           category: tabItem.category.name,
+          style: tabItem.style.name,
           brand: tabItem.brand.name,
           rental: tabItem.rental.name === "대여 가능" ? true : false,
           hashTag: {
