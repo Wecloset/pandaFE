@@ -1,27 +1,29 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
+import React, { useContext } from "react";
 import { cls } from "../../lib/class";
+import { FilterContext } from "../../store/filter-context";
 
 interface FilterTabProps {
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
   isOpen: string | null;
   name: string;
+  data: string[];
 }
 
-const priceList = ["30,000 이하", "30,000 ~ 100,000"];
+const FilterTab: NextPage<FilterTabProps> = ({
+  onClick,
+  isOpen,
+  name,
+  data,
+}) => {
+  const { wordList, updateList } = useContext(FilterContext);
 
-const fakeList = [
-  "하이엔드",
-  "여성 국내 브랜드",
-  "남성 국내 브랜드",
-  "빈티지",
-  "스트릿웨어",
-  "미니멀",
-  "Neo Y2K",
-  "SPA",
-];
+  const changeWordList = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    updateList(value);
+  };
 
-const FilterTab: NextPage<FilterTabProps> = ({ onClick, isOpen, name }) => {
   return (
     <div className="transition duration-150 ease-out">
       <div
@@ -34,41 +36,30 @@ const FilterTab: NextPage<FilterTabProps> = ({ onClick, isOpen, name }) => {
         {name.toUpperCase()}
       </div>
       {isOpen === name && (
-        <ul className="h-0 select-none border-b border-common-black peer-[.is-active]:h-auto peer-[.is-active]:p-5 [&_svg]:-mt-[3px] [&_svg]:text-2xl [&>li]:flex [&>li]:h-7 [&>li]:justify-between">
-          {name === "PRICE"
-            ? priceList.map((price, idx) => (
-                <li key={idx}>
-                  <label htmlFor="price1" className="peer">
-                    {price}
-                  </label>
-                  <input
-                    type="radio"
-                    id="price1"
-                    name="price"
-                    className="peer hidden"
-                  />
-                  <Icon
-                    icon="material-symbols:check-small"
-                    className="hidden peer-checked:block"
-                  />
-                </li>
-              ))
-            : fakeList.map((item, idx) => (
-                <li key={idx}>
-                  <label htmlFor={`${name}${idx}`} className="peer">
-                    {item}
-                  </label>
-                  <input
-                    type="checkbox"
-                    id={`${name}${idx}`}
-                    className="peer hidden"
-                  />
-                  <Icon
-                    icon="material-symbols:check-small"
-                    className="hidden peer-checked:block"
-                  />
-                </li>
-              ))}
+        <ul className="h-0 select-none border-b border-common-black peer-[.is-active]:h-auto peer-[.is-active]:p-5 [&>li]:flex [&>li]:h-7 [&>li]:justify-between [&_svg]:-mt-[3px] [&_svg]:text-2xl">
+          {data.map((item, i) => {
+            const itemKey = `${item}-${i}`;
+            return (
+              <li key={itemKey}>
+                <label htmlFor={itemKey} className="peer">
+                  {item}
+                </label>
+                <input
+                  type={name === "PRICE" ? "radio" : "checkbox"}
+                  id={itemKey}
+                  value={item}
+                  name={name}
+                  className="peer hidden"
+                  onChange={changeWordList}
+                  checked={wordList.includes(item) ? true : false}
+                />
+                <Icon
+                  icon="material-symbols:check-small"
+                  className="hidden peer-checked:block"
+                />
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Icon } from "@iconify/react";
 import Button from "../button";
 import FilterTab from "./filter-tab";
+import { priceList, tabData } from "../../lib/fake-data";
 
 const FilterOverlay: NextPage<{
   closeOverlay: (event: React.MouseEvent) => void;
@@ -26,9 +27,24 @@ const FilterOverlay: NextPage<{
         </button>
       </div>
       <div>
-        <FilterTab onClick={detailsClick} isOpen={isOpen} name="STYLE" />
-        <FilterTab onClick={detailsClick} isOpen={isOpen} name="CATEGORY" />
-        <FilterTab onClick={detailsClick} isOpen={isOpen} name="PRICE" />
+        <FilterTab
+          onClick={detailsClick}
+          isOpen={isOpen}
+          name="STYLE"
+          data={tabData.style}
+        />
+        <FilterTab
+          onClick={detailsClick}
+          isOpen={isOpen}
+          name="CATEGORY"
+          data={tabData.category}
+        />
+        <FilterTab
+          onClick={detailsClick}
+          isOpen={isOpen}
+          name="PRICE"
+          data={priceList}
+        />
         <Button
           text="검색"
           color="bg-black"

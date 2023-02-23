@@ -165,6 +165,8 @@ export const tabData = {
     "레트로",
     "캐주얼",
     "미니멀",
+    "모던",
+    "페미닌",
     "보헤미안",
     "비즈니스",
     "톰보이",
@@ -172,6 +174,8 @@ export const tabData = {
     "아메카지",
     "스트릿",
     "spa",
+    "여성 국내 브랜드",
+    "남성 국내 브랜드",
     "고프코어/y2k",
     "프레피룩",
     "페미닌",
@@ -203,5 +207,10 @@ export const tabData = {
   ],
   rental: ["대여 가능", "대여 불가능"],
 };
+
+const LOW = "30,000 이하";
+const MEDIUM = "30,000 ~ 100,000";
+const HIGH = "100,000 이상";
+export const priceList = [LOW, MEDIUM, HIGH];
 
 export default productData;
