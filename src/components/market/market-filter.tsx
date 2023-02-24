@@ -1,18 +1,35 @@
 import { NextPage } from "next";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Icon } from "@iconify/react";
 import Button from "../button";
 import FilterTab from "./filter-tab";
 import { priceList, tabData } from "../../lib/fake-data";
+import { FilterContext } from "../../store/filter-context";
 
 const FilterOverlay: NextPage<{
-  closeOverlay: (event: React.MouseEvent) => void;
+  closeOverlay: () => void;
 }> = ({ closeOverlay }) => {
   const [isOpen, setIsOpen] = useState<string | null>("STYLE");
+  const [filterWords, setFilterWords] = useState<string[]>([]);
 
-  const detailsClick = (event: React.MouseEvent<HTMLDivElement>) => {
+  const { updateList } = useContext(FilterContext);
+
+  const openTab = (event: React.MouseEvent<HTMLDivElement>) => {
     const target = event.target as HTMLDivElement;
     setIsOpen(target.textContent);
+  };
+
+  const updateTemporaryList = (word: string) => {
+    if (filterWords.includes(word))
+      setFilterWords(prev => prev.filter(item => item !== word));
+    else setFilterWords(prev => [...prev, word]);
+  };
+
+  const updateFilterList = () => {
+    updateList(filterWords);
+    setTimeout(() => {
+      closeOverlay();
+    }, 100);
   };
 
   return (
@@ -28,28 +45,35 @@ const FilterOverlay: NextPage<{
       </div>
       <div>
         <FilterTab
-          onClick={detailsClick}
-          isOpen={isOpen}
+          onClick={openTab}
           name="STYLE"
           data={tabData.style}
+          isOpen={isOpen}
+          setList={updateTemporaryList}
+          wordList={filterWords}
         />
         <FilterTab
-          onClick={detailsClick}
+          onClick={openTab}
           isOpen={isOpen}
           name="CATEGORY"
           data={tabData.category}
+          setList={updateTemporaryList}
+          wordList={filterWords}
         />
         <FilterTab
-          onClick={detailsClick}
+          onClick={openTab}
           isOpen={isOpen}
           name="PRICE"
           data={priceList}
+          setList={updateTemporaryList}
+          wordList={filterWords}
         />
         <Button
           text="검색"
           color="bg-black"
           fontColor="text-white"
           position="absolute bottom-2"
+          onClick={updateFilterList}
         />
       </div>
     </>

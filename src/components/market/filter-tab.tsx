@@ -1,14 +1,14 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
-import React, { useContext } from "react";
 import { cls } from "../../lib/class";
-import { FilterContext } from "../../store/filter-context";
 
 interface FilterTabProps {
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
   isOpen: string | null;
   name: string;
   data: string[];
+  setList: (word: string) => void;
+  wordList: string[];
 }
 
 const FilterTab: NextPage<FilterTabProps> = ({
@@ -16,12 +16,12 @@ const FilterTab: NextPage<FilterTabProps> = ({
   isOpen,
   name,
   data,
+  setList,
+  wordList,
 }) => {
-  const { wordList, updateList } = useContext(FilterContext);
-
   const changeWordList = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    updateList(value);
+    setList(value);
   };
 
   return (

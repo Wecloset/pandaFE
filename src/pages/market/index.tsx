@@ -9,9 +9,18 @@ import Navigation from "../../components/navigation";
 import FloatingButton from "../../components/floating-button";
 import FilterList from "../../components/market/filter-list";
 import MarketList from "../../components/market/market-list";
+import CategoryNavigation from "../../components/market/category-nav";
+import axios from "axios";
+import { useQuery } from "react-query";
 
 const Market: NextPage = () => {
   const [isFilterOpen, setFilterOpen] = useState<boolean>(false);
+
+  const getAllProducts = async () => {
+    const { data } = await axios.get("/api/products");
+    return data;
+  };
+  const { data } = useQuery("products", getAllProducts);
 
   const openFilterOverlay = () => setFilterOpen(true);
   const closeFilterOverlay = () => setFilterOpen(false);
@@ -30,6 +39,7 @@ const Market: NextPage = () => {
           </div>
         )}
         <Header />
+        <CategoryNavigation allData={data} />
         <div>
           <div className="px-5 py-4">
             <div className="flex items-center justify-between">
@@ -52,7 +62,7 @@ const Market: NextPage = () => {
           </div>
         </div>
         {/* {isLoading && <p>로딩중...</p>} */}
-        <MarketList />
+        <MarketList allData={data} />
         <Navigation />
         <FloatingButton />
       </div>

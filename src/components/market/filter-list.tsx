@@ -4,11 +4,7 @@ import { useContext } from "react";
 import { FilterContext } from "../../store/filter-context";
 
 const FilterList: NextPage = () => {
-  const { wordList, updateList } = useContext(FilterContext);
-
-  const removeWord = (item: any) => {
-    updateList(item);
-  };
+  const { wordList, removeWord } = useContext(FilterContext);
 
   const content =
     wordList.length > 0 ? (
@@ -18,7 +14,11 @@ const FilterList: NextPage = () => {
           return (
             <li key={key} className="flex items-center">
               {item}
-              <Icon icon="ic:baseline-clear" aria-label="검색어 삭제" onClick={() => removeWord(item)} />
+              <Icon
+                icon="ic:baseline-clear"
+                aria-label="검색어 삭제"
+                onClick={() => removeWord(item)}
+              />
             </li>
           );
         })}
