@@ -20,6 +20,7 @@ const Market: NextPage = () => {
     const { data } = await axios.get("/api/products");
     return data;
   };
+
   const { data } = useQuery("products", getAllProducts);
 
   const openFilterOverlay = () => setFilterOpen(true);
@@ -39,7 +40,7 @@ const Market: NextPage = () => {
           </div>
         )}
         <Header />
-        <CategoryNavigation allData={data} />
+        <CategoryNavigation />
         <div>
           <div className="px-5 py-4">
             <div className="flex items-center justify-between">

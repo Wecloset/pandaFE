@@ -1,29 +1,97 @@
 import { Icon } from "@iconify/react";
-import { NextPage } from "next";
+import axios from "axios";
+import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import Image from "next/image";
 import Button from "../../components/button";
 import Header from "../../components/header";
+import { MainProductData } from "../../types/data-type";
 
-const Product: NextPage = () => {
+interface ProductData {
+  id: number;
+  brand: string;
+  category: string;
+  description: string;
+  price: number;
+  title: string;
+  view: number;
+  imgurl: any;
+  user: {
+    id: number;
+    nickname: string;
+    profileImg?: string;
+  };
+}
+
+interface ProductData {
+  productData: {
+    message: string;
+    data: ProductData;
+  };
+}
+
+const Product: NextPage<ProductData> = ({ productData }) => {
+  const { brand, category, description, price, title, imgurl, user, view } =
+    productData.data;
+
+  const categoryToEng = (category: string) => {
+    switch (category) {
+      case "상의":
+        return "TOP";
+      case "하의":
+        return "BOTTOM";
+      case "아우터":
+        return "OUTER";
+      case "가방":
+        return "BAG";
+      case "기타":
+        return "OTHER";
+      default:
+        return;
+    }
+  };
+  const firstToUppercase = `${brand[0].toUpperCase()}${brand.slice(1)}`;
+  const priceAddComma = price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
   return (
     <>
       <Header goBack />
       <div className="relative">
-        <div className="h-[370px] w-full bg-slate-200" />
-        <div className="absolute top-1/2 flex w-full items-center justify-between px-5 text-2xl">
-          <Icon icon="material-symbols:chevron-left" />
-          <Icon icon="material-symbols:chevron-right" />
+        <div className="h-[370px] w-full overflow-hidden bg-slate-200">
+          <ul className="flex h-[370px] [&>li]:flex-shrink-0">
+            {imgurl.map((item: any) => (
+              <li key={item.id} className="h-auto w-auto">
+                <Image
+                  src={item.img}
+                  alt={`상품이미지${item.id}`}
+                  width={390}
+                  height={370}
+                  className="object-cover"
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="absolute top-1/2 flex w-[390px] items-center justify-between px-5 text-2xl">
+          <Icon
+            icon="material-symbols:chevron-left"
+            className="absolute left-2"
+          />
+          <Icon
+            icon="material-symbols:chevron-right"
+            className="absolute right-2"
+          />
         </div>
         <div className="absolute bottom-2 flex h-[3px] w-[390px] justify-center space-x-0.5">
-          <span className="block h-[3px] w-11 bg-white" />
-          <span className="block h-[3px] w-11 bg-white" />
-          <span className="block h-[3px] w-11 bg-white" />
+          {imgurl.map((item: any) => (
+            <span key={item.id} className="block h-[2px] w-6 bg-white" />
+          ))}
         </div>
       </div>
       <div className="p-5">
         <div className="flex justify-between">
           <div>
-            <p className="text-base">Patagonia</p>
-            <h1 className="text-xl font-bold">파타고니아 봄버 자켓</h1>
+            <p className="text-base">{firstToUppercase}</p>
+            <h1 className="text-xl font-bold">{title}</h1>
           </div>
           <div className="flex h-7 w-7 items-center justify-center rounded-full border-[1.5px] border-common-black">
             <Icon icon="icon-park-outline:like" className="text-lg" />
@@ -31,23 +99,18 @@ const Product: NextPage = () => {
         </div>
         <div className="mt-4 mb-6 flex gap-2">
           <div className="rounded-full border border-common-black px-2 py-0.5">
-            OUTER
+            {categoryToEng(category)}
           </div>
           <div className="rounded-full border border-common-black px-2 py-0.5">
-            Pategonia
+            {firstToUppercase}
           </div>
         </div>
         <div className="mb-4 flex text-xs text-commom-gray">
-          <span className="mr-2">조회 22</span>
+          <span className="mr-2">조회 {view}</span>
           <span>찜 1</span>
         </div>
         <div className="border-t border-b py-[18px]">
-          <p className="mb-8">
-            파타고니아의 봄버 자켓입니다. <br />
-            호불호 많이 없는 올리브 컬러로 아무착장에 걸치기만해도 잘 어울리는
-            자켓입니다. <br /> 무게도 가볍고 이제 겨울 끝나가는 시점 봄까지
-            유용하게 입으실 수 있겠습니다.
-          </p>
+          <p className="mb-8 whitespace-pre-wrap">{description}</p>
           <ul className="flex space-x-3 text-primary-violet">
             <li>#태그</li>
             <li>#태그</li>
@@ -58,7 +121,7 @@ const Product: NextPage = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="h-[50px] w-[50px] rounded-full border border-common-black bg-slate-400" />
-              <span className="ml-4 text-base font-bold">username</span>
+              <span className="ml-4 text-base font-bold">{user.nickname}</span>
             </div>
             <button className="h-8 bg-black px-4 py-1 text-white">
               메시지
@@ -66,9 +129,9 @@ const Product: NextPage = () => {
           </div>
         </div>
       </div>
-      <div className=" bottom-0 flex w-full items-center justify-between pl-5">
+      <div className="fixed bottom-0 flex w-[390px] items-center justify-between pl-5">
         <p className="text-2xl font-bold">
-          {"90000".replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+          {priceAddComma}
           <span className="text-lg">원</span>
         </p>
         <div className="relative w-64">
@@ -78,4 +141,50 @@ const Product: NextPage = () => {
     </>
   );
 };
+
+const getAllProducts = async () => {
+  try {
+    const { data } = await axios.get("http://localhost:3000/api/products");
+    return data;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const getOneProduct = async (id: string | string[]) => {
+  const productId = id;
+  try {
+    const { data } = await axios.get(
+      `http://localhost:3000/api/products/${productId}`,
+    );
+    return data;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const response = await getAllProducts();
+
+  const paths = response.map((post: MainProductData) => ({
+    params: { id: post.id.toString() },
+  }));
+
+  return {
+    paths: paths,
+    fallback: true,
+  };
+};
+
+export const getStaticProps: GetStaticProps = async context => {
+  const { params } = context;
+
+  let productData = null;
+  if (params?.id) {
+    productData = await getOneProduct(params.id);
+  }
+
+  return { props: { productData } };
+};
+
 export default Product;

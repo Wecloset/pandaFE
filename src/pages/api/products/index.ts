@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import client from "../../../lib/client";
 
 const productHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method == "POST") {
+  if (req.method === "POST") {
     const { data, imageurlList, tabItem } = req.body.payload;
 
     const tagList = data.tag

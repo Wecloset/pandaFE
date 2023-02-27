@@ -1,15 +1,22 @@
 import { NextPage } from "next";
 import Link from "next/link";
-import { MainData } from "../../types/data-type";
 
 interface MainDataProps {
-  data: MainData[];
+  data: {
+    id: number;
+    title: string;
+    subtitle: string;
+    rental: string;
+    price: string;
+    view: number;
+    like: number;
+  }[];
 }
 
 const MainList: NextPage<MainDataProps> = ({ data }) => {
   return (
     <ul className="flex items-center gap-[10px] ">
-      {data.map((item: MainData) => (
+      {data.map(item => (
         <li key={item.id}>
           <Link href="">
             <div className="mb-2 h-44 w-40 border border-common-black bg-borderColor-gray " />

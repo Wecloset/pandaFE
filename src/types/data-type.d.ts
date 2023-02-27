@@ -13,7 +13,6 @@ export interface MainProductData {
   title: string;
   style: string;
   rental: boolean;
-  price: string;
   view?: number;
   like?: number;
 }

@@ -109,7 +109,10 @@ const MyPage: NextPage = () => {
           {Array(10)
             .fill(0)
             .map((_, idx) => (
-              <div className=" h-52 w-44 border border-common-black bg-borderColor-gray" />
+              <div
+                key={idx}
+                className=" h-52 w-44 border border-common-black bg-borderColor-gray"
+              />
             ))}
         </div>
       )}
