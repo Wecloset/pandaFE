@@ -3,13 +3,13 @@ import client from "../../lib/client";
 
 const nickCheck = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
-    const { data } = req.body;
+    const { nickname } = req.body.data;
     const CheckNickName = await client.user.findMany({
       where: {
-        nickname: data,
+        nickname,
       },
     });
-    data === ""
+    nickname === ""
       ? res
           .status(400)
           .json({ message: "닉네임은 최소 한글자 이상 입력해주세요" })
