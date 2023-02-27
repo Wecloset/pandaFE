@@ -2,128 +2,71 @@ import { NextPage } from "next";
 import React, { useState } from "react";
 import { Icon } from "@iconify/react";
 import { cls } from "../../lib/class";
-import { MainData } from "../../types/data-type";
-
+import { FilterProvider } from "../../store/filter-context";
 import Header from "../../components/header";
-import productData from "../../lib/fake-data";
 import FilterOverlay from "../../components/market/market-filter";
-import MarketItem from "../../components/market/market-item";
 import Navigation from "../../components/navigation";
 import FloatingButton from "../../components/floating-button";
+import FilterList from "../../components/market/filter-list";
+import MarketList from "../../components/market/market-list";
+import CategoryNavigation from "../../components/market/category-nav";
+import axios from "axios";
+import { useQuery } from "react-query";
 
 const Market: NextPage = () => {
-  const [category, setCategory] = useState<string>("all");
   const [isFilterOpen, setFilterOpen] = useState<boolean>(false);
 
-  const categoryClick = (event: React.MouseEvent) => {
-    const target = event.target as HTMLButtonElement;
-    setCategory(target.name);
+  const getAllProducts = async () => {
+    const { data } = await axios.get("/api/products");
+    return data;
   };
-  const openFilterOverlay = (event: React.MouseEvent) => {
-    setFilterOpen(true);
-  };
+  const { data } = useQuery("products", getAllProducts);
 
-  const closeFilterOverlay = (event: React.MouseEvent) => {
-    setFilterOpen(false);
-  };
+  const openFilterOverlay = () => setFilterOpen(true);
+  const closeFilterOverlay = () => setFilterOpen(false);
 
   return (
-    <div>
-      {isFilterOpen && (
-        <div
-          className={cls(
-            "fixed z-50 h-screen  w-[390px] translate-x-[390px] bg-white",
-            isFilterOpen ? "translate-x-0" : "",
-          )}
-        >
-          <FilterOverlay closeOverlay={closeFilterOverlay} />
-        </div>
-      )}
-      <Header />
+    <FilterProvider>
       <div>
-        <div className="text-common-gray grid h-[45px] grid-cols-4 border-b border-common-black bg-white text-base text-textColor-gray-100">
-          <button
+        {isFilterOpen && (
+          <div
             className={cls(
-              " border-r  border-r-common-black",
-              category === "all"
-                ? "border-b-2 border-common-black font-bold text-common-black"
-                : "",
+              "fixed z-50 h-screen w-[390px] translate-x-[390px] bg-white",
+              isFilterOpen ? "translate-x-0" : "",
             )}
-            name="all"
-            onClick={categoryClick}
           >
-            전체
-          </button>
-          <button
-            className={cls(
-              " border-r  border-r-common-black ",
-              category === "top"
-                ? "border-b-2 border-common-black font-bold text-common-black"
-                : "",
-            )}
-            name="top"
-            onClick={categoryClick}
-          >
-            상의
-          </button>
-          <button
-            className={cls(
-              " border-r border-r-common-black",
-              category === "bottom"
-                ? "border-b-2 border-common-black font-bold text-common-black"
-                : "",
-            )}
-            name="bottom"
-            onClick={categoryClick}
-          >
-            하의
-          </button>
-          <button
-            className={cls(
-              "",
-              category === "other"
-                ? "border-b-2 border-common-black font-bold text-common-black"
-                : "",
-            )}
-            name="other"
-            onClick={categoryClick}
-          >
-            기타
-          </button>
-        </div>
-        <div className="px-5 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <button className="mr-2 rounded-full border border-common-black py-0.5 px-2">
-                대여상품
-              </button>
-              <button className="rounded-full border border-common-black py-0.5 px-2">
-                판매상품
-              </button>
-            </div>
-            <Icon
-              icon="akar-icons:settings-horizontal"
-              aria-label="옵션 필터링 목록"
-              className="cursor-pointer text-xl"
-              onClick={openFilterOverlay}
-            />
+            <FilterOverlay closeOverlay={closeFilterOverlay} />
           </div>
-          <ul className="pt-[18px] [&_svg]:ml-1 [&_svg]:-mt-0.5 [&_svg]:cursor-pointer [&_svg]:text-textColor-gray-50">
-            <li className="flex items-center">
-              여성 국내 브랜드
-              <Icon icon="ic:baseline-clear" aria-label="검색어 삭제" />
-            </li>
-          </ul>
+        )}
+        <Header />
+        <CategoryNavigation allData={data} />
+        <div>
+          <div className="px-5 py-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <button className="mr-2 rounded-full border border-common-black py-0.5 px-2">
+                  대여상품
+                </button>
+                <button className="rounded-full border border-common-black py-0.5 px-2">
+                  판매상품
+                </button>
+              </div>
+              <Icon
+                icon="akar-icons:settings-horizontal"
+                aria-label="옵션 필터링 목록"
+                className="cursor-pointer text-xl"
+                onClick={openFilterOverlay}
+              />
+            </div>
+            <FilterList />
+          </div>
         </div>
+        {/* {isLoading && <p>로딩중...</p>} */}
+        <MarketList allData={data} />
+        <Navigation />
+        <FloatingButton />
       </div>
-      <ul className="flex flex-col gap-3 px-5 py-3">
-        {productData.map((item: MainData) => (
-          <MarketItem key={item.id} data={item} />
-        ))}
-      </ul>
-      <Navigation />
-      <FloatingButton />
-    </div>
+    </FilterProvider>
   );
 };
 

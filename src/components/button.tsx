@@ -16,6 +16,7 @@ interface buttonInterface {
   divWidth?: string;
   height?: string;
   disabled?: boolean;
+  onClick?: () => void;
 }
 
 const Button: NextPage<buttonInterface> = ({
@@ -33,6 +34,7 @@ const Button: NextPage<buttonInterface> = ({
   padding,
   height,
   disabled,
+  onClick,
 }) => {
   return (
     <div
@@ -47,6 +49,7 @@ const Button: NextPage<buttonInterface> = ({
           disabled ? "cursor-not-allowed disabled:bg-commom-gray" : ""
         }`}
         disabled={disabled ? true : false}
+        onClick={onClick}
       >
         <div className="flex w-1/5 justify-center">
           <Icon icon={icon} width="20" />

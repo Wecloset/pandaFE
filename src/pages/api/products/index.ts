@@ -3,7 +3,6 @@ import client from "../../../lib/client";
 
 const productHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method == "POST") {
-    console.log(req.body.payload);
     const { data, imageurlList, tabItem } = req.body.payload;
 
     const tagList = data.tag
@@ -25,12 +24,14 @@ const productHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             })),
           },
           category: tabItem.category.name,
-          style: tabItem.style.name,
+          style: tabItem.style.name === "스타일" ? "" : tabItem.style.name,
           brand: tabItem.brand.name,
           rental: tabItem.rental.name === "대여 가능" ? true : false,
           hashTag: {
-            create: tagList.map((tagName: string) => ({
-              tag: tagName,
+            // @unique
+            connectOrCreate: tagList.map((tagName: string) => ({
+              create: { tag: tagName },
+              where: { tag: tagName },
             })),
           },
         },
@@ -40,6 +41,15 @@ const productHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     } catch (err) {
       console.log(err);
     }
+  }
+
+  if (req.method === "GET") {
+    const allProduct = await client.product.findMany({
+      include: {
+        imgurl: true,
+      },
+    });
+    res.status(200).json(allProduct);
   }
 };
 

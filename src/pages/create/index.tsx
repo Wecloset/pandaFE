@@ -1,5 +1,5 @@
 import type { GetStaticProps, NextPage } from "next";
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useForm, FieldErrors } from "react-hook-form";
 import Button from "../../components/button";
@@ -63,18 +63,24 @@ const Create: NextPage<CredentialProps> = ({
       headers: { "Content-Type": "application/json" },
       payload,
     });
-    // console.log(response);
+    console.log(response);
   };
 
   const validation = (data: CreateState) => {
     let isNotTag;
     if (typeof data.tag === "string") {
-      isNotTag = data.tag.split(" ").every((tag: string) => tag.includes("#"));
+      isNotTag = data.tag
+        .trim()
+        .split(" ")
+        .every((tag: string) => tag.includes("#"));
     }
-
     const numberCheck = /[0-9]/g;
+
+    // TODO : if else -> switch
     if (!numberCheck.test(data.price as string)) {
       return alert("상품가격을 숫자로 기입해주세요.");
+    } else if (tabItem.category.name === "카테고리") {
+      return alert("카테고리를 선택해 주세요.");
     } else if (imgsrc.length === 0) {
       return alert("상품이미지를 추가해주세요.");
     } else if (!isNotTag) {
