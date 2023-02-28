@@ -1,9 +1,9 @@
 import { Icon } from "@iconify/react";
 import axios from "axios";
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
-import Image from "next/image";
 import Button from "../../components/button";
 import Header from "../../components/header";
+import ImageSlide from "../../components/market/detail/image-slide";
 import { MainProductData } from "../../types/data-type";
 
 interface ProductData {
@@ -14,7 +14,11 @@ interface ProductData {
   price: number;
   title: string;
   view: number;
-  imgurl: any;
+  imgurl: {
+    id: number;
+    img: string;
+    productId: number;
+  }[];
   user: {
     id: number;
     nickname: string;
@@ -55,38 +59,7 @@ const Product: NextPage<ProductData> = ({ productData }) => {
   return (
     <>
       <Header goBack />
-      <div className="relative">
-        <div className="h-[370px] w-full overflow-hidden bg-slate-200">
-          <ul className="flex h-[370px] [&>li]:flex-shrink-0">
-            {imgurl.map((item: any) => (
-              <li key={item.id} className="h-auto w-auto">
-                <Image
-                  src={item.img}
-                  alt={`상품이미지${item.id}`}
-                  width={390}
-                  height={370}
-                  className="object-cover"
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="absolute top-1/2 flex w-[390px] items-center justify-between px-5 text-2xl">
-          <Icon
-            icon="material-symbols:chevron-left"
-            className="absolute left-2"
-          />
-          <Icon
-            icon="material-symbols:chevron-right"
-            className="absolute right-2"
-          />
-        </div>
-        <div className="absolute bottom-2 flex h-[3px] w-[390px] justify-center space-x-0.5">
-          {imgurl.map((item: any) => (
-            <span key={item.id} className="block h-[2px] w-6 bg-white" />
-          ))}
-        </div>
-      </div>
+      <ImageSlide images={imgurl} />
       <div className="p-5">
         <div className="flex justify-between">
           <div>
