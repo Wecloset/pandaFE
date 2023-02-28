@@ -1,36 +1,59 @@
 import { NextPage } from "next";
-import { useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import { taglist } from "../../lib/tag-data";
 import { Icon } from "@iconify/react";
 import Header from "../../components/header";
 import { useRouter } from "next/router";
-import { axiosGet, axiosPost } from "../../lib/services";
+import axios from "axios";
+import { useMutation, useQuery } from "react-query";
+import LoadingSpinner from "../../components/loading-spinner";
 
-interface userProps {
-  createdDate: string;
-  email: string;
-  id: number;
-  password: string;
+interface TagData {
+  userData: number;
+  tags: string;
 }
 
 const SignTag: NextPage = () => {
   const router = useRouter();
   const [selectedTag, setSelectedTag] = useState<string[]>([]);
-  const [user, setUser] = useState<userProps | undefined>(undefined);
-  useEffect(() => {
-    axiosGet("/api/signtag").then(res => {
-      setUser(
-        res.data.length === 0
-          ? res.data[res.data.length]
-          : res.data[res.data.length - 1],
-      );
-    });
-  }, []);
+
+  const { data } = useQuery("userData", async () => {
+    const { data } = await axios.get("/api/signtag");
+    return data.length === 0 ? data[data.length] : data[data.length - 1];
+  });
+
+  const postTagData = async (tagData: TagData) => {
+    const { data: response } = await axios.post("/api/signtag", tagData);
+    return response;
+  };
+
+  const { mutate, isLoading } = useMutation(postTagData, {
+    onSuccess: ({ message }) => {
+      alert(message);
+      router.replace("/signprofile");
+    },
+    onError: ({ response }) => {
+      alert(response.data.message);
+    },
+  });
+
+  const handleFormSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    const tagData: TagData = {
+      userData: data.id,
+      tags: selectedTag.toString(),
+    };
+    mutate(tagData);
+  };
+
+  // ------------------------------------------------------------
+
   const newArray: string[] = [];
   const onResetBtn = () => {
     setSelectedTag([]);
   };
   const allSelectedTag = taglist.value;
+
   const onClick = (data: string) => {
     setSelectedTag([...selectedTag, data]);
     const deduplication = selectedTag.includes(data);
@@ -47,17 +70,6 @@ const SignTag: NextPage = () => {
     setSelectedTag(newArray);
   };
 
-  const onSubmitTag = () => {
-    axiosPost(
-      "/api/signtag",
-      {
-        tags: selectedTag.toString(),
-        userData: user?.id,
-      },
-      router,
-      "/signprofile",
-    );
-  };
   return (
     <>
       <Header text="SIGNUP" goBack noGoBack />
@@ -94,14 +106,19 @@ const SignTag: NextPage = () => {
           </ul>
         </div>
       </div>
-      <div
+      <form
+        onSubmit={handleFormSubmit}
         className="mx-6 flex items-center justify-center"
-        onClick={onSubmitTag}
       >
-        <button className="mt-5 h-14 w-full bg-black px-10 text-white hover:bg-primary-green">
-          완료
-        </button>
-      </div>
+        {isLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <input
+            type="submit"
+            className="mt-5 h-14 w-full bg-black px-10 text-white hover:bg-primary-green"
+          />
+        )}
+      </form>
     </>
   );
 };

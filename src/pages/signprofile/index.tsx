@@ -6,11 +6,11 @@ import { errorLine } from "../../lib/error";
 import profile from "../../../public/asset/image/addprofile.png";
 import Image from "next/image";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import useUpload from "../../hooks/useUpload";
-import { createImageUrl } from "../../lib/image-url";
-import { axiosGet, axiosPost } from "../../lib/services";
 import { useMutation, useQuery } from "react-query";
+import LoadingSpinner from "../../components/loading-spinner";
+import { createImageUrl } from "../../lib/image-url";
 
 interface CredentialProps {
   region: string;
@@ -25,26 +25,15 @@ interface userProps {
   password: string;
 }
 
-interface ProfileProps {
-  [key: string]: string | FileList;
-}
-
 const SignProfile: NextPage<CredentialProps> = ({
   region,
   accessKey,
   secretKey,
 }) => {
-  const [user, setUser] = useState<userProps | undefined>(undefined);
-  const getUser = async () => {
+  const { data } = useQuery("userData", async () => {
     const { data } = await axios.get("/api/signtag");
-    return data;
-  };
-  const { isLoading, data, isError } = useQuery("user", getUser);
-  useEffect(() => {
-    !isLoading &&
-      setUser(data.length === 0 ? data[data.length] : data[data.length - 1]);
-  }, []);
-
+    return data.length === 0 ? data[data.length] : data[data.length - 1];
+  });
   const router = useRouter();
   const credentials = { region, accessKey, secretKey };
 
@@ -59,14 +48,21 @@ const SignProfile: NextPage<CredentialProps> = ({
     formState: { errors },
   } = useForm({});
 
-  const onDuplication = async () => {
+  const onDuplication = (event: FormEvent) => {
+    event.preventDefault();
     const nickname = getValues("nickname");
+    nickMutate(nickname);
+  };
 
-    const createNickName = async () => {
-      const { data: response } = await axios.post("/api/nickname", nickname);
-      return response;
-    };
-    const { mutate, isLoading } = useMutation(createNickName, {
+  const createNickName = async (createNick: string) => {
+    const { data } = await axios.post("/api/nickname", {
+      nickname: createNick,
+    });
+    return data;
+  };
+  const { mutate: nickMutate, isLoading: nickLoaing } = useMutation(
+    createNickName,
+    {
       onSuccess: ({ message }) => {
         alert(message);
         setPass(true);
@@ -75,27 +71,33 @@ const SignProfile: NextPage<CredentialProps> = ({
         alert(response.data.message);
         setPass(false);
       },
-    });
-  };
+    },
+  );
 
-  const addProfile = (data: ProfileProps) => {
-    axiosPost(
-      "/api/profile",
-      {
-        data,
-        userData: user?.id,
-      },
-      router,
-      "/login",
-    );
-  };
-
-  const valid = async (data: ProfileProps) => {
+  const createProfile = async (userProfile: any) => {
     uploadImage(imgsrc[0].file);
     const imageurl = createImageUrl(imgsrc[0].file);
-    data.image = imageurl;
-    addProfile(data);
+    userProfile.image = imageurl;
+    const { data: response } = await axios.post("/api/profile", {
+      userProfile,
+      userData: data?.id,
+    });
+
+    return response;
   };
+
+  const { mutate: profileMutate, isLoading: profileLoading } = useMutation(
+    createProfile,
+    {
+      onSuccess: ({ message }) => {
+        alert(message);
+        router.replace("/login");
+      },
+      onError: ({ response }) => {
+        alert(response.data.message);
+      },
+    },
+  );
 
   return (
     <>
@@ -107,7 +109,7 @@ const SignProfile: NextPage<CredentialProps> = ({
         </p>
       </div>
       <form
-        onSubmit={handleSubmit(valid)}
+        onSubmit={handleSubmit(submitData => profileMutate({ ...submitData }))}
         className="mt-32 flex flex-col items-center justify-center px-5"
       >
         <label className="text-textCol or-gray-100 flex h-[178px] w-[178px] flex-shrink-0 cursor-pointer gap-1 rounded-full bg-textColor-gray-100 hover:scale-105 hover:transition hover:duration-150  hover:ease-in-out">
@@ -122,7 +124,6 @@ const SignProfile: NextPage<CredentialProps> = ({
           ) : (
             <Image src={profile} alt="test" width={178} height={178} />
           )}
-
           <input
             {...register("image", { required: "이미지를 등록해주세요." })}
             id="picture"
@@ -140,21 +141,27 @@ const SignProfile: NextPage<CredentialProps> = ({
             placeholder="닉네임"
             className={errorLine(errors.nickname)}
           />
-          <button
-            onClick={onDuplication}
-            type="button"
-            className=" ml-3 h-9 w-2/5 bg-black text-white hover:bg-primary-green"
-          >
-            중복확인
-          </button>
+          {nickLoaing ? (
+            <LoadingSpinner />
+          ) : (
+            <button
+              type="button"
+              onClick={onDuplication}
+              className=" ml-3 h-9 w-2/5 bg-black text-white hover:bg-primary-green"
+            >
+              중복확인
+            </button>
+          )}
         </div>
-        <div className=" bottom-0 mb-7 w-full px-3">
+        {profileLoading ? (
+          <LoadingSpinner />
+        ) : (
           <input
             disabled={!pass}
             type="submit"
-            className="mt-5 mb-10 h-12 bg-commom-gray px-2 hover:bg-primary-green"
+            className="mt-5 mb-10 h-12 bg-commom-gray px-2 hover:cursor-pointer hover:bg-primary-green"
           />
-        </div>
+        )}
       </form>
     </>
   );

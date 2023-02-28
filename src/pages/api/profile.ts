@@ -5,9 +5,9 @@ const userSignTag = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const {
       userData,
-      data: { image, nickname },
-    } = req.body.data;
-
+      userProfile: { image, nickname },
+    } = req.body;
+    console.log(userData);
     const UpdateProfile = await client.user.update({
       where: {
         id: userData,
@@ -18,11 +18,11 @@ const userSignTag = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
     UpdateProfile
-      ? res.status(200).json({
+      ? res.status(201).json({
           message: "회원가입이 완료되었습니다.",
         })
-      : res.status(400).json({
-          message: "프로필 설정이 잘 못 되었습니다.",
+      : res.status(500).json({
+          message: "프로필 내용을 옳바르게 입력해주세요",
         });
   }
 };
