@@ -1,38 +1,39 @@
 import { NextPage } from "next";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { errorLine, errorMessage } from "../../lib/error";
 import createHashedPassword from "../../lib/hash";
 import { regExgPw, regExpEm } from "../../lib/regInput";
-import { axiosPost } from "../../lib/services";
+import { useSession } from "next-auth/react";
 
 interface LoginProps {
   email: string;
   password: string;
+  nickname: string;
 }
 
 const LoginForm: NextPage = () => {
   const router = useRouter();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginProps>({});
 
-  const onSubmit = handleSubmit(data => {
-    axiosPost(
-      "/api/login",
-      {
-        email: data.email,
-        password: createHashedPassword(data.password),
-      },
-      router,
-      "/",
-    );
-  });
+  const onSubmit = async (data: LoginProps) => {
+    const result = await signIn("credentials", {
+      redirect: false,
+      email: data.email,
+      password: createHashedPassword(data.password),
+      nickname: data.nickname,
+    });
+    !result?.error ? router.replace("/") : alert(result.error);
+  };
   return (
-    <form onSubmit={onSubmit} className="px-3 py-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="px-3 py-5">
       <input
         {...register("email", { required: true, pattern: regExpEm })}
         placeholder="아이디(이메일)"
