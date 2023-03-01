@@ -17,7 +17,7 @@ const userSignTag = async (req: NextApiRequest, res: NextApiResponse) => {
       });
       res.status(201).json({ message: "태그 저장이 완료되었습니다" });
     } catch {
-      res.status(500).json({ message: "태그 저장에 실패했습니다" });
+      res.status(500).json({ message: "1개 이상의 태그를 저장해주세요" });
     }
   }
 };

@@ -8,7 +8,7 @@ const userLogin = async (req: NextApiRequest, res: NextApiResponse) => {
     const CheckUser = await client.user.findMany({
       where: {
         email,
-        password: createHashedPassword(password),
+        password,
       },
     });
     if (CheckUser.length === 0) {
