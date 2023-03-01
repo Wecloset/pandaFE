@@ -14,9 +14,9 @@ module.exports = {
         "borderColor-gray": "#D9D9D9",
         error: "#FF5252",
       },
-      backgroundImage: {
-        mainImg: "url('../../../public/asset/image/main-img.png')",
-      },
+      // backgroundImage: {
+      //   mainImg: "url('../../../public/asset/image/main-img.png')",
+      // },
       fontFamily: {
         myfont: ["worksans", "sans-serif"],
       },

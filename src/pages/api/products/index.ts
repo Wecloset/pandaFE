@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import client from "../../../lib/client";
 
 const productHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method == "POST") {
+  if (req.method === "POST") {
     const { data, imageurlList, tabItem } = req.body.payload;
 
     const tagList = data.tag
@@ -44,12 +44,16 @@ const productHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === "GET") {
-    const allProduct = await client.product.findMany({
-      include: {
-        imgurl: true,
-      },
-    });
-    res.status(200).json(allProduct);
+    try {
+      const allProduct = await client.product.findMany({
+        include: {
+          imgurl: true,
+        },
+      });
+      res.status(200).send(allProduct);
+    } catch (err) {
+      res.status(400).send({ message: "Getting products failed." });
+    }
   }
 };
 
