@@ -12,18 +12,19 @@ const productDetailHandler = async (
     try {
       const productOne = await client.product.findUnique({
         where: {
-          id: +id,
+          id: +id!, // non-null필수. 제거시 '`undefined` cannot be serialized as JSON.' 에러발생함.
         },
         include: {
           user: true,
           imgurl: true,
+          hashTag: true,
         },
       });
       res
         .status(200)
-        .json({ message: "Getting product success.", data: productOne });
+        .send({ message: "Getting product success.", data: productOne });
     } catch (err) {
-      res.status(400).json({ message: "Getting product failed." });
+      res.status(400).send({ message: "Getting product failed." });
     }
   }
 };

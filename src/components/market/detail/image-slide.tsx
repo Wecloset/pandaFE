@@ -115,7 +115,7 @@ const ImageSlide: NextPage<{ images: Images[] }> = ({ images }) => {
           <span
             key={item.id}
             className={`block h-[2px] w-6 ${
-              slideCount - 1 === i ? "bg-black" : "bg-white"
+              slideCount - 1 === i ? "bg-black" : "bg-white opacity-50"
             }`}
           />
         ))}

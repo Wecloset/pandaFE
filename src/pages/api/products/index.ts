@@ -44,12 +44,16 @@ const productHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === "GET") {
-    const allProduct = await client.product.findMany({
-      include: {
-        imgurl: true,
-      },
-    });
-    res.status(200).json(allProduct);
+    try {
+      const allProduct = await client.product.findMany({
+        include: {
+          imgurl: true,
+        },
+      });
+      res.status(200).send(allProduct);
+    } catch (err) {
+      res.status(400).send({ message: "Getting products failed." });
+    }
   }
 };
 
