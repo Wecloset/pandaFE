@@ -1,17 +1,23 @@
 import { Icon } from "@iconify/react";
-import axios from "axios";
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { MainProductData, ProductData } from "../../types/data-type";
 import Button from "../../components/button";
 import Header from "../../components/header";
 import ImageSlide from "../../components/market/detail/image-slide";
-
 import {
   categoryToEng,
   firstToUppercase,
   priceAddComma,
-} from "../../lib/markets";
-import { MainProductData, ProductData } from "../../types/data-type";
+} from "../../utils/markets";
+import {
+  getAllProducts,
+  getOneProduct,
+  getUserData,
+  updateUserProduct,
+  updateViewCount,
+} from "../../utils/market-post";
 
 interface Product {
   productData: {
@@ -19,31 +25,6 @@ interface Product {
     data: ProductData;
   };
 }
-
-// updateLikes는 isLikeActive값에 의존적임. (바뀐 isLikeActive값을 payload로 보내야 함.)
-const updateLikes = async (
-  productId: number,
-  payload: { likes: number; isLikeActive: boolean },
-) => {
-  console.log("updating likes...");
-  const response = await axios.post(`/api/products/${productId}/likes`, {
-    headers: { "Content-Type": "application/json" },
-    payload,
-  });
-  console.log(response);
-};
-
-const updateViewCount = async (
-  productId: number,
-  payload: { view: number },
-) => {
-  console.log("updating view count...");
-  const response = await axios.post(`/api/products/${productId}/views`, {
-    headers: { "Content-Type": "application/json" },
-    payload,
-  });
-  console.log(response);
-};
 
 const Product: NextPage<Product> = ({ productData }) => {
   const {
@@ -56,50 +37,82 @@ const Product: NextPage<Product> = ({ productData }) => {
     imgurl,
     user,
     view,
-    likes,
+    fav,
     hashTag,
   } = productData.data;
-  const [isLikeActive, setIsLikeActive] = useState<boolean>(false);
-  const [likeValue, setLikeValue] = useState<number>(likes); // 업데이트를 바로바로 보여주기 위한 state
+
+  const { data: session } = useSession();
+  const userEmail = session?.user?.email;
+
+  const [userId, setUserId] = useState<number>(0);
+  const [isLikeActive, setIsLikeActive] = useState<boolean | null>(null);
+  const [likeValue, setLikeValue] = useState<number>(fav.length);
 
   const updateLikeCount = async () => {
-    setIsLikeActive(prev => !prev);
+    if (isLikeActive === null) setIsLikeActive(true);
+    else setIsLikeActive(prev => !prev);
+
     isLikeActive
       ? setLikeValue(prev => prev - 1)
       : setLikeValue(prev => prev + 1);
   };
 
-  // update like count
   useEffect(() => {
-    updateLikes(productId, { likes, isLikeActive });
-  }, [isLikeActive]);
+    if (!userEmail) return;
+    getUserData({ userEmail }).then(({ id, fav }) => {
+      setUserId(id);
+      // 해당유저 찜상품이면 버튼active true로 변경.
+      fav.forEach(
+        (item: { productId: number }) =>
+          item.productId === productId && setIsLikeActive(true),
+      );
+    });
 
-  // update view count
-  useEffect(() => {
-    const productLog = localStorage.getItem("panda-market");
+    // update view count
+    const log = localStorage.getItem("panda-market");
+    const productLog = JSON.parse(log as string);
+    const viewProducts = productLog.map(
+      (item: { user: string; product: number[] }) => {
+        if (item.user === userEmail) return item.product;
+      },
+    );
 
-    if (!productLog) {
-      console.log("product log is not defined.");
-      const localData = {
-        product: [productId],
-      };
+    if (!log) {
+      const localData = [
+        {
+          user: userEmail,
+          product: [productId],
+        },
+      ];
       localStorage.setItem("panda-market", JSON.stringify(localData));
       updateViewCount(productId, { view });
       return;
     }
 
     let isExisted = null;
-    const views = JSON.parse(productLog as string).product;
-    isExisted = views.indexOf(productId) !== -1 ? true : false;
-
+    isExisted = viewProducts[0].indexOf(productId) !== -1 ? true : false;
     if (!isExisted) {
-      const localData = {
-        product: [...views, productId],
-      };
+      const localData = productLog.map(
+        (item: { user: string; product: number[] }) =>
+          item.user === userEmail
+            ? { ...item, product: [...item.product, productId] }
+            : item,
+      );
       localStorage.setItem("panda-market", JSON.stringify(localData));
       updateViewCount(productId, { view });
     }
-  }, []);
+  }, [userEmail]);
+
+  // update user - fav
+  useEffect(() => {
+    let isExisted = false;
+    if (fav.length > 0)
+      fav.forEach(item => (isExisted = item.userId === userId ? true : false));
+    // 첫 렌더링 요청X or 이미 찜한상품일 경우 요청X
+    if (isLikeActive === null || (isLikeActive && isExisted)) return;
+
+    updateUserProduct({ userId, productId, isLikeActive });
+  }, [isLikeActive]);
 
   return (
     <>
@@ -176,27 +189,6 @@ const Product: NextPage<Product> = ({ productData }) => {
       </div>
     </>
   );
-};
-
-const getAllProducts = async () => {
-  try {
-    const { data } = await axios.get("http://localhost:3000/api/products");
-    return data;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-const getOneProduct = async (id: string | string[]) => {
-  const productId = id;
-  try {
-    const { data } = await axios.get(
-      `http://localhost:3000/api/products/${productId}`,
-    );
-    return data;
-  } catch (err) {
-    console.log(err);
-  }
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {

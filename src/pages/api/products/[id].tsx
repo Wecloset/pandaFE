@@ -18,13 +18,14 @@ const productDetailHandler = async (
           user: true,
           imgurl: true,
           hashTag: true,
+          fav: true,
         },
       });
       res
         .status(200)
         .send({ message: "Getting product success.", data: productOne });
     } catch (err) {
-      res.status(400).send({ message: "Getting product failed." });
+      res.status(400).send(err);
     }
   }
 };

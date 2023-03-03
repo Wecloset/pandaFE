@@ -48,6 +48,7 @@ const productHandler = async (req: NextApiRequest, res: NextApiResponse) => {
       const allProduct = await client.product.findMany({
         include: {
           imgurl: true,
+          fav: true,
         },
       });
       res.status(200).send(allProduct);

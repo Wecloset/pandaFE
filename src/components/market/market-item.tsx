@@ -12,8 +12,8 @@ const MarketItem: NextPage<{ data: MainProductData }> = ({ data }) => {
     brand,
     price,
     rental,
+    fav,
     view = 0,
-    likes = 0,
   } = data;
 
   return (
@@ -44,7 +44,7 @@ const MarketItem: NextPage<{ data: MainProductData }> = ({ data }) => {
           >
             {rental ? "대여" : "판매"}
           </div>
-          <ViewBox view={view} likes={likes} />
+          <ViewBox view={view} likes={fav} />
         </div>
       </dl>
     </li>

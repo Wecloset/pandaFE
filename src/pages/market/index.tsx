@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import { cls } from "../../lib/class";
 import { FilterProvider } from "../../store/filter-context";

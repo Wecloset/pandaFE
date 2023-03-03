@@ -1,3 +1,32 @@
+export interface ProductData {
+  id: number;
+  brand: string;
+  category: string;
+  description: string;
+  price: number;
+  title: string;
+  view: number;
+  fav: {
+    id: number;
+    productId: number;
+    userId: number;
+  }[];
+  imgurl: {
+    id: number;
+    img: string;
+    productId: number;
+  }[];
+  user: {
+    id: number;
+    nickname: string;
+    profileImg?: string;
+  };
+  hashTag: {
+    id: number;
+    tag: string;
+  }[];
+}
+
 export interface MainProductData {
   id: number;
   imgurl: string[{
@@ -14,30 +43,9 @@ export interface MainProductData {
   style: string;
   rental: boolean;
   view?: number;
-  likes?: number;
-}
-
-export interface ProductData {
-  id: number;
-  brand: string;
-  category: string;
-  description: string;
-  price: number;
-  title: string;
-  view: number;
-  likes: number;
-  imgurl: {
+  fav: {
     id: number;
-    img: string;
     productId: number;
-  }[];
-  user: {
-    id: number;
-    nickname: string;
-    profileImg?: string;
-  };
-  hashTag: {
-    id: number;
-    tag: string;
+    userId: number;
   }[];
 }
