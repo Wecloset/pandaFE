@@ -7,8 +7,16 @@ import graphic3 from "../../../public/asset/image/graphic3.svg";
 import graphic4 from "../../../public/asset/image/graphic4.svg";
 import LoginForm from "../../components/login/login-form";
 import Button from "../../components/button";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const Login: NextPage = () => {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const handleLogin = async () => {
+    await signIn("google");
+  };
+  session && router.push("/");
   return (
     <div className="relative h-screen w-full bg-black">
       <Image src={graphic1} alt="" className="absolute -top-3 -left-3 w-1/2" />
@@ -26,6 +34,7 @@ const Login: NextPage = () => {
         </div>
         <LoginForm />
         <Button
+          onClick={handleLogin}
           text="Continue With Google"
           color="bg-white"
           icon="ph:google-logo"
