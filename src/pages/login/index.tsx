@@ -13,8 +13,11 @@ import { useRouter } from "next/router";
 const Login: NextPage = () => {
   const { data: session } = useSession();
   const router = useRouter();
-  const handleLogin = async () => {
+  const GoogleLogin = async () => {
     await signIn("google");
+  };
+  const KakaoLogin = async () => {
+    await signIn("kakao");
   };
   session && router.push("/");
   return (
@@ -34,7 +37,7 @@ const Login: NextPage = () => {
         </div>
         <LoginForm />
         <Button
-          onClick={handleLogin}
+          onClick={GoogleLogin}
           text="Continue With Google"
           color="bg-white"
           icon="ph:google-logo"
@@ -44,6 +47,7 @@ const Login: NextPage = () => {
           position="absolute left-0 bottom-[60px]"
         />
         <Button
+          onClick={KakaoLogin}
           text="Continue With Kakao"
           color="bg-primary-yellow"
           icon="ri:kakao-talk-fill"
