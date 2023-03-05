@@ -18,6 +18,8 @@ import {
   updateUserProduct,
   updateViewCount,
 } from "../../utils/market-post";
+import { useRecoilValue } from "recoil";
+import { currentUserState } from "../recoil/user";
 
 interface Product {
   productData: {
@@ -40,10 +42,7 @@ const Product: NextPage<Product> = ({ productData }) => {
     fav,
     hashTag,
   } = productData.data;
-
-  const { data: session } = useSession();
-  const userEmail = session?.user?.email;
-
+  const userEmail = useRecoilValue(currentUserState);
   const [userId, setUserId] = useState<number>(0);
   const [isLikeActive, setIsLikeActive] = useState<boolean | null>(null);
   const [likeValue, setLikeValue] = useState<number>(fav.length);

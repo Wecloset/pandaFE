@@ -1,4 +1,4 @@
-import type { GetStaticProps, NextPage } from "next";
+import type { NextPage } from "next";
 import productData from "../lib/fake-data";
 import Header from "../components/header";
 import Navigation from "../components/navigation";
@@ -6,8 +6,21 @@ import MainList from "../components/main/main-list";
 import MainLookBook from "../components/main/main-lookbook";
 import Button from "../components/button";
 import FloatingButton from "../components/floating-button";
+import { useRecoilState } from "recoil";
+import { currentUserEmailState } from "./recoil/user";
+import { getSession } from "next-auth/react";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
+  const [userEmail, setUserEmail] = useRecoilState(currentUserEmailState);
+  useEffect(() => {
+    const fetchSession = async () => {
+      const session = await getSession();
+      const email = session?.user?.email;
+      if (email) setUserEmail(email);
+    };
+    fetchSession();
+  }, []);
   return (
     <>
       <Header />
