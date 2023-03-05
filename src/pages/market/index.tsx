@@ -4,7 +4,7 @@ import { Icon } from "@iconify/react";
 import { cls } from "../../lib/class";
 import { FilterProvider } from "../../store/filter-context";
 import Header from "../../components/header";
-import FilterOverlay from "../../components/market/market-filter";
+import FilterOverlay from "../../components/market/filter/market-filter";
 import Navigation from "../../components/navigation";
 import FloatingButton from "../../components/floating-button";
 import FilterList from "../../components/market/filter-list";
@@ -12,6 +12,7 @@ import MarketList from "../../components/market/market-list";
 import CategoryNavigation from "../../components/market/category-nav";
 import axios from "axios";
 import { useQuery } from "react-query";
+import RentButtons from "../../components/market/rent-buttons";
 
 const Market: NextPage = () => {
   const [isFilterOpen, setFilterOpen] = useState<boolean>(false);
@@ -44,14 +45,7 @@ const Market: NextPage = () => {
         <div>
           <div className="px-5 py-4">
             <div className="flex items-center justify-between">
-              <div>
-                <button className="mr-2 rounded-full border border-common-black py-0.5 px-2">
-                  대여상품
-                </button>
-                <button className="rounded-full border border-common-black py-0.5 px-2">
-                  판매상품
-                </button>
-              </div>
+              <RentButtons />
               <Icon
                 icon="akar-icons:settings-horizontal"
                 aria-label="옵션 필터링 목록"

@@ -1,10 +1,10 @@
 import { NextPage } from "next";
 import React, { useContext, useState } from "react";
 import { Icon } from "@iconify/react";
-import Button from "../button";
+import Button from "../../button";
 import FilterTab from "./filter-tab";
-import { priceList, tabData } from "../../lib/fake-data";
-import { FilterContext } from "../../store/filter-context";
+import { priceList, tabData } from "../../../lib/fake-data";
+import { FilterContext } from "../../../store/filter-context";
 
 const FilterOverlay: NextPage<{
   closeOverlay: () => void;
@@ -49,14 +49,6 @@ const FilterOverlay: NextPage<{
           name="STYLE"
           data={tabData.style}
           isOpen={isOpen}
-          setList={updateTemporaryList}
-          wordList={filterWords}
-        />
-        <FilterTab
-          onClick={openTab}
-          isOpen={isOpen}
-          name="CATEGORY"
-          data={tabData.category}
           setList={updateTemporaryList}
           wordList={filterWords}
         />
