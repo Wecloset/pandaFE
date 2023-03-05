@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Icon } from "@iconify/react";
 import { cls } from "../../lib/class";
 import { FilterProvider } from "../../store/filter-context";
@@ -10,14 +10,14 @@ import FloatingButton from "../../components/floating-button";
 import FilterList from "../../components/market/filter-list";
 import MarketList from "../../components/market/market-list";
 import CategoryNavigation from "../../components/market/category-nav";
-import axios from "axios";
 import { useQuery } from "react-query";
+import { axiosGet } from "../../lib/services";
 
 const Market: NextPage = () => {
   const [isFilterOpen, setFilterOpen] = useState<boolean>(false);
 
   const getAllProducts = async () => {
-    const { data } = await axios.get("/api/products");
+    const { data } = await axiosGet("/api/products");
     return data;
   };
 

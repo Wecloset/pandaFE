@@ -1,17 +1,17 @@
 import { atom, selector } from "recoil";
+import { v1 } from "uuid";
 
-const currentUserEmailState = atom<string>({
-  key: "currentUserEmailState",
-  default: "",
+const userState = atom({
+  key: `userState/${v1()}`,
+  default: {},
 });
 
 const currentUserState = selector({
-  key: "currentUserState",
+  key: `currentUserState/${v1()}`,
   get: ({ get }) => {
-    const userEmail = get(currentUserEmailState);
-
-    return userEmail;
+    const userData = get(userState);
+    return userData;
   },
 });
 
-export { currentUserEmailState, currentUserState };
+export { userState, currentUserState };

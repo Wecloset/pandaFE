@@ -3,7 +3,7 @@ import client from "../../../lib/client";
 
 const getUser = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
-    const { userEmail } = req.body.payload;
+    const { userEmail } = req.body.data;
 
     try {
       const user = await client.user.findUnique({
@@ -14,7 +14,7 @@ const getUser = async (req: NextApiRequest, res: NextApiResponse) => {
           fav: true,
         },
       });
-      res.status(200).send(user);
+      res.status(200).send({ message: "Getting user data success.", user });
     } catch (err) {
       res.status(400).send(err);
     }

@@ -6,13 +6,16 @@ import MainList from "../components/main/main-list";
 import MainLookBook from "../components/main/main-lookbook";
 import Button from "../components/button";
 import FloatingButton from "../components/floating-button";
-import { useRecoilState } from "recoil";
-import { currentUserEmailState } from "./recoil/user";
+import { useSetRecoilState } from "recoil";
+import { userState } from "./recoil/user";
 import { getSession } from "next-auth/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Home: NextPage = () => {
-  const [userEmail, setUserEmail] = useRecoilState(currentUserEmailState);
+  const [userEmail, setUserEmail] = useState<string>("");
+  const setUser = useSetRecoilState(userState);
+
   useEffect(() => {
     const fetchSession = async () => {
       const session = await getSession();
@@ -21,6 +24,22 @@ const Home: NextPage = () => {
     };
     fetchSession();
   }, []);
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const { data } = await axios.post(`/api/user`, {
+          headers: { "Content-Type": "application/json" },
+          data: { userEmail },
+        });
+        setUser(data.user);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getUser();
+  }, [userEmail]);
+
   return (
     <>
       <Header />

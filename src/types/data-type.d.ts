@@ -27,6 +27,20 @@ export interface ProductData {
   }[];
 }
 
+export interface UserData {
+  createdDate: string;
+  email: string;
+  id: number;
+  fav: {
+    id: number;
+    productId: number;
+    userId: number;
+  }[];
+  nickname: string;
+  password: string;
+  profileImg?: string;
+}
+
 export interface MainProductData {
   id: number;
   imgurl: string[{
