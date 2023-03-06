@@ -46,6 +46,7 @@ export default NextAuth({
   ],
   callbacks: {
     async signIn({ user, account }) {
+      if (account?.type === "credentials") return true;
       if (account?.provider === "google") {
         const email = user.email;
         const myString: string = email?.toString() || "";
