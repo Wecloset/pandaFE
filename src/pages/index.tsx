@@ -1,4 +1,4 @@
-import type { GetStaticProps, NextPage } from "next";
+import type { NextPage } from "next";
 import productData from "../lib/fake-data";
 import Header from "../components/header";
 import Navigation from "../components/navigation";
@@ -6,8 +6,40 @@ import MainList from "../components/main/main-list";
 import MainLookBook from "../components/main/main-lookbook";
 import Button from "../components/button";
 import FloatingButton from "../components/floating-button";
+import { useSetRecoilState } from "recoil";
+import { userState } from "./recoil/user";
+import { getSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Home: NextPage = () => {
+  const [userEmail, setUserEmail] = useState<string>("");
+  const setUser = useSetRecoilState(userState);
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const session = await getSession();
+      const email = session?.user?.email;
+      if (email) setUserEmail(email);
+    };
+    fetchSession();
+  }, []);
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const { data } = await axios.post(`/api/user`, {
+          headers: { "Content-Type": "application/json" },
+          data: { userEmail },
+        });
+        setUser(data.user);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getUser();
+  }, [userEmail]);
+
   return (
     <>
       <Header />
