@@ -23,10 +23,11 @@ module.exports = {
     // ESLint 규칙을 지정합니다. extends에서 지정된 규칙을 덮어 쓸수도 있습니다.
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
+    "@typescript-eslint/no-empty-function": "off",
   },
   settings: {
     react: {
       version: "detect", // 현재 사용하고 있는 react 버전을 eslint-plugin-react가 자동으로 감지합니다.
     },
-  },  
+  },
 };

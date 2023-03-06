@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
-import { cls } from "../../lib/class";
+import { cls } from "../../../lib/class";
 
 interface FilterTabProps {
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
