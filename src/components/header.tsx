@@ -4,12 +4,15 @@ import Link from "next/link";
 import Image from "next/image";
 import logo from "../../public/asset/image/logo.png";
 import { useRouter } from "next/router";
+import { signOut } from "next-auth/react";
 
 interface HeaderProps {
   goBack?: boolean;
   text?: string;
   noGoBack?: boolean;
 }
+
+//임시로 sign out 설정
 
 const Header: NextPage<HeaderProps> = ({ goBack, text, noGoBack }) => {
   const router = useRouter();
@@ -20,6 +23,9 @@ const Header: NextPage<HeaderProps> = ({ goBack, text, noGoBack }) => {
           <Link href="/">
             <Image src={logo} alt="로고이미지" className="h-10 w-7" />
           </Link>
+          <button type="button" onClick={() => signOut()}>
+            SignOut
+          </button>
           <div className="flex">
             <Link href="" className="text-[28px]">
               <Icon icon="uil:message" aria-label="채팅하기" />
