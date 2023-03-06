@@ -3,8 +3,7 @@ import client from "../../../lib/client";
 
 const updateFav = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
-    const { userId, productId, isLikeActive } = req.body.payload;
-
+    const { userId, productId, isLikeActive } = req.body.data;
     try {
       if (!isLikeActive) {
         await client.user.update({
@@ -14,7 +13,7 @@ const updateFav = async (req: NextApiRequest, res: NextApiResponse) => {
           data: {
             fav: {
               deleteMany: {
-                productId: productId,
+                productId: +productId,
               },
             },
           },
@@ -23,13 +22,13 @@ const updateFav = async (req: NextApiRequest, res: NextApiResponse) => {
         await client.fav.create({
           data: {
             userId,
-            productId,
+            productId: +productId,
           },
         });
       }
-      res.status(200).send({ message: "Updating user success." });
+      res.status(200).send({ message: "Updating fav success." });
     } catch (err) {
-      res.status(400).send({ message: "Updating user failed." });
+      res.status(400).send({ message: "Updating fav failed." });
     }
   }
 };
