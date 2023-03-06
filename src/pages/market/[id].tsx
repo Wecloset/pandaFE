@@ -28,6 +28,8 @@ const Product: NextPage<Product> = () => {
   const { id: productId } = router.query;
   const userData = useRecoilValue(currentUserState) as UserData;
 
+  console.log(userData); // 메인페이지 -> 마켓 -> 마켓디테일 이동시 null, 새로고침시 {}.
+
   const [product, setProduct] = useState<ProductData | null>();
   const [isLikeActive, setIsLikeActive] = useState<boolean | null>(null);
   const [likeValue, setLikeValue] = useState<number>(0);
@@ -51,10 +53,11 @@ const Product: NextPage<Product> = () => {
   };
 
   const pageSetting = () => {
-    const { email: userEmail, fav } = userData;
-
     if (product && productId) {
       setLikeValue(product.fav.length);
+
+      if (!userData) return;
+      const { email: userEmail, fav } = userData;
       updateViews(userEmail, +productId, product.view);
 
       // fav button style setting
@@ -81,7 +84,7 @@ const Product: NextPage<Product> = () => {
   }, [isLikeActive]);
 
   useEffect(() => {
-    getProductData();
+    if (productId) getProductData();
   }, [productId]);
 
   useEffect(() => {
