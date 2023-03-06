@@ -6,8 +6,10 @@ const FilterContext = createContext<{
   filterList: MainProductData[];
   wordList: string[];
   categoryName: string;
+  isRent: boolean | "";
   setProducts: (data: MainProductData[]) => void;
   setCategory: (name: string) => void;
+  setRentStatus: (rent: boolean | "") => void;
   removeWord: (word: string) => void;
   updateList: (words: string[]) => void;
   categoryFiltering: (value: any) => MainProductData[] | void;
@@ -17,17 +19,13 @@ const FilterContext = createContext<{
   filterList: [],
   wordList: [],
   categoryName: "",
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  isRent: "",
   setProducts: () => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setCategory: () => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  setRentStatus: () => {},
   removeWord: () => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   updateList: () => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   categoryFiltering: () => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   filtering: () => {
     [{}];
   },
@@ -52,6 +50,7 @@ const priceMapping = (price: number, word: string) => {
 const FilterProvider = ({ children }: { children: React.ReactNode }) => {
   const [allList, setAllList] = useState<MainProductData[]>([]);
   const [categoryName, setCategoryName] = useState<string>("전체");
+  const [isRent, setIsRent] = useState<boolean | "">("");
   const [wordList, setWordList] = useState<string[]>([]);
   const [filterList, setFilterList] = useState<MainProductData[]>([]);
 
@@ -60,17 +59,14 @@ const FilterProvider = ({ children }: { children: React.ReactNode }) => {
     setFilterList(data);
   };
 
-  const updateList = (words: string[]) => {
-    setWordList(words);
-  };
+  const updateList = (words: string[]) => setWordList(words);
 
-  const removeWord = (word: string) => {
+  const removeWord = (word: string) =>
     setWordList(prev => prev.filter(item => item !== word));
-  };
 
-  const setCategory = (name: string) => {
-    setCategoryName(name);
-  };
+  const setCategory = (name: string) => setCategoryName(name);
+
+  const setRentStatus = (rent: boolean | "") => setIsRent(rent);
 
   const categoryFiltering = (name: string) => {
     const filteredList = allList.filter(product => product.category === name);
@@ -81,11 +77,10 @@ const FilterProvider = ({ children }: { children: React.ReactNode }) => {
   // style필터링 : 선택한 스타일 모두 (카테고리에서 필터링된 리스트 중에서 - productList)
   // price필터링 : 선택한 category, style에 해당하면서 가격이 맞는것.
   const filtering = (category: string) => {
-    let filteredData: MainProductData[] = [];
+    let filteredData: MainProductData[] =
+      category !== "전체" ? categoryFiltering(category) : allList;
     let styleList: MainProductData[] = [];
     let price = "";
-
-    filteredData = category !== "전체" ? categoryFiltering(category) : allList;
 
     if (wordList.length > 0) {
       wordList.forEach(word => {
@@ -97,7 +92,7 @@ const FilterProvider = ({ children }: { children: React.ReactNode }) => {
         }
       });
 
-      if (styleList.length !== 0) {
+      if (styleList.length > 0 || (styleList.length === 0 && price === "")) {
         filteredData = styleList;
       }
 
@@ -108,12 +103,17 @@ const FilterProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
 
+    if (isRent !== "") {
+      if (isRent) filteredData = filteredData.filter(product => product.rental);
+      else filteredData = filteredData.filter(product => !product.rental);
+    }
+
     setFilterList(filteredData);
   };
 
   useEffect(() => {
     filtering(categoryName);
-  }, [wordList]);
+  }, [wordList, isRent]);
 
   return (
     <FilterContext.Provider
@@ -122,9 +122,11 @@ const FilterProvider = ({ children }: { children: React.ReactNode }) => {
         filterList,
         wordList,
         categoryName,
+        isRent,
         setProducts,
         setCategory,
         updateList,
+        setRentStatus,
         removeWord,
         categoryFiltering,
         filtering,
