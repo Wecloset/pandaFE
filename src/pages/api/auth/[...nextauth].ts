@@ -1,6 +1,9 @@
 import NextAuth, { User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import KakaoProvider from "next-auth/providers/kakao";
 import client from "../../../lib/client";
+import createHashedPassword from "../../../lib/hash";
 
 interface Credentials {
   email: string;
@@ -32,5 +35,50 @@ export default NextAuth({
         }
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_ID as string,
+      clientSecret: process.env.GOOGLE_SECRET as string,
+    }),
+    KakaoProvider({
+      clientId: process.env.KAKAO_CLIENT_ID as string,
+      clientSecret: process.env.KAKAO_CLIENT_SECRET as string,
+    }),
   ],
+  callbacks: {
+    async signIn({ user, account }) {
+      if (account?.type === "credentials") return true;
+      if (account?.provider === "google") {
+        const email = user.email;
+        const myString: string = email?.toString() || "";
+        const existGoogle = await client.user.findMany({
+          where: {
+            email: myString,
+          },
+        });
+        if (existGoogle.length === 0) {
+          await client.user.create({
+            data: {
+              email: myString,
+              password: createHashedPassword(user.id),
+            },
+          });
+        }
+      } else {
+        const existKakao = await client.user.findMany({
+          where: {
+            email: `${user.id}@kakao.com`,
+          },
+        });
+        if (existKakao.length === 0) {
+          await client.user.create({
+            data: {
+              email: user.id,
+              password: account?.access_token as string,
+            },
+          });
+        }
+      }
+      return true;
+    },
+  },
 });

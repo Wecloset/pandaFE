@@ -1,9 +1,23 @@
 import type { NextPage } from "next";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import ButtonItem from "../../components/button";
 import Header from "../../components/header";
 import SignForm from "../../components/sign/sign-form";
 
 const Sign: NextPage = () => {
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  const handleSignGoogle = async () => {
+    await signIn("google");
+  };
+  const handleSignKakao = async () => {
+    await signIn("kakao");
+  };
+  if (session) {
+    router.replace("/signtag", "/signtag", { shallow: true });
+  }
   return (
     <>
       <Header text="SIGNUP" goBack />
@@ -17,6 +31,7 @@ const Sign: NextPage = () => {
         </div>
         <div>
           <ButtonItem
+            onClick={handleSignGoogle}
             text="Continue With Google"
             color="bg-white"
             icon="ph:google-logo"
@@ -26,6 +41,7 @@ const Sign: NextPage = () => {
           />
         </div>
         <ButtonItem
+          onClick={handleSignKakao}
           text="Continue With Kakao"
           color="bg-primary-yellow"
           icon="ri:kakao-talk-fill"
