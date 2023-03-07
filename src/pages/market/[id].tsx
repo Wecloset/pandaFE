@@ -28,8 +28,6 @@ const Product: NextPage<Product> = () => {
   const { id: productId } = router.query;
   const userData = useRecoilValue(currentUserState) as UserData;
 
-  console.log(userData); // 메인페이지 -> 마켓 -> 마켓디테일 이동시 null, 새로고침시{}.
-
   const [product, setProduct] = useState<ProductData | null>();
   const [isLikeActive, setIsLikeActive] = useState<boolean | null>(null);
   const [likeValue, setLikeValue] = useState<number>(0);
