@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { errorLine, errorMessage } from "../../lib/error";
-import createHashedPassword from "../../lib/hash";
+import createHashedPassword from "../../utils/hash";
 import { regExgPw, regExpEm } from "../../lib/regInput";
 import { useSession } from "next-auth/react";
 

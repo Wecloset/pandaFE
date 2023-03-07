@@ -3,16 +3,13 @@ import client from "../../../lib/client";
 
 const productHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
-    const { data, imageurlList, tabItem } = req.body.payload;
-
+    const { data, imageurlList, options, userId } = req.body;
     const tagList = data.tag
       .split(" ")
       .map((tag: string) => tag.replace("#", ""));
 
-    const userId = 101; // 테스트 id
-
     try {
-      const newProduct = await client.product.create({
+      await client.product.create({
         data: {
           userId,
           title: data.title,
@@ -23,10 +20,10 @@ const productHandler = async (req: NextApiRequest, res: NextApiResponse) => {
               img: image,
             })),
           },
-          category: tabItem.category.name,
-          style: tabItem.style.name === "스타일" ? "" : tabItem.style.name,
-          brand: tabItem.brand.name,
-          rental: tabItem.rental.name === "대여 가능" ? true : false,
+          category: options.category.name,
+          style: options.style.name === "스타일" ? "" : options.style.name,
+          brand: options.brand.name,
+          rental: options.rental.name === "대여 가능" ? true : false,
           hashTag: {
             // @unique
             connectOrCreate: tagList.map((tagName: string) => ({
@@ -36,10 +33,9 @@ const productHandler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         },
       });
-
-      res.status(200).json(newProduct);
+      res.status(200).json({ message: "아이템 등록 완료!" });
     } catch (err) {
-      console.log(err);
+      res.status(400).json({ message: "Error: 아이템 등록에 실패하였습니다." });
     }
   }
 
