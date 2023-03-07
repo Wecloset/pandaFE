@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import KakaoProvider from "next-auth/providers/kakao";
 import client from "../../../lib/client";
-import createHashedPassword from "../../../lib/hash";
+import createHashedPassword from "../../../utils/hash";
 
 interface Credentials {
   email: string;

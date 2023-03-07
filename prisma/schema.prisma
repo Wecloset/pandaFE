@@ -20,7 +20,7 @@ model User {
   fav         Fav[]
   profileImg  String?
   nickname    String?   @unique
-  HashTag     HashTag[]
+  keywords    HashTag[]
 }
 
 model Product {
