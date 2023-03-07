@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import client from "../../lib/client";
-import createHashedPassword from "../../lib/hash";
+import createHashedPassword from "../../utils/hash";
 
 const userLogin = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {

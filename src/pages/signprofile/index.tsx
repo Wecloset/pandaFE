@@ -11,6 +11,7 @@ import useUpload from "../../hooks/useUpload";
 import { useMutation, useQuery } from "react-query";
 import LoadingSpinner from "../../components/loading-spinner";
 import { createImageUrl } from "../../lib/image-url";
+import { signOut } from "next-auth/react";
 
 interface CredentialProps {
   region: string;
@@ -92,6 +93,7 @@ const SignProfile: NextPage<CredentialProps> = ({
       onSuccess: ({ message }) => {
         alert(message);
         router.replace("/login");
+        signOut({ redirect: false });
       },
       onError: ({ response }) => {
         alert(response.data.message);

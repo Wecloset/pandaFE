@@ -1,4 +1,4 @@
-import { axiosPost } from "../lib/services";
+import { axiosPost } from "./services";
 
 interface Views {
   user: string;

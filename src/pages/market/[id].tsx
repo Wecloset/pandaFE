@@ -11,8 +11,8 @@ import {
   priceAddComma,
 } from "../../utils/markets";
 import { useRecoilValue } from "recoil";
-import { axiosGet, axiosPost } from "../../lib/services";
-import { currentUserState } from "../recoil/user";
+import { axiosGet, axiosPost } from "../../utils/services";
+import { currentUserState } from "../../recoil/user";
 import { useRouter } from "next/router";
 import { updateViews } from "../../utils/market-view";
 
@@ -27,8 +27,6 @@ const Product: NextPage<Product> = () => {
   const router = useRouter();
   const { id: productId } = router.query;
   const userData = useRecoilValue(currentUserState) as UserData;
-
-  console.log(userData); // 메인페이지 -> 마켓 -> 마켓디테일 이동시 null, 새로고침시 {}.
 
   const [product, setProduct] = useState<ProductData | null>();
   const [isLikeActive, setIsLikeActive] = useState<boolean | null>(null);

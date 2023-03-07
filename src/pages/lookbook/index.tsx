@@ -2,9 +2,9 @@ import { NextPage } from "next";
 import { styleListData } from "../../lib/fake-data";
 import Header from "../../components/header";
 import Navigation from "../../components/navigation";
-import StyleItem from "../../components/style/style-item";
+import StyleItem from "../../components/lookbook/style-item";
 
-const Style: NextPage = () => {
+const Lookbook: NextPage = () => {
   return (
     <>
       <Header />
@@ -20,4 +20,4 @@ const Style: NextPage = () => {
   );
 };
 
-export default Style;
+export default Lookbook;
