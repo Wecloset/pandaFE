@@ -11,7 +11,7 @@ const updateFav = async (req: NextApiRequest, res: NextApiResponse) => {
             id: userId,
           },
           data: {
-            fav: {
+            Fav: {
               deleteMany: {
                 productId: +productId,
               },

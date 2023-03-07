@@ -46,10 +46,10 @@ export default NextAuth({
   ],
   callbacks: {
     async signIn({ user, account }) {
+      const email = user.email;
+      const myString: string = email?.toString() || "";
       if (account?.type === "credentials") return true;
       if (account?.provider === "google") {
-        const email = user.email;
-        const myString: string = email?.toString() || "";
         const existGoogle = await client.user.findMany({
           where: {
             email: myString,
@@ -66,14 +66,14 @@ export default NextAuth({
       } else {
         const existKakao = await client.user.findMany({
           where: {
-            email: `${user.id}@kakao.com`,
+            email: myString,
           },
         });
         if (existKakao.length === 0) {
           await client.user.create({
             data: {
-              email: user.id,
-              password: account?.access_token as string,
+              email: myString,
+              password: createHashedPassword(user.id),
             },
           });
         }
