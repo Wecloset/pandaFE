@@ -1,13 +1,18 @@
-import { axiosPost } from "../lib/services";
+import { axiosPost } from "./services";
 
 interface Views {
   user: string;
   product: number[];
 }
 
-const GET_VIEWLIST = localStorage.getItem("panda-market");
+const GET_VIEWLIST =
+  typeof window === "undefined"
+    ? undefined
+    : localStorage.getItem("panda-market");
 const SET_VIEWLIST = (localData: Views[]) =>
-  localStorage.setItem("panda-market", JSON.stringify(localData));
+  typeof window === "undefined"
+    ? undefined
+    : localStorage.setItem("panda-market", JSON.stringify(localData));
 
 export const updateViews = (
   userEmail: string,
@@ -31,7 +36,7 @@ export const updateViews = (
     return;
   }
 
-  const isExisted = viewProducts[0].indexOf(productId) !== -1 ? true : false;
+  const isExisted = viewProducts[0]?.indexOf(productId) !== -1 ? true : false;
 
   if (!isExisted) {
     const localData = productLog.map((item: Views) =>

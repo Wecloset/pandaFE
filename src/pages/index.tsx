@@ -7,7 +7,7 @@ import MainLookBook from "../components/main/main-lookbook";
 import Button from "../components/button";
 import FloatingButton from "../components/floating-button";
 import { useSetRecoilState } from "recoil";
-import { userState } from "./recoil/user";
+import { userState } from "../recoil/user";
 import { getSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import axios from "axios";

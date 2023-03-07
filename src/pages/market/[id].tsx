@@ -11,8 +11,8 @@ import {
   priceAddComma,
 } from "../../utils/markets";
 import { useRecoilValue } from "recoil";
-import { axiosGet, axiosPost } from "../../lib/services";
-import { currentUserState } from "../recoil/user";
+import { axiosGet, axiosPost } from "../../utils/services";
+import { currentUserState } from "../../recoil/user";
 import { useRouter } from "next/router";
 import { updateViews } from "../../utils/market-view";
 
@@ -51,10 +51,11 @@ const Product: NextPage<Product> = () => {
   };
 
   const pageSetting = () => {
-    const { email: userEmail, fav } = userData;
-
     if (product && productId) {
       setLikeValue(product.fav.length);
+
+      if (!userData) return;
+      const { email: userEmail, fav } = userData;
       updateViews(userEmail, +productId, product.view);
 
       // fav button style setting
@@ -81,7 +82,7 @@ const Product: NextPage<Product> = () => {
   }, [isLikeActive]);
 
   useEffect(() => {
-    getProductData();
+    if (productId) getProductData();
   }, [productId]);
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import React, { useState } from "react";
 import { Icon } from "@iconify/react";
-import { cls } from "../../lib/class";
+import { cls } from "../../utils/class";
 import { FilterProvider } from "../../store/filter-context";
 import Header from "../../components/header";
 import FilterOverlay from "../../components/market/filter/market-filter";
@@ -12,7 +12,7 @@ import MarketList from "../../components/market/market-list";
 import CategoryNavigation from "../../components/market/category-nav";
 import { useQuery } from "react-query";
 import RentButtons from "../../components/market/rent-buttons";
-import { axiosGet } from "../../lib/services";
+import { axiosGet } from "../../utils/services";
 
 const Market: NextPage = () => {
   const [isFilterOpen, setFilterOpen] = useState<boolean>(false);
