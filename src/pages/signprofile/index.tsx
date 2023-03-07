@@ -6,7 +6,7 @@ import { errorLine } from "../../lib/error";
 import profile from "../../../public/asset/image/addprofile.png";
 import Image from "next/image";
 import axios from "axios";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import useUpload from "../../hooks/useUpload";
 import { useMutation, useQuery } from "react-query";
 import LoadingSpinner from "../../components/loading-spinner";

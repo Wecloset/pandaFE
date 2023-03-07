@@ -11,14 +11,33 @@ import { userState } from "../recoil/user";
 import { getSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useMutation } from "react-query";
 
 const Home: NextPage = () => {
   const [userEmail, setUserEmail] = useState<string>("");
   const setUser = useSetRecoilState(userState);
+  const { mutate: getUser } = useMutation(
+    async (email: string) => {
+      const { data } = await axios.post(`/api/user`, {
+        headers: { "Content-Type": "application/json" },
+        data: { userEmail: email },
+      });
+      return data.user;
+    },
+    {
+      onSuccess: data => {
+        setUser(data);
+      },
+      onError: err => {
+        alert(err);
+      },
+    },
+  );
 
   useEffect(() => {
     const fetchSession = async () => {
       const session = await getSession();
+      console.log("session", session);
       const email = session?.user?.email;
       if (email) setUserEmail(email);
     };
@@ -26,19 +45,10 @@ const Home: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    const getUser = async () => {
-      try {
-        const { data } = await axios.post(`/api/user`, {
-          headers: { "Content-Type": "application/json" },
-          data: { userEmail },
-        });
-        setUser(data.user);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getUser();
-  }, [userEmail]);
+    if (userEmail) {
+      getUser(userEmail);
+    }
+  }, [userEmail, getUser]);
 
   return (
     <>

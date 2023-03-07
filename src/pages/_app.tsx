@@ -6,7 +6,6 @@ import { RecoilRoot } from "recoil";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const queryClient = new QueryClient();
-
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider session={session}>
