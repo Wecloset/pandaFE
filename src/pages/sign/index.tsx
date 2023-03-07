@@ -16,7 +16,7 @@ const Sign: NextPage = () => {
     await signIn("kakao");
   };
   if (session) {
-    router.replace("/signtag", "/signtag", { shallow: true });
+    router.replace("/signtag", "signtag", { shallow: true });
   }
   return (
     <>

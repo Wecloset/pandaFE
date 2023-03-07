@@ -5,8 +5,13 @@ import Header from "../../components/header";
 import { cls } from "../../lib/class";
 import productData from "../../lib/fake-data";
 import Link from "next/link";
+import { useRecoilValue } from "recoil";
+import { currentUserState } from "../recoil/user";
+import { UserData } from "../../types/data-type";
+import Image from "next/image";
 
 const MyPage: NextPage = () => {
+  const userData = useRecoilValue(currentUserState) as UserData;
   const [category, setCategory] = useState<string>("items");
   const categoryClick = (event: React.MouseEvent) => {
     const target = event.target as HTMLButtonElement;
@@ -20,11 +25,17 @@ const MyPage: NextPage = () => {
           icon="iconoir:profile-circle"
           className="float-right mx-5 my-5 text-2xl"
         />
-        <div className=" absolute left-40 top-32   h-20 w-20 rounded-full bg-gray-500" />
+        <Image
+          src={`${userData.profileImg}`}
+          alt="유저이미지"
+          width={50}
+          height={50}
+          className=" absolute left-40 top-32 h-20 w-20 rounded-full"
+        />
       </div>
       <div className="my-10">
         <div className="mb-4 flex items-center justify-center">
-          <p className="mx-1 text-xl font-semibold">username</p>
+          <p className="mx-1 text-xl font-semibold">{userData.nickname}</p>
           <Icon icon="material-symbols:edit-outline-rounded" />
         </div>
         <div className="mb-6 flex items-center justify-center">
