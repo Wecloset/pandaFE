@@ -2,11 +2,11 @@ import { Icon } from "@iconify/react";
 import type { NextPage } from "next";
 import { useState } from "react";
 import Header from "../../components/header";
-import { cls } from "../../lib/class";
+import { cls } from "../../utils/class";
 import productData from "../../lib/fake-data";
 import Link from "next/link";
 import { useRecoilValue } from "recoil";
-import { currentUserState } from "../recoil/user";
+import { currentUserState } from "../../recoil/user";
 import { UserData } from "../../types/data-type";
 import Image from "next/image";
 

@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import ButtonItem from "../../components/button";
 import Header from "../../components/header";
 import SignForm from "../../components/sign/sign-form";
@@ -15,9 +16,10 @@ const Sign: NextPage = () => {
   const handleSignKakao = async () => {
     await signIn("kakao");
   };
-  if (session) {
-    router.replace("/signtag", "signtag", { shallow: true });
-  }
+  useEffect(() => {
+    session && router.replace("/signtag", "signtag", { shallow: true });
+  }, [session]);
+
   return (
     <>
       <Header text="SIGNUP" goBack />
