@@ -54,7 +54,7 @@ const SignProfile: NextPage<CredentialProps> = ({
     });
     return data;
   };
-  const { mutate: nickMutate, isLoading: nickLoaing } = useMutation(
+  const { mutate: nickMutate, isLoading: nickLoading } = useMutation(
     createNickName,
     {
       onSuccess: ({ message }) => {
@@ -136,7 +136,7 @@ const SignProfile: NextPage<CredentialProps> = ({
             placeholder="닉네임"
             className={errorLine(errors.nickname)}
           />
-          {nickLoaing ? (
+          {nickLoading ? (
             <LoadingSpinner />
           ) : (
             <button

@@ -9,6 +9,7 @@ import LoginForm from "../../components/login/login-form";
 import Button from "../../components/button";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 const Login: NextPage = () => {
   const { data: session } = useSession();
@@ -19,7 +20,10 @@ const Login: NextPage = () => {
   const KakaoLogin = async () => {
     await signIn("kakao");
   };
-  session && router.push("/");
+  useEffect(() => {
+    session && router.push("/");
+  }, [session]);
+
   return (
     <div className="relative h-screen w-full bg-black">
       <Image src={graphic1} alt="" className="absolute -top-3 -left-3 w-1/2" />
