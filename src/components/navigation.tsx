@@ -1,13 +1,11 @@
 import { NextPage } from "next";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useRecoilValue } from "recoil";
-import { currentUserState } from "../recoil/user";
 
 const Navigation: NextPage = () => {
   const { pathname } = useRouter();
-  const userData = useRecoilValue(currentUserState);
-  console.log(userData);
+  const { data: sesssion } = useSession();
   return (
     <footer className="fixed bottom-0 z-20 flex h-12 w-[390px] items-center justify-between bg-black p-5 text-lg shadow dark:border-gray-600 dark:bg-gray-800">
       <Link href="/">
@@ -37,13 +35,13 @@ const Navigation: NextPage = () => {
           STYLE
         </button>
       </Link>
-      <Link href="mypage">
+      <Link href={sesssion?.user ? "mypage" : "login"}>
         <button
           className={`${
             pathname === "/mypage" ? "text-primary-violet" : "text-white"
           }`}
         >
-          MY
+          {sesssion?.user ? "MY" : "LOGIN"}
         </button>
       </Link>
     </footer>
