@@ -8,15 +8,6 @@ const Navigation: NextPage = () => {
   const { data: sesssion } = useSession();
   return (
     <footer className="fixed bottom-0 z-20 flex h-12 w-[390px] items-center justify-between bg-black p-5 text-lg shadow dark:border-gray-600 dark:bg-gray-800">
-      <Link href="/">
-        <button
-          className={`${
-            pathname === "/" ? "text-primary-violet" : "text-white"
-          }`}
-        >
-          HOME
-        </button>
-      </Link>
       <Link href="market">
         <button
           className={`${
@@ -35,13 +26,22 @@ const Navigation: NextPage = () => {
           STYLE
         </button>
       </Link>
-      <Link href={sesssion?.user ? "mypage" : "login"}>
+      <Link href="/mypage">
         <button
           className={`${
             pathname === "/mypage" ? "text-primary-violet" : "text-white"
           }`}
         >
-          {sesssion?.user ? "MY" : "LOGIN"}
+          MYPAGE
+        </button>
+      </Link>
+      <Link href={sesssion?.user ? "dm" : "login"}>
+        <button
+          className={`${
+            pathname === "/login" || "dm" ? "text-primary-violet" : "text-white"
+          }`}
+        >
+          {sesssion?.user ? "DM" : "LOGIN"}
         </button>
       </Link>
     </footer>
