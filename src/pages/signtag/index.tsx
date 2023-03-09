@@ -23,7 +23,6 @@ const SignTag: NextPage = () => {
   });
 
   const postTagData = async (tagData: TagData) => {
-    console.log(tagData);
     const { data: response } = await axios.post("/api/signtag", tagData);
     return response;
   };

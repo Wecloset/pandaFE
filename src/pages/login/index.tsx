@@ -9,20 +9,55 @@ import LoginForm from "../../components/login/login-form";
 import Button from "../../components/button";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { useMutation } from "react-query";
+import axios from "axios";
+
+//회원정보가 있으면 session && router.push("/")
+//회원정보가 없으면 email 이랑 id 들고 signtag 로 넘어가서 회원가입하게 만들어야함 (로그인이 된 경우 해쉬태그가 없으면 해쉬태그로 이동하게)
+//회원정보를 가져와서 해쉬태그가 있는지 없는지 비교한다.
+//구글버튼 누르면 회원가입이 자동으로 된다
+//마지막 유저의 정보를 가져와서 hashtag 가 빈배열인지 확인을 한다
+//빈배열이면 /signtag 로 가서 회원가입을 이어서
+//빈배열이 아니면 return true
 
 const Login: NextPage = () => {
   const { data: session } = useSession();
+  const alerted = useRef(false);
   const router = useRouter();
+
+  const findUser = async (findUser: string) => {
+    const { data: response } = await axios.post("/api/find", findUser);
+    return response;
+  };
+
+  const { mutate, data } = useMutation(findUser);
+
   const GoogleLogin = async () => {
     await signIn("google");
   };
   const KakaoLogin = async () => {
     await signIn("kakao");
   };
+
   useEffect(() => {
-    session && router.push("/");
+    session && mutate(session?.user?.email as string);
   }, [session]);
+
+  useEffect(() => {
+    if (session && data && data[0].HashTag) {
+      if (data[0].HashTag.length === 0 && !alerted.current) {
+        alerted.current = true;
+        alert("유저 정보가 존재하지 않습니다. 회원가입으로 이동합니다");
+        router.push("/signtag");
+        return;
+      } else {
+        alert("로그인이 완료되었습니다");
+        router.push("/");
+        return;
+      }
+    }
+  }, [data]);
 
   return (
     <div className="relative h-screen w-full bg-black">
