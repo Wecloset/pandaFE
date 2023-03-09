@@ -4,7 +4,10 @@ import { FilterContext } from "../../store/filter-context";
 import { MainProductData } from "../../types/data-type";
 import MarketItem from "./market-item";
 
-const MarketList: NextPage<{ allData: MainProductData[] }> = ({ allData }) => {
+const MarketList: NextPage<{
+  allData: MainProductData[];
+  isLoading: boolean;
+}> = ({ allData, isLoading }) => {
   const { filterList, setProducts } = useContext(FilterContext);
 
   useEffect(() => {
@@ -18,7 +21,7 @@ const MarketList: NextPage<{ allData: MainProductData[] }> = ({ allData }) => {
       const key = `${product.id}-${i}`;
       return <MarketItem key={key} data={product} />;
     });
-  } else if (filterList.length === 0) {
+  } else if (filterList.length === 0 && !isLoading) {
     list = <p>상품이 존재하지 않습니다 :p</p>;
   }
   return <ul className="flex flex-col gap-3 px-5">{list}</ul>;

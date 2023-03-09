@@ -1,6 +1,6 @@
 import type { GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useForm, FieldErrors } from "react-hook-form";
 import { useMutation } from "react-query";
@@ -17,16 +17,8 @@ import { currentUserState } from "../../recoil/user";
 import { UserData } from "../../types/data-type";
 import useUpload from "../../hooks/useUpload";
 import useOptions from "../../hooks/useOptions";
-
-interface CreateState {
-  [key: string]: string | number | FileList | undefined;
-}
-
-interface CredentialProps {
-  region: string;
-  accessKey: string;
-  secretKey: string;
-}
+import { tabData } from "../../lib/fake-data";
+import { CreateState, CredentialProps } from "../../types/create-type";
 
 const Create: NextPage<CredentialProps> = ({
   region,
@@ -49,7 +41,12 @@ const Create: NextPage<CredentialProps> = ({
     selectOptionItem,
     submitBrand,
     closeTab,
-  } = useOptions();
+  } = useOptions({
+    category: { name: "카테고리", current: false, list: tabData.category },
+    style: { name: "스타일", current: false, list: tabData.style },
+    brand: { name: "브랜드", current: false, list: tabData.brand },
+    rental: { name: "대여 가능", current: false, list: tabData.rental },
+  });
 
   const { register, handleSubmit } = useForm<CreateState>({
     mode: "onSubmit",
@@ -99,8 +96,6 @@ const Create: NextPage<CredentialProps> = ({
       return alert("상품가격을 숫자로 기입해주세요.");
     } else if (options.category.name === "카테고리") {
       return alert("카테고리를 선택해 주세요.");
-    } else if (imgsrc.length === 0) {
-      return alert("상품이미지를 추가해주세요.");
     } else if (!isNotTag) {
       return alert("태그는 공백을 포함할 수 없습니다.");
     }
@@ -124,7 +119,12 @@ const Create: NextPage<CredentialProps> = ({
   };
 
   const inValid = (error: FieldErrors) => {
-    alert(error.desc?.message || error.title?.message || error.price?.message);
+    alert(
+      error.desc?.message ||
+        error.title?.message ||
+        error.price?.message ||
+        error.image?.message,
+    );
   };
 
   return (
@@ -176,7 +176,10 @@ const Create: NextPage<CredentialProps> = ({
                 )}
                 onChange={textAreaValue}
               />
-              <div className="pointer-events-none absolute top-5 left-5 bg-transparent text-commom-gray peer-focus:hidden peer-[.is-valid]:hidden">
+              <div
+                className="pointer-events-none absolute top-5 left-5 bg-transparent text-commom-gray 
+              peer-focus:hidden peer-[.is-valid]:hidden"
+              >
                 <p>아이템에 대한 설명을 작성해주세요.</p>
                 <p className="mt-3">
                   작성예시. 제품상태, 사이즈, 소재 등 자세히

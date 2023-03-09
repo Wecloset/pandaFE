@@ -2,9 +2,9 @@ import { NextPage } from "next";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 
-const FloatingButton: NextPage = () => {
+const FloatingButton: NextPage<{ path: string }> = ({ path }) => {
   return (
-    <Link href="/create" className="fixed bottom-20 translate-x-[320px]">
+    <Link href={path} className="fixed bottom-20 translate-x-[320px]">
       <button className="rounded-full bg-primary-violet p-3 shadow-md">
         <Icon
           icon="ic:baseline-plus"

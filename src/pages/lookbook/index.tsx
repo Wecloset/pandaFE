@@ -3,6 +3,7 @@ import { styleListData } from "../../lib/fake-data";
 import Header from "../../components/header";
 import Navigation from "../../components/navigation";
 import StyleItem from "../../components/lookbook/style-item";
+import FloatingButton from "../../components/floating-button";
 
 const Lookbook: NextPage = () => {
   return (
@@ -15,6 +16,7 @@ const Lookbook: NextPage = () => {
           ))}
         </ul>
       </div>
+      <FloatingButton path="/create/post" />
       <Navigation />
     </>
   );

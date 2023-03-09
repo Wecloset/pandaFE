@@ -4,13 +4,29 @@ import client from "../../../lib/client";
 const getUser = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const { userEmail } = req.body.data;
+
     try {
       const user = await client.user.findUnique({
         where: {
           email: userEmail,
         },
         include: {
-          HashTag: true,
+          keywords: true,
+          product: {
+            select: {
+              id: true,
+              brand: true,
+              title: true,
+              price: true,
+              imgurl: {
+                select: {
+                  id: true,
+                  img: true,
+                },
+              },
+            },
+          },
+          fav: true,
         },
       });
       res.status(200).send({ message: "Getting user data success.", user });
