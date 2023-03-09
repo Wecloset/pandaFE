@@ -96,7 +96,7 @@ const Home: NextPage = () => {
         </div>
       </div>
       <Navigation />
-      <FloatingButton />
+      <FloatingButton path="/create" />
     </>
   );
 };

@@ -1,3 +1,26 @@
+export interface MainProductData {
+  id: number;
+  imgurl: string[{
+    id: number;
+    img: string;
+  }];
+  category: string;
+  createdDate: string;
+  description: string;
+  brand: string;
+  lookId: number | null;
+  price: number;
+  title: string;
+  style: string;
+  rental: boolean;
+  view?: number;
+  fav: {
+    id: number;
+    productId: number;
+    userId: number;
+  }[];
+}
+
 export interface ProductData {
   id: number;
   brand: string;
@@ -27,6 +50,14 @@ export interface ProductData {
   }[];
 }
 
+export interface ProductDataMin {
+  brand: string;
+  id: string | number;
+  price: number;
+  title: string;
+  imgurl: { id: number; img: string }[];
+}
+
 export interface UserData {
   createdDate: string;
   email: string;
@@ -36,6 +67,7 @@ export interface UserData {
     productId: number;
     userId: number;
   }[];
+  product: ProductData[] | ProductDataMin[];
   keywords: {
     id: number;
     tag: string;
@@ -46,28 +78,4 @@ export interface UserData {
   profileImg?: string;
   followers: number[];
   followings: number[];
-  product: ProductData[];
-}
-
-export interface MainProductData {
-  id: number;
-  imgurl: string[{
-    id: number;
-    img: string;
-  }];
-  category: string;
-  createdDate: string;
-  description: string;
-  brand: string;
-  lookId: number | null;
-  price: number;
-  title: string;
-  style: string;
-  rental: boolean;
-  view?: number;
-  fav: {
-    id: number;
-    productId: number;
-    userId: number;
-  }[];
 }

@@ -2,10 +2,7 @@ import { Icon } from "@iconify/react";
 import { NextPage } from "next";
 import React from "react";
 import { UseFormRegister } from "react-hook-form";
-
-interface CreateState {
-  [key: string]: string | number | FileList | undefined;
-}
+import { CreateState } from "../../types/create-type";
 
 interface UploadImagesProps {
   register: UseFormRegister<CreateState>;

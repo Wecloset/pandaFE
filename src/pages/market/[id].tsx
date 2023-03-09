@@ -59,7 +59,7 @@ const Product: NextPage<Product> = () => {
       updateViews(userEmail, +productId, product.view);
 
       // fav button style setting
-      fav.forEach((item: { productId: number }) => {
+      fav?.forEach((item: { productId: number }) => {
         item.productId === +productId && setIsLikeActive(true);
       });
     }

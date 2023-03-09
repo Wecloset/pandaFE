@@ -1,24 +1,7 @@
 import { NextPage } from "next";
 import { Icon } from "@iconify/react";
 import { useRef } from "react";
-
-interface Options {
-  [key: string]: { name: string; current: boolean; list: string[] };
-}
-
-interface OptionTabProps {
-  isTabOpen: boolean;
-  options: Options;
-  selectOptionItem: (
-    event: React.MouseEvent<HTMLLIElement>,
-    name: string,
-  ) => void;
-  submitBrand: (
-    event: React.FormEvent<HTMLFormElement>,
-    brandName: string,
-  ) => void;
-  closeTab: () => void;
-}
+import { OptionTabProps } from "../../types/create-type";
 
 const OptionTab: NextPage<OptionTabProps> = ({
   isTabOpen,
@@ -48,6 +31,8 @@ const OptionTab: NextPage<OptionTabProps> = ({
           ) : null,
         )}
       {isTabOpen &&
+        selectOptionItem &&
+        submitBrand &&
         Object.entries(options).map(
           ([key, { name, current, list }]) =>
             current === true && (

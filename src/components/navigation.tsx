@@ -17,10 +17,10 @@ const Navigation: NextPage = () => {
           MARKET
         </button>
       </Link>
-      <Link href="style">
+      <Link href="lookbook">
         <button
           className={`${
-            pathname === "/style" ? "text-primary-violet" : "text-white"
+            pathname === "/lookbook" ? "text-primary-violet" : "text-white"
           }`}
         >
           STYLE

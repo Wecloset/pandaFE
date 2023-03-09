@@ -13,6 +13,7 @@ import CategoryNavigation from "../../components/market/category-nav";
 import { useQuery } from "react-query";
 import RentButtons from "../../components/market/rent-buttons";
 import { axiosGet } from "../../utils/services";
+import LoadingSpinner from "../../components/loading-spinner";
 
 const Market: NextPage = () => {
   const [isFilterOpen, setFilterOpen] = useState<boolean>(false);
@@ -22,7 +23,7 @@ const Market: NextPage = () => {
     return data;
   };
 
-  const { data } = useQuery("products", getAllProducts);
+  const { data, isLoading } = useQuery("products", getAllProducts);
 
   const openFilterOverlay = () => setFilterOpen(true);
   const closeFilterOverlay = () => setFilterOpen(false);
@@ -56,10 +57,14 @@ const Market: NextPage = () => {
             <FilterList />
           </div>
         </div>
-        {/* {isLoading && <p>로딩중...</p>} */}
-        <MarketList allData={data} />
+        {isLoading && (
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <LoadingSpinner />
+          </div>
+        )}
+        <MarketList allData={data} isLoading={isLoading} />
         <Navigation />
-        <FloatingButton />
+        <FloatingButton path="/create" />
       </div>
     </FilterProvider>
   );

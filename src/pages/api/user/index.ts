@@ -4,6 +4,7 @@ import client from "../../../lib/client";
 const getUser = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const { userEmail } = req.body.data;
+
     try {
       const user = await client.user.findUnique({
         where: {
@@ -11,9 +12,22 @@ const getUser = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         include: {
           keywords: true,
+          product: {
+            select: {
+              id: true,
+              brand: true,
+              title: true,
+              price: true,
+              imgurl: {
+                select: {
+                  id: true,
+                  img: true,
+                },
+              },
+            },
+          },
           followers: true,
           followings: true,
-          product: true,
           fav: true,
         },
       });

@@ -22,7 +22,7 @@ const productHandler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
           category: options.category.name,
           style: options.style.name === "스타일" ? "" : options.style.name,
-          brand: options.brand.name,
+          brand: options.brand.name === "브랜드" ? "" : options.brand.name,
           rental: options.rental.name === "대여 가능" ? true : false,
           hashTag: {
             // @unique
