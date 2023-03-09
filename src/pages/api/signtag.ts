@@ -5,7 +5,7 @@ const userSignTag = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
     const signUserData = await client.user.findMany({
       include: {
-        HashTag: true,
+        keywords: true,
       },
     });
     res.json(signUserData);

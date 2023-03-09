@@ -10,7 +10,11 @@ const getUser = async (req: NextApiRequest, res: NextApiResponse) => {
           email: userEmail,
         },
         include: {
-          HashTag: true,
+          keywords: true,
+          followers: true,
+          followings: true,
+          product: true,
+          fav: true,
         },
       });
       res.status(200).send({ message: "Getting user data success.", user });

@@ -17,6 +17,7 @@ const MyPage: NextPage = () => {
     const target = event.target as HTMLButtonElement;
     setCategory(target.name);
   };
+  console.log(userData.keywords[0].tag.split(","));
   return (
     <>
       <Header />
@@ -30,7 +31,7 @@ const MyPage: NextPage = () => {
           alt="유저이미지"
           width={50}
           height={50}
-          className=" absolute left-40 top-32 h-20 w-20 rounded-full"
+          className=" absolute  left-[155px] top-32 h-20 w-20 rounded-full"
         />
       </div>
       <div className="my-10">
@@ -40,25 +41,35 @@ const MyPage: NextPage = () => {
         </div>
         <div className="mb-6 flex items-center justify-center">
           <div className="text-center">
-            <div className="text-xl font-semibold">6</div>
+            <div className="text-xl font-semibold">
+              {userData.followers.length}
+            </div>
             <div>followers</div>
           </div>
           <div className="mx-3 text-center">
-            <div className="text-xl font-semibold">25</div>
+            <div className="text-xl font-semibold">
+              {userData.followings.length}
+            </div>
             <div>following</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-semibold">10</div>
+            <div className="text-xl font-semibold">
+              {userData.product.length}
+            </div>
             <div>products</div>
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <button className=" mx-1 rounded-2xl border-2 border-solid border-black px-1 py-1">
-            #스트릿
-          </button>
-          <button className=" mx-1 rounded-2xl border-2 border-solid border-black px-1 py-1">
-            #미니멀
-          </button>
+          {userData.keywords[0].tag.split(",").map((item, index) => {
+            return (
+              <div
+                key={index}
+                className=" mx-1 rounded-xl border-[1px] border-solid border-black px-1 py-1"
+              >
+                {`#${item}`}
+              </div>
+            );
+          })}
         </div>
       </div>
       <div>
