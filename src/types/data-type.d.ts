@@ -68,7 +68,14 @@ export interface UserData {
     userId: number;
   }[];
   product: ProductData[] | ProductDataMin[];
+  keywords: {
+    id: number;
+    tag: string;
+    userId: number;
+  }[];
   nickname: string;
   password: string;
   profileImg?: string;
+  followers: number[];
+  followings: number[];
 }

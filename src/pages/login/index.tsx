@@ -9,17 +9,48 @@ import LoginForm from "../../components/login/login-form";
 import Button from "../../components/button";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useEffect, useRef } from "react";
+import { useMutation } from "react-query";
+import axios from "axios";
 
 const Login: NextPage = () => {
   const { data: session } = useSession();
+  const alerted = useRef(false);
   const router = useRouter();
+
+  const findUser = async (findUser: string) => {
+    const { data: response } = await axios.post("/api/find", findUser);
+    return response;
+  };
+
+  const { mutate, data } = useMutation(findUser);
+
   const GoogleLogin = async () => {
     await signIn("google");
   };
   const KakaoLogin = async () => {
     await signIn("kakao");
   };
-  session && router.push("/");
+
+  useEffect(() => {
+    session && mutate(session?.user?.email as string);
+  }, [session]);
+
+  useEffect(() => {
+    if (session && data && data[0].keywords) {
+      if (data[0].keywords.length === 0 && !alerted.current) {
+        alerted.current = true;
+        alert("유저 정보가 존재하지 않습니다. 회원가입으로 이동합니다");
+        router.push("/signtag");
+        return;
+      } else {
+        alert("로그인이 완료되었습니다");
+        router.push("/");
+        return;
+      }
+    }
+  }, [data]);
+
   return (
     <div className="relative h-screen w-full bg-black">
       <Image src={graphic1} alt="" className="absolute -top-3 -left-3 w-1/2" />

@@ -26,6 +26,8 @@ const getUser = async (req: NextApiRequest, res: NextApiResponse) => {
               },
             },
           },
+          followers: true,
+          followings: true,
           fav: true,
         },
       });
