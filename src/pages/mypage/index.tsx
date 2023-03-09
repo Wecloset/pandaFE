@@ -9,22 +9,27 @@ import { useRecoilValue } from "recoil";
 import { currentUserState } from "../../recoil/user";
 import { UserData } from "../../types/data-type";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import Navigation from "../../components/navigation";
 
 const MyPage: NextPage = () => {
   const userData = useRecoilValue(currentUserState) as UserData;
+  const router = useRouter();
   const [category, setCategory] = useState<string>("items");
   const categoryClick = (event: React.MouseEvent) => {
     const target = event.target as HTMLButtonElement;
     setCategory(target.name);
   };
-  console.log(userData.keywords[0].tag.split(","));
   return (
     <>
       <Header />
       <div className=" relative h-44 bg-gray-300">
         <Icon
+          onClick={() => {
+            router.push("/mypage/profile");
+          }}
           icon="iconoir:profile-circle"
-          className="float-right mx-5 my-5 text-2xl"
+          className="float-right mx-5 my-5 cursor-pointer text-2xl hover:scale-105"
         />
         <Image
           src={`${userData.profileImg}`}
@@ -37,7 +42,6 @@ const MyPage: NextPage = () => {
       <div className="my-10">
         <div className="mb-4 flex items-center justify-center">
           <p className="mx-1 text-xl font-semibold">{userData.nickname}</p>
-          <Icon icon="material-symbols:edit-outline-rounded" />
         </div>
         <div className="mb-6 flex items-center justify-center">
           <div className="text-center">
@@ -48,13 +52,13 @@ const MyPage: NextPage = () => {
           </div>
           <div className="mx-3 text-center">
             <div className="text-xl font-semibold">
-              {userData.followings.length}
+              {userData?.followings.length}
             </div>
             <div>following</div>
           </div>
           <div className="text-center">
             <div className="text-xl font-semibold">
-              {userData.product.length}
+              {userData?.product.length}
             </div>
             <div>products</div>
           </div>
@@ -138,6 +142,7 @@ const MyPage: NextPage = () => {
             ))}
         </div>
       )}
+      <Navigation />
     </>
   );
 };

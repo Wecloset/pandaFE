@@ -11,7 +11,13 @@ const nickCheck = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
     if (hasNickname.length === 0) {
-      res.status(201).json({ message: "닉네임을 사용할 수 있습니다." });
+      res
+        .status(201)
+        .json({
+          message: "닉네임을 사용할 수 있습니다.",
+          hasNickname,
+          nickname,
+        });
     }
     res.status(500).json({
       message: "해당 닉네임은 중복됩니다.",
