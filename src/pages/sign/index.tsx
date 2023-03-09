@@ -1,6 +1,9 @@
+import axios from "axios";
 import type { NextPage } from "next";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useEffect, useRef } from "react";
+import { useMutation } from "react-query";
 import ButtonItem from "../../components/button";
 import Header from "../../components/header";
 import SignForm from "../../components/sign/sign-form";
@@ -8,6 +11,14 @@ import SignForm from "../../components/sign/sign-form";
 const Sign: NextPage = () => {
   const router = useRouter();
   const { data: session } = useSession();
+  const alerted = useRef(false);
+
+  const findUser = async (findUser: string) => {
+    const { data: response } = await axios.post("/api/find", findUser);
+    return response;
+  };
+
+  const { mutate, data } = useMutation(findUser);
 
   const handleSignGoogle = async () => {
     await signIn("google");
@@ -15,9 +26,26 @@ const Sign: NextPage = () => {
   const handleSignKakao = async () => {
     await signIn("kakao");
   };
-  if (session) {
-    router.replace("/signtag", "signtag", { shallow: true });
-  }
+
+  useEffect(() => {
+    session && mutate(session?.user?.email as string);
+  }, [session]);
+
+  useEffect(() => {
+    if (session && data && data[0].HashTag) {
+      if (data[0].HashTag.length === 0 && !alerted.current) {
+        alerted.current = true;
+        alert("유저 정보가 존재하지 않습니다. 회원가입을 진행하겠습니다");
+        router.push("/signtag");
+        return;
+      } else {
+        alert("유저 정보가 존재합니다. 로그인 되었습니다");
+        router.push("/");
+        return;
+      }
+    }
+  }, [data]);
+
   return (
     <>
       <Header text="SIGNUP" goBack />

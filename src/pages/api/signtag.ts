@@ -3,7 +3,11 @@ import client from "../../lib/client";
 
 const userSignTag = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
-    const signUserData = await client.user.findMany();
+    const signUserData = await client.user.findMany({
+      include: {
+        keywords: true,
+      },
+    });
     res.json(signUserData);
   }
   const { userData, tags } = req.body;

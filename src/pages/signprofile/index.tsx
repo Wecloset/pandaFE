@@ -10,20 +10,13 @@ import { FormEvent, useState } from "react";
 import useUpload from "../../hooks/useUpload";
 import { useMutation, useQuery } from "react-query";
 import LoadingSpinner from "../../components/loading-spinner";
-import { createImageUrl } from "../../lib/image-url";
+import { createImageUrl } from "../../utils/image-url";
 import { signOut } from "next-auth/react";
 
 interface CredentialProps {
   region: string;
   accessKey: string;
   secretKey: string;
-}
-
-interface userProps {
-  createdDate: string;
-  email: string;
-  id: number;
-  password: string;
 }
 
 const SignProfile: NextPage<CredentialProps> = ({
@@ -61,7 +54,7 @@ const SignProfile: NextPage<CredentialProps> = ({
     });
     return data;
   };
-  const { mutate: nickMutate, isLoading: nickLoaing } = useMutation(
+  const { mutate: nickMutate, isLoading: nickLoading } = useMutation(
     createNickName,
     {
       onSuccess: ({ message }) => {
@@ -143,7 +136,7 @@ const SignProfile: NextPage<CredentialProps> = ({
             placeholder="닉네임"
             className={errorLine(errors.nickname)}
           />
-          {nickLoaing ? (
+          {nickLoading ? (
             <LoadingSpinner />
           ) : (
             <button

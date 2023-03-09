@@ -37,7 +37,6 @@ const Home: NextPage = () => {
   useEffect(() => {
     const fetchSession = async () => {
       const session = await getSession();
-      console.log("session", session);
       const email = session?.user?.email;
       if (email) setUserEmail(email);
     };

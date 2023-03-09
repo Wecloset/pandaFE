@@ -36,9 +36,17 @@ export interface UserData {
     productId: number;
     userId: number;
   }[];
+  keywords: {
+    id: number;
+    tag: string;
+    userId: number;
+  }[];
   nickname: string;
   password: string;
   profileImg?: string;
+  followers: number[];
+  followings: number[];
+  product: ProductData[];
 }
 
 export interface MainProductData {

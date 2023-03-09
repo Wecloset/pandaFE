@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { errorLine, errorMessage } from "../../lib/error";
-import { regExgPw, regExpEm } from "../../lib/regInput";
+import { regExgPw, regExpEm } from "../../utils/regInput";
 import LoadingSpinner from "../loading-spinner";
 
 interface SignProps {
