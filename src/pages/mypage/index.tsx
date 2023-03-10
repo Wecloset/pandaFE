@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import type { NextPage } from "next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../../components/header";
 import { cls } from "../../utils/class";
 import productData from "../../lib/fake-data";

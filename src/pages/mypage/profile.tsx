@@ -13,11 +13,6 @@ import { taglist } from "../../lib/tag-data";
 import { currentUserState } from "../../recoil/user";
 import { UserData } from "../../types/data-type";
 
-//닉네임 완료누르면 일치하는게 있는지확인
-//일치할려면 where 을 이용해서 post 요청을 한다
-// 일치하면 alert(중복)
-// 일치하지 않으면 post 요청을 내부에서 또 보내서 닉네임 변경하게 함
-
 const ProfileEdit: NextPage = () => {
   const userData = useRecoilValue(currentUserState) as UserData;
   const router = useRouter();
@@ -48,7 +43,7 @@ const ProfileEdit: NextPage = () => {
     setSelectedTag([]);
   };
 
-  const { mutate } = useMutation(
+  const { mutate: nickMutate } = useMutation(
     async (nick: string) => {
       const { data } = await axios.post("/api/nickname", { nickname: nick });
       return data;
@@ -68,6 +63,24 @@ const ProfileEdit: NextPage = () => {
     },
   );
 
+  const { mutate: userMutate } = useMutation(
+    async (id: number) => {
+      const response = await axios.delete("/api/userdelete", {
+        data: { userId: id },
+      });
+      return response;
+    },
+    {
+      onSuccess: data => {
+        alert("회원탈퇴가 완료되었습니다");
+        router.push("/").then(() => signOut());
+      },
+      onError: error => {
+        alert("다시 시도해주세요");
+      },
+    },
+  );
+
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setNick(value);
@@ -75,7 +88,11 @@ const ProfileEdit: NextPage = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    nick && mutate(nick);
+    nick && nickMutate(nick);
+  };
+
+  const handleDelete = () => {
+    userMutate(userData.id);
   };
   return (
     <>
@@ -172,7 +189,8 @@ const ProfileEdit: NextPage = () => {
         <div
           className="flex cursor-pointer items-center justify-between py-3 hover:scale-105 hover:duration-150"
           onClick={() => (
-            alert("로그아웃이 완료되었습니다."), router.push("/"), signOut()
+            alert("로그아웃이 완료되었습니다."),
+            router.push("/").then(() => signOut())
           )}
         >
           <p className=" text-base font-bold">로그아웃</p>
@@ -181,7 +199,10 @@ const ProfileEdit: NextPage = () => {
             className=" text-xl font-bold"
           />
         </div>
-        <div className="flex cursor-pointer items-center justify-between py-3 hover:scale-105 hover:duration-150">
+        <div
+          className="flex cursor-pointer items-center justify-between py-3 hover:scale-105 hover:duration-150"
+          onClick={handleDelete}
+        >
           <p className=" text-base font-bold">회원탈퇴</p>
           <Icon
             icon="material-symbols:chevron-right-sharp"
