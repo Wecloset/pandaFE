@@ -24,7 +24,7 @@ const MarketList: NextPage<{
   } else if (filterList.length === 0 && !isLoading) {
     list = <p>상품이 존재하지 않습니다 :p</p>;
   }
-  return <ul className="flex flex-col gap-3 px-5">{list}</ul>;
+  return <ul className="flex flex-col gap-3 px-5 pb-16">{list}</ul>;
 };
 
 export default MarketList;

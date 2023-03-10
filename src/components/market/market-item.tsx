@@ -18,7 +18,7 @@ const MarketItem: NextPage<{ data: MainProductData }> = ({ data }) => {
 
   return (
     <li className="relative flex gap-[14px] border border-common-black p-3">
-      <Link href={`market/${productId}`}>
+      <Link href={`market/${productId}`} className="h-[100px] w-[100px]">
         <Image
           width={100}
           height={100}
@@ -30,7 +30,7 @@ const MarketItem: NextPage<{ data: MainProductData }> = ({ data }) => {
       </Link>
       <dl>
         <dt className="text-base font-bold">{brand}</dt>
-        <dd className="mb-2 text-textColor-gray-100">
+        <dd className="mb-2 w-52 truncate text-textColor-gray-100">
           <Link href={`market/${productId}`}>{title}</Link>
         </dd>
         <dd aria-label="가격" className="mb-1 text-base font-bold">

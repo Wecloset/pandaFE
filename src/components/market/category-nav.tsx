@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import { useContext } from "react";
-import { cls } from "../../lib/class";
+import { cls } from "../../utils/class";
 import { FilterContext } from "../../store/filter-context";
 
 const navigationList = ["전체", "상의", "하의", "아우터", "가방", "기타"];

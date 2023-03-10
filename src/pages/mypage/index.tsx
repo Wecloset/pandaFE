@@ -17,7 +17,7 @@ const MyPage: NextPage = () => {
     const target = event.target as HTMLButtonElement;
     setCategory(target.name);
   };
-  console.log(userData.keywords[0].tag.split(","));
+
   return (
     <>
       <Header />

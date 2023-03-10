@@ -73,7 +73,7 @@ const CreatePost: NextPage<CredentialProps> = ({
   const { mutate, isLoading } = useMutation(createPost, {
     onSuccess: ({ message }) => {
       alert(message);
-      router.replace("/mypage");
+      // router.replace("/mypage");
     },
     onError: ({ response }) => {
       alert(response.data.message);
