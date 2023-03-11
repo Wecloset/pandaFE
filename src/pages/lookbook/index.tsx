@@ -16,8 +16,6 @@ const Lookbook: NextPage = () => {
 
   const { data: allData, isLoading } = useQuery("lookbooks", getAllLooks);
 
-  console.log(allData);
-
   return (
     <>
       <Header />

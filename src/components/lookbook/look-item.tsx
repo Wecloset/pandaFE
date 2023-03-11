@@ -8,7 +8,7 @@ const LookItem: NextPage<{ lookbooks: LookbookData }> = ({ lookbooks }) => {
   const { user, imgurl, id } = lookbooks;
   return (
     <li className="flex h-[220px] w-[196px] items-center justify-center">
-      <Link href="">
+      <Link href={`lookbook/${id}`}>
         <div className="relative h-[190px] w-40 bg-slate-200">
           <Image
             src={imgurl[0]?.img}
