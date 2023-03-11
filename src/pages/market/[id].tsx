@@ -15,6 +15,8 @@ import { axiosGet, axiosPost } from "../../utils/services";
 import { currentUserState } from "../../recoil/user";
 import { useRouter } from "next/router";
 import { updateViews } from "../../utils/market-view";
+import { useQuery } from "react-query";
+import LoadingSpinner from "../../components/loading-spinner";
 
 interface Product {
   productData: {
@@ -28,7 +30,6 @@ const Product: NextPage<Product> = () => {
   const { id: productId } = router.query;
   const userData = useRecoilValue(currentUserState) as UserData;
 
-  const [product, setProduct] = useState<ProductData | null>();
   const [isLikeActive, setIsLikeActive] = useState<boolean | null>(null);
   const [likeValue, setLikeValue] = useState<number>(0);
 
@@ -44,11 +45,13 @@ const Product: NextPage<Product> = () => {
   const getProductData = async () => {
     try {
       const { data } = await axiosGet(`/api/products/${productId}`);
-      setProduct(data.product);
+      return data.product;
     } catch (err) {
       console.log(err);
     }
   };
+
+  const { data: product, isLoading } = useQuery("getProduct", getProductData);
 
   const pageSetting = () => {
     if (product && productId) {
@@ -73,8 +76,11 @@ const Product: NextPage<Product> = () => {
     const { fav } = product;
     const { id: userId } = userData;
 
-    if (fav.length > 0)
-      fav.forEach(item => (isExisted = item.userId === userId ? true : false));
+    if (fav?.length > 0)
+      fav.forEach(
+        (item: { userId: number }) =>
+          (isExisted = item.userId === userId ? true : false),
+      );
     // 첫 렌더링 요청X or 이미 찜한상품일 경우 요청X
     if (isLikeActive === null || (isLikeActive && isExisted)) return;
 
@@ -82,19 +88,20 @@ const Product: NextPage<Product> = () => {
   }, [isLikeActive]);
 
   useEffect(() => {
-    if (productId) getProductData();
-  }, [productId]);
-
-  useEffect(() => {
     pageSetting();
-  }, [userData, product]);
+  }, [userData]);
 
   return (
     <>
       <Header goBack />
       {product && (
         <>
-          <ImageSlide images={product.imgurl} />
+          <ImageSlide images={product.imgurl} isLoading={isLoading} />
+          {isLoading && (
+            <div className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
+              <LoadingSpinner />
+            </div>
+          )}
           <div className="p-5">
             <div className="flex justify-between">
               <div>
@@ -136,13 +143,13 @@ const Product: NextPage<Product> = () => {
               <p className="mb-8 whitespace-pre-wrap">{product.description}</p>
               {product.hashTag && (
                 <ul className="flex space-x-3 text-primary-violet">
-                  {product.hashTag?.map(item => (
+                  {product.hashTag?.map((item: { id: number; tag: string }) => (
                     <li key={item.id}>#{item.tag}</li>
                   ))}
                 </ul>
               )}
             </div>
-            <div className="py-5">
+            <div className="py-5 pb-20">
               <h3 className="mb-4 text-lg font-bold">Seller</h3>
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -157,7 +164,7 @@ const Product: NextPage<Product> = () => {
               </div>
             </div>
           </div>
-          <div className="fixed bottom-0 flex w-[390px] items-center justify-between pl-5">
+          <div className="fixed bottom-0 flex w-[390px] items-center justify-between border border-t-common-black bg-white pt-5 pl-5">
             <p className="text-2xl font-bold">
               {priceAddComma(product.price)}
               <span className="text-lg">원</span>

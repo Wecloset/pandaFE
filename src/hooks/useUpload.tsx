@@ -1,5 +1,5 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface credentialProps {
   region: string;
@@ -24,10 +24,10 @@ const useUpload = ({ region, accessKey, secretKey }: credentialProps) => {
     },
   });
 
-  const uploadImage = useCallback(async (file: File) => {
+  const uploadImage = useCallback(async (file: File, path: string) => {
     const encodedName = Buffer.from(file.name).toString("base64");
     const ext = file.type.split("/")[1];
-    const key = `products/${encodedName.substring(0, 11)}.${ext}`;
+    const key = `${path}/${encodedName}.${ext}`;
     const bucketParams = {
       Bucket: "panda-products",
       Key: key,

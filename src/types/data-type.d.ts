@@ -79,3 +79,17 @@ export interface UserData {
   followers: number[];
   followings: number[];
 }
+
+export interface LookbookData {
+  id: number;
+  createdDate: string;
+  description: string;
+  hashTag: { id: number; tag: string }[];
+  imgurl: { id: number; img: string }[];
+  product: ProductDataMin[];
+  likes: number;
+  userId: number;
+  user: {
+    nickname: string;
+  };
+}

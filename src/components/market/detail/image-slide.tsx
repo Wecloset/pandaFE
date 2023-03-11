@@ -2,7 +2,8 @@ import { Icon } from "@iconify/react";
 import { NextPage } from "next";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { cls } from "../../../lib/class";
+import { cls } from "../../../utils/class";
+import LoadingSpinner from "../../loading-spinner";
 
 interface Images {
   id: number;
@@ -24,7 +25,10 @@ const translateClasses: { [key: string]: string } = {
   10: "transform -translate-x-[3900px]",
 };
 
-const ImageSlide: NextPage<{ images: Images[] }> = ({ images }) => {
+const ImageSlide: NextPage<{ images: Images[]; isLoading: boolean }> = ({
+  images,
+  isLoading,
+}) => {
   const [slideCount, setSlideCount] = useState<number>(1);
   const [translateX, setTranslateX] = useState<string>("");
   const [isMoving, setIsMoving] = useState<boolean>(false);
@@ -60,6 +64,7 @@ const ImageSlide: NextPage<{ images: Images[] }> = ({ images }) => {
   return (
     <div className="relative">
       <div className="h-[370px] w-full overflow-hidden bg-slate-200">
+        {isLoading && <LoadingSpinner />}
         <ul
           className={cls(
             `flex h-[370px] [&>li]:flex-shrink-0 ${translateX}`,
@@ -73,7 +78,7 @@ const ImageSlide: NextPage<{ images: Images[] }> = ({ images }) => {
               alt="상품이미지00"
               width={390}
               height={370}
-              className="object-cover"
+              className="h-[370px] w-[390px] object-cover"
             />
           </li>
           {images.map(item => (

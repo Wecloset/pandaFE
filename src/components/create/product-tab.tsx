@@ -25,7 +25,7 @@ const ProductTagTab: NextPage<ProductTagTabProps> = ({
     const id = e.target.id;
 
     let tagItem: ProductDataMin;
-    product.forEach(item => {
+    product?.forEach(item => {
       if (item.id === +id) tagItem = item;
     });
 
@@ -52,7 +52,7 @@ const ProductTagTab: NextPage<ProductTagTabProps> = ({
   }, [tagItems]);
 
   const notice =
-    product.length > 0
+    product?.length > 0
       ? "게시물에 태그할 상품을 선택해 주세요."
       : "태그할 수 있는 상품이 없습니다.";
 
