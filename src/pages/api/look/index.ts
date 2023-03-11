@@ -44,12 +44,10 @@ const updateLookbook = async (req: NextApiRequest, res: NextApiResponse) => {
           user: true,
           product: {
             select: {
-              imgurl: {
-                select: {
-                  id: true,
-                  img: true,
-                },
-              },
+              title: true,
+              price: true,
+              brand: true,
+              imgurl: true,
             },
           },
           hashTag: true,
@@ -57,7 +55,7 @@ const updateLookbook = async (req: NextApiRequest, res: NextApiResponse) => {
       });
       res.status(200).send(allLookbooks);
     } catch (err) {
-      res.status(400).send({ message: "리스트 가져오는데 실패했습니다." });
+      res.status(400).send({ message: "리스트를 가져오는데 실패했습니다." });
     }
   }
 };

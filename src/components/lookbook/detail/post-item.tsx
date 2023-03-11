@@ -1,41 +1,46 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
+import { LookbookData } from "../../../types/data-type";
 import ImageSlide from "../../market/detail/image-slide";
 import TagItem from "./tag-item";
 
-const PostItem: NextPage = () => {
+const PostItem: NextPage<LookbookData> = ({
+  description,
+  imgurl,
+  product,
+  hashTag,
+  user,
+  likes,
+}) => {
   return (
     <>
-      <div className="flex items-center justify-between p-4">
+      <div className="flex items-center justify-between px-5 py-3">
         <div className="flex items-center">
-          <div className="mr-3 h-10 w-10 rounded-full border border-common-black"></div>
+          <img
+            src={user.profileImg}
+            alt=""
+            className="mr-3 h-10 w-10 rounded-full border-2 border-common-black"
+          />
           <div>
-            <p className="text-sm font-bold">username</p>
-            <p className="text-xs text-commom-gray">2023.03.11</p>
+            <p className="text-sm font-bold">{user.nickname}</p>
           </div>
         </div>
       </div>
-      <div className="relative">
-        <div className="h-[370px] w-full bg-slate-200" />
-        <div className="absolute top-1/2 flex w-full items-center justify-between px-5 text-2xl">
-          <Icon icon="material-symbols:chevron-left" className="invisible" />
-          <Icon icon="material-symbols:chevron-right" />
-        </div>
-        <div className="absolute bottom-2 flex h-[3px] w-[390px] justify-center space-x-0.5">
-          <span className="block h-[3px] w-11 bg-white" />
-          <span className="block h-[3px] w-11 bg-white" />
-          <span className="block h-[3px] w-11 bg-white" />
-        </div>
-      </div>
-      {/* <ImageSlide /> */}
+      <ImageSlide images={imgurl} />
       <div className="relative p-5">
         <div>
-          <div className="mb-4 flex gap-2 text-xs text-commom-gray">
-            <div>조회 128</div>
-            <div>좋아요 48</div>
+          <div className="mb-3 flex gap-2 text-xs text-commom-gray">
+            <div>2023.03.11</div>
+            <div>좋아요 {likes}</div>
           </div>
           <p className="mb-2">
-            텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트
+            <span className="mr-2">{description}</span>
+            {hashTag.map(({ tag }, i) => (
+              <span key={`태그${i}`} className="mr-1">
+                <span>#</span>
+                <span>{tag}</span>
+              </span>
+            ))}
           </p>
           <span className="w-auto cursor-pointer text-commom-gray hover:underline">
             댓글 2개
@@ -57,12 +62,14 @@ const PostItem: NextPage = () => {
             </li>
           </ul>
         </div>
-        <div className="border-t border-borderColor-gray">
-          <h2 className="mt-[18px] text-lg">Tagged</h2>
-          <ul className="mt-3 flex gap-2 overflow-y-scroll scrollbar-hide">
-            <TagItem />
-          </ul>
-        </div>
+        {product.length > 0 && (
+          <div className="border-t border-borderColor-gray">
+            <h2 className="mt-[18px] text-lg">Tagged</h2>
+            <ul className="mt-3 flex gap-2 overflow-y-scroll scrollbar-hide">
+              <TagItem {...product} />
+            </ul>
+          </div>
+        )}
       </div>
     </>
   );

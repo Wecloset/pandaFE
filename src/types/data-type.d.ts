@@ -91,5 +91,6 @@ export interface LookbookData {
   userId: number;
   user: {
     nickname: string;
+    profileImg: string;
   };
 }
