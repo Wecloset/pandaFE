@@ -5,12 +5,12 @@ import ImageSlide from "../../market/detail/image-slide";
 import TagItem from "./tag-item";
 
 const PostItem: NextPage<LookbookData> = ({
-  description,
-  imgurl,
-  product,
-  hashTag,
   user,
+  imgurl,
   likes,
+  description,
+  hashTag,
+  product,
 }) => {
   return (
     <>
@@ -35,7 +35,7 @@ const PostItem: NextPage<LookbookData> = ({
           </div>
           <p className="mb-2">
             <span className="mr-2">{description}</span>
-            {hashTag.map(({ tag }, i) => (
+            {hashTag?.map(({ tag }, i) => (
               <span key={`태그${i}`} className="mr-1">
                 <span>#</span>
                 <span>{tag}</span>

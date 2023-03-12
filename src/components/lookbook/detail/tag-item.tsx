@@ -7,7 +7,7 @@ import { priceAddComma } from "../../../utils/markets";
 const TagItem: NextPage<ProductDataMin[]> = product => {
   return (
     <>
-      {product?.map(({ id, imgurl, title, brand, price }) => (
+      {Object.values(product).map(({ id, imgurl, title, brand, price }) => (
         <li
           key={id}
           className="flex min-w-[200px] items-center justify-between"

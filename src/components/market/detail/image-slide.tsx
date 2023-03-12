@@ -88,7 +88,7 @@ const ImageSlide: NextPage<{ images: Images[]; isLoading?: boolean }> = ({
                 alt={`상품이미지${item.id}`}
                 width={390}
                 height={370}
-                className="object-cover"
+                className="h-[370px] w-[390px] object-cover"
               />
             </li>
           ))}
@@ -98,7 +98,7 @@ const ImageSlide: NextPage<{ images: Images[]; isLoading?: boolean }> = ({
               alt="상품이미지"
               width={390}
               height={370}
-              className="object-cover"
+              className="h-[370px] w-[390px] object-cover"
             />
           </li>
         </ul>
