@@ -73,7 +73,7 @@ const MyPage: NextPage = () => {
                 return (
                   <div
                     key={index}
-                    className=" mx-1 rounded-xl border-[1px] border-solid border-black px-1 py-1"
+                    className="mx-1 rounded-xl border-[1px] border-solid border-black px-1 py-1"
                   >
                     {`#${item}`}
                   </div>

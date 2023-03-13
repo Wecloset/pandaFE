@@ -6,24 +6,27 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useMutation } from "react-query";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import Header from "../../components/header";
 import Navigation from "../../components/navigation";
 import { taglist } from "../../lib/tag-data";
-import { currentUserState } from "../../recoil/user";
+import { currentUserState, userState } from "../../recoil/user";
 import { UserData } from "../../types/data-type";
 
 const ProfileEdit: NextPage = () => {
   const userData = useRecoilValue(currentUserState) as UserData;
+  const setUser = useSetRecoilState(userState);
   const router = useRouter();
   const [isTab, setIsTab] = useState<boolean>(false);
-  const [isNick, setIsNick] = useState<boolean>(true);
+  const [isNick, setIsNick] = useState<boolean>(false);
+  const [isTag, setIsTag] = useState<boolean>(false);
   const [nick, setNick] = useState("");
   const allSelectedTag = taglist.value;
   const newArray: string[] = [];
   const [selectedTag, setSelectedTag] = useState<string[]>(
     userData.keywords[0].tag.split(","),
   );
+
   const onClick = (data: string) => {
     setSelectedTag([...selectedTag, data]);
     const deduplication = selectedTag.includes(data);
@@ -55,10 +58,39 @@ const ProfileEdit: NextPage = () => {
           id: userData.id,
           nickname: data.nickname,
         });
-        setIsNick(true);
+        setIsNick(false);
+        axios
+          .post("/api/user", {
+            data: { userEmail: userData.email },
+          })
+          .then(res => setUser(res.data.user));
       },
       onError: error => {
         alert("닉네임이 중복됩니다");
+      },
+    },
+  );
+
+  const { mutate: tagMutate } = useMutation(
+    async (tag: string[]) => {
+      const { data } = await axios.post("/api/tagchange", {
+        tags: tag,
+        id: userData.keywords[0].id,
+      });
+      return data;
+    },
+    {
+      onSuccess: data => {
+        alert("태그변경이 완료되었습니다.");
+        setIsTag(false);
+        axios
+          .post("/api/user", {
+            data: { userEmail: userData.email },
+          })
+          .then(res => setUser(res.data.user));
+      },
+      onError: error => {
+        alert("태그변경이 잘못됫습니다");
       },
     },
   );
@@ -88,12 +120,23 @@ const ProfileEdit: NextPage = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    nick && nickMutate(nick);
+    const formId = (event.target as HTMLFormElement).id;
+    formId === "nickname-form" && nick && nickMutate(nick);
+  };
+
+  const handleTagSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formId = (event.target as HTMLFormElement).id;
+    isTag && formId === "tag-form" && tagMutate(selectedTag);
   };
 
   const handleDelete = () => {
     userMutate(userData.id);
   };
+
+  const tagButtonText = isTag ? "완료" : "변경";
+  const nickButtonText = isNick ? "완료" : "변경";
+
   return (
     <>
       <Header goBack text="PROFILE" />
@@ -111,38 +154,43 @@ const ProfileEdit: NextPage = () => {
           <p className="px-2 text-base font-bold">유저정보 수정</p>
           <p className="text-textColor-gr ay-100 mt-5 px-2 text-sm">닉네임</p>
           <form
+            id="nickname-form"
             className="my-2 flex w-full justify-between px-3"
             onSubmit={handleSubmit}
           >
             <input
               placeholder={userData.nickname}
               className="border-b-[1px] border-solid border-black bg-transparent text-black outline-0 placeholder:text-textColor-gray-100"
-              disabled={isNick}
+              disabled={!isNick}
               onChange={onChange}
             />
             <button
               type="submit"
               className=" ml-3 h-9 w-2/5 bg-black text-white hover:bg-primary-green"
-              onClick={() => setIsNick(false)}
+              onClick={() => setIsNick(true)}
             >
-              {isNick ? "변경" : "완료"}
+              {nickButtonText}
             </button>
           </form>
           <p className="mt-5 px-2 text-sm text-textColor-gray-100">키워드</p>
-          <div className="my-2 flex w-full justify-between px-3">
-            <div className="flex w-full items-center border-b-[1px] border-solid border-black outline-0 placeholder:text-black">
-              {userData.keywords[0].tag}
+          <form onSubmit={handleTagSubmit} id="tag-form">
+            <div className="my-2 flex w-full justify-between px-3">
+              <div className="flex w-full items-center border-b-[1px] border-solid border-black outline-0 placeholder:text-black">
+                {userData.keywords[0].tag.split(",") === selectedTag
+                  ? userData.keywords[0].tag
+                  : selectedTag.join(",")}
+              </div>
+              <button
+                type="submit"
+                className=" ml-3 h-9 w-2/5 bg-black text-white hover:bg-primary-green"
+                onClick={() => {
+                  setIsTab(true);
+                }}
+              >
+                {tagButtonText}
+              </button>
             </div>
-            <button
-              type="button"
-              className=" ml-3 h-9 w-2/5 bg-black text-white hover:bg-primary-green"
-              onClick={() => {
-                setIsTab(true);
-              }}
-            >
-              변경
-            </button>
-          </div>
+          </form>
         </div>
       </div>
 
@@ -155,7 +203,13 @@ const ProfileEdit: NextPage = () => {
               className="absolute top-4 right-4 z-50 h-7 w-7 cursor-pointer"
               onClick={() => setIsTab(false)}
             />
-            <button className="absolute bottom-5 right-5 z-50 cursor-pointer font-bold">
+            <button
+              type="button"
+              className="absolute bottom-5 right-5 z-50 cursor-pointer font-bold"
+              onClick={() => {
+                setIsTab(false), setIsTag(true);
+              }}
+            >
               완료
             </button>
           </div>

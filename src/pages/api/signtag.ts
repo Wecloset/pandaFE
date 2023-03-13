@@ -11,6 +11,7 @@ const userSignTag = async (req: NextApiRequest, res: NextApiResponse) => {
     res.json(signUserData);
   }
   const { userData, tags } = req.body;
+  console.log(tags);
   if (req.method === "POST") {
     try {
       await client.hashTag.create({

@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 
 const Navigation: NextPage = () => {
   const { pathname } = useRouter();
+  const router = useRouter();
   const { data: session } = useSession();
   return (
     <div className="fixed bottom-0 z-20 flex h-12 w-[390px] items-center justify-between bg-black p-5 text-lg shadow dark:border-gray-600 dark:bg-gray-800">
@@ -50,7 +51,9 @@ const Navigation: NextPage = () => {
                 ? "text-primary-violet"
                 : "text-white"
             }`}
-            onClick={() => alert("로그인 후 이용가능합니다")}
+            onClick={() => {
+              alert("로그인 후 이용가능합니다"), router.push("/login");
+            }}
           >
             MYPAGE
           </button>
