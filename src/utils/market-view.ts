@@ -20,7 +20,7 @@ export const updateViews = (
   currentView: number,
 ) => {
   const productLog = JSON.parse(GET_VIEWLIST as string);
-  const viewProducts = productLog.map((item: Views) => {
+  const viewProducts = productLog?.map((item: Views) => {
     if (item.user === userEmail) return item.product;
   });
 

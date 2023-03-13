@@ -19,7 +19,7 @@ const Header: NextPage<HeaderProps> = ({ goBack, text, noGoBack }) => {
   return (
     <>
       {!goBack ? (
-        <div className="sticky top-0 z-10 flex h-[60px] items-center justify-between border-b border-black bg-white px-5">
+        <div className="sticky top-0 z-10 flex h-[60px] items-center justify-between border-b border-b-common-black bg-white px-5">
           <Link href="/">
             <Image src={logo} alt="로고이미지" className="h-10 w-7" />
           </Link>
@@ -33,7 +33,7 @@ const Header: NextPage<HeaderProps> = ({ goBack, text, noGoBack }) => {
           </div>
         </div>
       ) : (
-        <div className="sticky top-0 z-10 flex h-[60px] items-center  bg-white px-3">
+        <div className="sticky top-0 z-10 flex h-[60px] items-center border-b border-b-common-black bg-white px-3">
           {!noGoBack ? (
             <>
               <button

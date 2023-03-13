@@ -21,6 +21,7 @@ model User {
   profileImg  String?
   nickname    String?   @unique
   keywords    HashTag[]
+  look        Look[]
 }
 
 model Product {
@@ -69,6 +70,8 @@ model Look {
   product     Product[]
   hashTag     HashTag[]
   likes       Int       @default(0)
+  User        User?     @relation(fields: [userId], references: [id])
+  userId      Int?
 }
 
 model Fav {

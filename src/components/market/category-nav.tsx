@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import { useContext } from "react";
-
+import { cls } from "../../utils/class";
 import { FilterContext } from "../../store/filter-context";
 import { cls } from "../../utils/class";
 

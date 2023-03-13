@@ -1,19 +1,12 @@
-import React, { useState } from "react";
-import { tabData } from "../lib/fake-data";
+import { FormEvent, MouseEvent, useState } from "react";
+import { Options } from "../types/create-type";
 
-interface Options {
-  [key: string]: { name: string; current: boolean; list: string[] };
-}
-
-const useOptions = () => {
+const useOptions = (initialValues: Options) => {
+  const initialOptions = initialValues ? initialValues : {};
   const [isTabOpen, setIsTabOpen] = useState<boolean>(false);
-  const [options, setOptions] = useState<Options>({
-    category: { name: "카테고리", current: false, list: tabData.category },
-    style: { name: "스타일", current: false, list: tabData.style },
-    brand: { name: "브랜드", current: false, list: tabData.brand },
-    rental: { name: "대여 가능", current: false, list: tabData.rental },
-  });
+  const [options, setOptions] = useState<Options>(initialOptions);
 
+  const openTab = () => setIsTabOpen(true);
   const closeTab = () => setIsTabOpen(false);
 
   const openOptionItem = (name: string) => {
@@ -29,10 +22,7 @@ const useOptions = () => {
     setIsTabOpen(true);
   };
 
-  const selectOptionItem = (
-    event: React.MouseEvent<HTMLLIElement>,
-    name: string,
-  ) => {
+  const selectOptionItem = (event: MouseEvent<HTMLLIElement>, name: string) => {
     const target = event.target as HTMLLIElement;
     const newTabItem: Options = {};
     for (const key in options) {
@@ -47,7 +37,7 @@ const useOptions = () => {
   };
 
   const submitBrand = (
-    event: React.FormEvent<HTMLFormElement>,
+    event: FormEvent<HTMLFormElement>,
     brandName: string,
   ) => {
     event.preventDefault();
@@ -69,6 +59,7 @@ const useOptions = () => {
     openOptionItem,
     selectOptionItem,
     submitBrand,
+    openTab,
     closeTab,
   };
 };
