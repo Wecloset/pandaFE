@@ -68,12 +68,12 @@ const MyPage: NextPage = () => {
                 <div>products</div>
               </div>
             </div>
-            <div className="flex items-center justify-center">
+            <div className="flex flex-wrap justify-center">
               {userData.keywords[0].tag.split(",").map((item, index) => {
                 return (
                   <div
                     key={index}
-                    className="mx-1 rounded-xl border-[1px] border-solid border-black px-1 py-1"
+                    className="mx-1 my-1 rounded-xl border-[1px] border-solid border-black px-1 py-1"
                   >
                     {`#${item}`}
                   </div>

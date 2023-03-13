@@ -127,7 +127,7 @@ const ProfileEdit: NextPage = () => {
   const handleTagSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formId = (event.target as HTMLFormElement).id;
-    isTag && formId === "tag-form" && tagMutate(selectedTag);
+    tagButtonText === "완료" && formId === "tag-form" && tagMutate(selectedTag);
   };
 
   const handleDelete = () => {
@@ -175,16 +175,18 @@ const ProfileEdit: NextPage = () => {
           <p className="mt-5 px-2 text-sm text-textColor-gray-100">키워드</p>
           <form onSubmit={handleTagSubmit} id="tag-form">
             <div className="my-2 flex w-full justify-between px-3">
-              <div className="flex w-full items-center border-b-[1px] border-solid border-black outline-0 placeholder:text-black">
+              <div className=" flex w-full items-center whitespace-nowrap border-b-[1px] border-solid border-black text-textColor-gray-100 outline-0">
                 {userData.keywords[0].tag.split(",") === selectedTag
                   ? userData.keywords[0].tag
-                  : selectedTag.join(",")}
+                  : selectedTag.length < 20
+                  ? selectedTag.join(", ").slice(0, 22) + " ..."
+                  : selectedTag.join(", ")}
               </div>
               <button
                 type="submit"
                 className=" ml-3 h-9 w-2/5 bg-black text-white hover:bg-primary-green"
                 onClick={() => {
-                  setIsTab(true);
+                  tagButtonText === "변경" && setIsTab(true);
                 }}
               >
                 {tagButtonText}
