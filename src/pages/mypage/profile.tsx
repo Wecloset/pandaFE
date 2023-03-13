@@ -26,6 +26,8 @@ const ProfileEdit: NextPage = () => {
   const [selectedTag, setSelectedTag] = useState<string[]>(
     userData.keywords[0].tag.split(","),
   );
+  const tagButtonText = isTag ? "완료" : "변경";
+  const nickButtonText = isNick ? "완료" : "변경";
 
   const onClick = (data: string) => {
     setSelectedTag([...selectedTag, data]);
@@ -54,11 +56,12 @@ const ProfileEdit: NextPage = () => {
     {
       onSuccess: data => {
         alert("닉네임변경이 완료되었습니다.");
+        setIsNick(false);
+        setNick("");
         axios.post("/api/nickchange", {
           id: userData.id,
           nickname: data.nickname,
         });
-        setIsNick(false);
         axios
           .post("/api/user", {
             data: { userEmail: userData.email },
@@ -118,10 +121,16 @@ const ProfileEdit: NextPage = () => {
     setNick(value);
   };
 
+  console.log(nick);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formId = (event.target as HTMLFormElement).id;
-    formId === "nickname-form" && nick && nickMutate(nick);
+    nickButtonText === "완료" &&
+      formId === "nickname-form" &&
+      isNick &&
+      nick !== "" &&
+      nickMutate(nick);
   };
 
   const handleTagSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -133,10 +142,6 @@ const ProfileEdit: NextPage = () => {
   const handleDelete = () => {
     userMutate(userData.id);
   };
-
-  const tagButtonText = isTag ? "완료" : "변경";
-  const nickButtonText = isNick ? "완료" : "변경";
-
   return (
     <>
       <Header goBack text="PROFILE" />
@@ -167,7 +172,7 @@ const ProfileEdit: NextPage = () => {
             <button
               type="submit"
               className=" ml-3 h-9 w-2/5 bg-black text-white hover:bg-primary-green"
-              onClick={() => setIsNick(true)}
+              onClick={() => nickButtonText === "변경" && setIsNick(true)}
             >
               {nickButtonText}
             </button>
