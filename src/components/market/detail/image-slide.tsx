@@ -2,12 +2,13 @@ import { Icon } from "@iconify/react";
 import { NextPage } from "next";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { cls } from "../../../lib/class";
+import { cls } from "../../../utils/class";
+import LoadingSpinner from "../../loading-spinner";
 
 interface Images {
   id: number;
   img: string;
-  productId: number;
+  productId?: number;
 }
 
 const translateClasses: { [key: string]: string } = {
@@ -24,7 +25,10 @@ const translateClasses: { [key: string]: string } = {
   10: "transform -translate-x-[3900px]",
 };
 
-const ImageSlide: NextPage<{ images: Images[] }> = ({ images }) => {
+const ImageSlide: NextPage<{ images: Images[]; isLoading?: boolean }> = ({
+  images,
+  isLoading,
+}) => {
   const [slideCount, setSlideCount] = useState<number>(1);
   const [translateX, setTranslateX] = useState<string>("");
   const [isMoving, setIsMoving] = useState<boolean>(false);
@@ -59,10 +63,11 @@ const ImageSlide: NextPage<{ images: Images[] }> = ({ images }) => {
 
   return (
     <div className="relative">
-      <div className="h-[370px] w-full overflow-hidden bg-slate-200">
+      <div className="min-h-[370px] w-full overflow-hidden bg-slate-200">
+        {isLoading && <LoadingSpinner />}
         <ul
           className={cls(
-            `flex h-[370px] [&>li]:flex-shrink-0 ${translateX}`,
+            `flex min-h-[370px] [&>li]:flex-shrink-0 ${translateX}`,
             isMoving ? `transition duration-300 ease-out` : "",
           )}
           onTransitionEnd={transitionEnd}
@@ -73,7 +78,7 @@ const ImageSlide: NextPage<{ images: Images[] }> = ({ images }) => {
               alt="상품이미지00"
               width={390}
               height={370}
-              className="object-cover"
+              className="h-[370px] w-[390px] object-cover"
             />
           </li>
           {images.map(item => (
@@ -83,7 +88,7 @@ const ImageSlide: NextPage<{ images: Images[] }> = ({ images }) => {
                 alt={`상품이미지${item.id}`}
                 width={390}
                 height={370}
-                className="object-cover"
+                className="h-[370px] w-[390px] object-cover"
               />
             </li>
           ))}
@@ -93,23 +98,25 @@ const ImageSlide: NextPage<{ images: Images[] }> = ({ images }) => {
               alt="상품이미지"
               width={390}
               height={370}
-              className="object-cover"
+              className="h-[370px] w-[390px] object-cover"
             />
           </li>
         </ul>
       </div>
-      <div className="absolute top-1/2 flex w-[390px] items-center justify-between px-5 text-2xl">
-        <Icon
-          icon="material-symbols:chevron-left"
-          className="absolute left-2"
-          onClick={slideCountDown}
-        />
-        <Icon
-          icon="material-symbols:chevron-right"
-          className="absolute right-2"
-          onClick={slideCountUp}
-        />
-      </div>
+      {images.length > 1 && (
+        <div className="absolute top-1/2 flex w-[390px] items-center justify-between px-5 text-2xl text-textColor-gray-50">
+          <Icon
+            icon="material-symbols:chevron-left"
+            className="absolute left-2"
+            onClick={slideCountDown}
+          />
+          <Icon
+            icon="material-symbols:chevron-right"
+            className="absolute right-2"
+            onClick={slideCountUp}
+          />
+        </div>
+      )}
       <div className="absolute bottom-2 flex h-[3px] w-[390px] justify-center space-x-0.5">
         {images.map((item, i) => (
           <span
