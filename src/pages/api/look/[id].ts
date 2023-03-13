@@ -30,6 +30,7 @@ const lookbookDetail = async (req: NextApiRequest, res: NextApiResponse) => {
               author: true,
             },
           },
+          fav: true,
         },
       });
       res.status(200).send(post);

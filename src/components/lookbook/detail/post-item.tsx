@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { currentUserState } from "../../../recoil/user";
 import { LookbookData, UserData } from "../../../types/data-type";
@@ -18,7 +18,7 @@ const PostItem: NextPage<PostItemProps> = ({
   id,
   user,
   imgurl,
-  likes,
+  fav,
   description,
   hashTag,
   product,
@@ -29,7 +29,15 @@ const PostItem: NextPage<PostItemProps> = ({
 }) => {
   const userData = useRecoilValue(currentUserState) as UserData;
   const { nickname: currentUserNickname } = userData;
+  const { id: currentUserId } = userData;
   const [showComment, setShowComment] = useState<boolean>(false);
+  const [isFavActive, setIsFavActive] = useState<boolean>(false);
+
+  useEffect(() => {
+    fav?.forEach((item: { userId: number }) => {
+      item.userId === currentUserId && setIsFavActive(true);
+    });
+  }, []);
 
   return (
     <>
@@ -50,13 +58,13 @@ const PostItem: NextPage<PostItemProps> = ({
         <div>
           <div className="mb-3 flex gap-2 text-xs text-commom-gray">
             <div>2023.03.11</div>
-            <div>좋아요 {likes}</div>
+            <div>좋아요 {fav?.length ?? 0}</div>
           </div>
           <p className="mb-2">
             <span className="mr-2">{description}</span>
             {hashTag?.map(({ tag }, i) => (
               <span key={`태그${i}`} className="mr-1">
-                <span>{`#${tag}`}</span>
+                {tag !== "" && `#${tag}`}
               </span>
             ))}
           </p>
@@ -69,7 +77,11 @@ const PostItem: NextPage<PostItemProps> = ({
         </div>
         <div className="absolute top-4 right-4 flex items-center gap-3 text-2xl [&>svg]:cursor-pointer">
           <Icon icon="ci:chat-circle" onClick={() => setInput(id, true)} />
-          <Icon icon="icon-park-outline:like" />
+          {isFavActive ? (
+            <Icon icon="icon-park-solid:like" color="#ff5252" />
+          ) : (
+            <Icon icon="icon-park-outline:like" />
+          )}
         </div>
         {showComment && comment?.length > 0 && (
           <div className="py-4">

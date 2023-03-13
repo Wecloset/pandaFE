@@ -39,8 +39,7 @@ model Product {
   view        Int       @default(0)
   user        User      @relation(fields: [userId], references: [id])
   userId      Int
-  look        Look?     @relation(fields: [lookId], references: [id])
-  lookId      Int?
+  look        Look[]
   hashTag     HashTag[]
   fav         Fav[]
 }
@@ -70,18 +69,18 @@ model Look {
   imgurl      Img[]
   product     Product[]
   hashTag     HashTag[]
-  likes       Int       @default(0)
   user        User      @relation(fields: [userId], references: [id])
   userId      Int
+  fav         Fav[]
   comment     Comment[]
 }
 
 model Fav {
-  id        Int     @id @default(autoincrement())
-  fav       Product @relation(fields: [productId], references: [id])
-  productId Int
-  user      User?   @relation(fields: [userId], references: [id])
-  userId    Int?
+  id       Int       @id @default(autoincrement())
+  products Product[]
+  looks    Look[]
+  user     User[]
+  userId   Int
 }
 
 model Comment {

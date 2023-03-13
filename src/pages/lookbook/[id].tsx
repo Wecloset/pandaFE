@@ -20,6 +20,7 @@ const Post: NextPage = () => {
   const { ref, inView } = useInView();
   const { register, handleSubmit } = useForm();
   const userData = useRecoilValue(currentUserState) as UserData;
+  const { id: userId } = userData;
 
   const [showInput, setShowInput] = useState<boolean>(false);
   const [commentValue, setCommentValue] = useState<string>("");
@@ -27,8 +28,12 @@ const Post: NextPage = () => {
   const [postId, setPostId] = useState<number>(0);
   const [commentId, setCommentId] = useState<number>(0);
 
+  // const updateFav = async () => {
+  //   const { data } = await axios.post(`api/look/post?fav=${lookbookId}`);
+  //   return data;
+  // };
+
   const submitComment = async (comment?: string) => {
-    const { id: userId } = userData;
     const payload = { comment, userId };
 
     if (!isUpdating) {

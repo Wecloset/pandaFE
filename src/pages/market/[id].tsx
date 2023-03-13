@@ -58,12 +58,12 @@ const Product: NextPage<Product> = () => {
       setLikeValue(product.fav.length);
 
       if (!userData) return;
-      const { email: userEmail, fav } = userData;
+      const { email: userEmail, id: currentUserId } = userData;
       updateViews(userEmail, +productId, product.view);
 
       // fav button style setting
-      fav?.forEach((item: { productId: number }) => {
-        item.productId === +productId && setIsLikeActive(true);
+      product.fav.forEach((item: { userId: number }) => {
+        item.userId === currentUserId && setIsLikeActive(true);
       });
     }
   };
@@ -89,7 +89,7 @@ const Product: NextPage<Product> = () => {
 
   useEffect(() => {
     pageSetting();
-  }, [userData]);
+  }, [userData, product]);
 
   return (
     <>

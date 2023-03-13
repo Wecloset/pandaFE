@@ -104,7 +104,7 @@ const ImageSlide: NextPage<{ images: Images[]; isLoading?: boolean }> = ({
         </ul>
       </div>
       {images.length > 1 && (
-        <div className="absolute top-1/2 flex w-[390px] items-center justify-between px-5 text-2xl text-textColor-gray-50">
+        <div className="absolute top-1/2 flex w-[390px] items-center justify-between px-5 text-2xl text-common-black">
           <Icon
             icon="material-symbols:chevron-left"
             className="absolute left-2"

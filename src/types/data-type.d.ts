@@ -64,8 +64,8 @@ export interface UserData {
   id: number;
   fav: {
     id: number;
-    productId: number;
-    userId: number;
+    products: ProductDataMin[];
+    looks: LookbookData[];
   }[];
   product: ProductData[] | ProductDataMin[];
   keywords: {
@@ -92,7 +92,11 @@ export interface LookbookData {
     text: string;
     author: { nickname: string };
   }[];
-  likes: number;
+  fav: {
+    id: number;
+    productId: number;
+    userId: number;
+  }[];
   userId: number;
   user: {
     nickname: string;
