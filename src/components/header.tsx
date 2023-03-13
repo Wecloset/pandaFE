@@ -23,9 +23,6 @@ const Header: NextPage<HeaderProps> = ({ goBack, text, noGoBack }) => {
           <Link href="/">
             <Image src={logo} alt="로고이미지" className="h-10 w-7" />
           </Link>
-          <button type="button" onClick={() => signOut()}>
-            SignOut
-          </button>
           <div className="flex">
             <Link href="" className="text-[28px]">
               <Icon icon="uil:message" aria-label="채팅하기" />
@@ -49,7 +46,7 @@ const Header: NextPage<HeaderProps> = ({ goBack, text, noGoBack }) => {
                   aria-label="뒤로가기"
                 />
               </button>
-              <p className="flex w-4/5 select-none justify-center text-base font-bold">
+              <p className="flex w-[88%] select-none justify-center text-base font-bold">
                 {text?.toUpperCase()}
               </p>
             </>
