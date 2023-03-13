@@ -1,17 +1,36 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
-import { LookbookData } from "../../../types/data-type";
+import { useState } from "react";
+import { useRecoilValue } from "recoil";
+import { currentUserState } from "../../../recoil/user";
+import { LookbookData, UserData } from "../../../types/data-type";
 import ImageSlide from "../../market/detail/image-slide";
 import TagItem from "./tag-item";
 
-const PostItem: NextPage<LookbookData> = ({
+interface PostItemProps extends LookbookData {
+  setInput: (postId: number, val?: boolean) => void;
+  updateComment: (commentId: number, text: string) => void;
+  deleteComment: (commentId: number) => void;
+  currentUser?: UserData;
+}
+
+const PostItem: NextPage<PostItemProps> = ({
+  id,
   user,
   imgurl,
   likes,
   description,
   hashTag,
   product,
+  comment,
+  updateComment,
+  deleteComment,
+  setInput,
 }) => {
+  const userData = useRecoilValue(currentUserState) as UserData;
+  const { nickname: currentUserNickname } = userData;
+  const [showComment, setShowComment] = useState<boolean>(false);
+
   return (
     <>
       <div className="flex items-center justify-between px-5 py-3">
@@ -37,33 +56,49 @@ const PostItem: NextPage<LookbookData> = ({
             <span className="mr-2">{description}</span>
             {hashTag?.map(({ tag }, i) => (
               <span key={`태그${i}`} className="mr-1">
-                <span>#</span>
-                <span>{tag}</span>
+                <span>{`#${tag}`}</span>
               </span>
             ))}
           </p>
-          <span className="w-auto cursor-pointer text-commom-gray hover:underline">
-            댓글 2개
+          <span
+            className="cursor-pointer text-commom-gray hover:underline"
+            onClick={() => setShowComment(true)}
+          >
+            댓글 {comment ? comment.length : 0}개
           </span>
         </div>
         <div className="absolute top-4 right-4 flex items-center gap-3 text-2xl [&>svg]:cursor-pointer">
-          <Icon icon="ci:chat-circle" />
+          <Icon icon="ci:chat-circle" onClick={() => setInput(id, true)} />
           <Icon icon="icon-park-outline:like" />
         </div>
-        <div className="py-4">
-          <div>
-            <h2 className="mr-2 inline-block text-lg">comments</h2>
-            <span className="text-base font-bold">2</span>
+        {showComment && comment?.length > 0 && (
+          <div className="py-4">
+            <div>
+              <h2 className="mr-2 inline-block text-lg">comments</h2>
+              <span className="text-base font-bold">{comment?.length}</span>
+            </div>
+            <ul className="mt-3">
+              {comment?.map(({ id, author, text }, i) => (
+                <li key={`코멘트${i}`} className="flex justify-between">
+                  <div className="flex gap-3">
+                    <b className="text-base font-bold">{author.nickname}</b>
+                    {text}
+                  </div>
+                  {author.nickname == currentUserNickname && (
+                    <div className="flex gap-3">
+                      <button onClick={() => updateComment(id, text)}>
+                        수정
+                      </button>
+                      <button onClick={() => deleteComment(id)}>삭제</button>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
           </div>
-          <ul className="mt-3">
-            <li className="flex gap-3">
-              <b className="text-base font-bold">zoala</b>
-              댓글 댓글
-            </li>
-          </ul>
-        </div>
+        )}
         {product.length > 0 && (
-          <div className="border-t border-borderColor-gray">
+          <div className="mt-3 border-t border-borderColor-gray">
             <h2 className="mt-[18px] text-lg">Tagged</h2>
             <ul className="mt-3 flex gap-2 overflow-y-scroll scrollbar-hide">
               <TagItem {...product} />

@@ -23,6 +23,13 @@ const lookbookDetail = async (req: NextApiRequest, res: NextApiResponse) => {
               imgurl: true,
             },
           },
+          comment: {
+            select: {
+              id: true,
+              text: true,
+              author: true,
+            },
+          },
         },
       });
       res.status(200).send(post);

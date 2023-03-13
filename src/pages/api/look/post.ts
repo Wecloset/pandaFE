@@ -3,14 +3,13 @@ import client from "../../../lib/client";
 
 const getPosts = async (req: NextApiRequest, res: NextApiResponse) => {
   const { lookbookId } = req.body;
-  // console.log(+lookbookId);
   const take = 3;
   const cursorQuery =
     (req.query.cursor as string) === "1" ? undefined : req.query.cursor;
   const skip = cursorQuery ? 1 : 0;
   const cursor = cursorQuery
     ? { id: parseInt(req.query.cursor as string) }
-    : { id: 18 };
+    : { id: 1 };
 
   if (req.method === "POST") {
     try {
@@ -31,6 +30,13 @@ const getPosts = async (req: NextApiRequest, res: NextApiResponse) => {
               price: true,
               brand: true,
               imgurl: true,
+            },
+          },
+          comment: {
+            select: {
+              id: true,
+              text: true,
+              author: true,
             },
           },
         },

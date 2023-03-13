@@ -25,7 +25,7 @@ const Lookbook: NextPage = () => {
         </div>
       )}
       <div>
-        <ul className="grid grid-cols-2 [&>li]:border-r [&>li]:border-b [&>li]:odd:border-common-black">
+        <ul className="grid grid-cols-2 pb-10 [&>li]:border-r [&>li]:border-b [&>li]:odd:border-common-black">
           {allData?.map((data: LookbookData) => (
             <LookItem key={data.id} {...data} />
           ))}
