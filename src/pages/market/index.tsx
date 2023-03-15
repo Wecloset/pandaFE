@@ -1,7 +1,6 @@
 import { NextPage } from "next";
 import React, { useState } from "react";
 import { Icon } from "@iconify/react";
-import { cls } from "../../utils/class";
 import { FilterProvider } from "../../store/filter-context";
 import Header from "../../components/header";
 import FilterOverlay from "../../components/market/filter/market-filter";
@@ -13,6 +12,7 @@ import CategoryNavigation from "../../components/market/category-nav";
 import { useQuery } from "react-query";
 import RentButtons from "../../components/market/rent-buttons";
 import { axiosGet } from "../../utils/services";
+import { cls } from "../../utils/class";
 import LoadingSpinner from "../../components/loading-spinner";
 
 const Market: NextPage = () => {
