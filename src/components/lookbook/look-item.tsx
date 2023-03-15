@@ -1,10 +1,10 @@
 import { Icon } from "@iconify/react";
-import axios from "axios";
 import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useMutation } from "react-query";
+import useFav from "../../hooks/useFav";
 import { LookbookData, UserData } from "../../types/data-type";
 
 interface LookItemProps extends LookbookData {
@@ -19,40 +19,27 @@ const LookItem: NextPage<LookItemProps> = ({
   currentUser,
 }) => {
   const { id: currentUserId } = currentUser;
-  const [isFavActive, setIsFavActive] = useState<boolean>(false);
-
-  const updateFav = async (payload: {
-    currentUserId: number;
-    lookId?: number;
-    productId?: number;
-  }) => {
-    const { currentUserId, productId, lookId } = payload;
-    const data = axios.post(`/api/user/fav`, {
-      currentUserId,
-      lookId,
-    });
-    return data;
-  };
+  const { isFavActive, updateFav, changeButtonSytle, initialButtonStyle } =
+    useFav(currentUserId);
 
   const { mutate } = useMutation(updateFav, {
     onSuccess: ({ data }) => {
-      console.log(data);
+      console.log(data.message);
     },
     onError: ({ response }) => {
-      alert(response.data.message);
+      console.log(response.data.message);
     },
   });
 
   const toggleFavButton = async () => {
-    setIsFavActive(prev => !prev);
+    changeButtonSytle();
     mutate({ currentUserId, lookId: id });
   };
 
   useEffect(() => {
-    fav?.forEach((item: { userId: number }) => {
-      item.userId === currentUserId && setIsFavActive(true);
-    });
-  }, []);
+    if (!fav) return;
+    initialButtonStyle(fav);
+  }, [fav]);
 
   return (
     <li className="flex h-[220px] justify-center border-b border-r border-common-black pt-4">

@@ -1,9 +1,9 @@
 import { Icon } from "@iconify/react";
-import axios from "axios";
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { useMutation } from "react-query";
 import { useRecoilValue } from "recoil";
+import useFav from "../../../hooks/useFav";
 import { currentUserState } from "../../../recoil/user";
 import { LookbookData, UserData } from "../../../types/data-type";
 import ImageSlide from "../../market/detail/image-slide";
@@ -32,29 +32,21 @@ const PostItem: NextPage<PostItemProps> = ({
   const userData = useRecoilValue(currentUserState) as UserData;
   const { nickname: currentUserNickname } = userData;
   const { id: currentUserId } = userData;
+  const {
+    isFavActive,
+    favCount,
+    updateFav,
+    changeCount,
+    changeButtonSytle,
+    updateFavCount,
+    initialButtonStyle,
+  } = useFav(currentUserId);
   const [showComment, setShowComment] = useState<boolean>(false);
-  const [isFavActive, setIsFavActive] = useState<boolean>(false);
-  const [favValue, setFavValue] = useState<number>(0);
-
-  const updateFav = async (payload: {
-    currentUserId: number;
-    lookId?: number;
-    productId?: number;
-  }) => {
-    const { currentUserId, productId, lookId } = payload;
-    const data = axios.post(`/api/user/fav`, {
-      currentUserId,
-      lookId,
-    });
-    return data;
-  };
 
   const { mutate } = useMutation(updateFav, {
     onSuccess: ({ data }) => {
-      console.log(data);
-      isFavActive
-        ? setFavValue(prev => prev - 1)
-        : setFavValue(prev => prev + 1);
+      console.log(data.message);
+      changeCount();
     },
     onError: ({ response }) => {
       alert(response.data.message);
@@ -62,17 +54,15 @@ const PostItem: NextPage<PostItemProps> = ({
   });
 
   const toggleFavButton = async () => {
-    setIsFavActive(prev => !prev);
+    changeButtonSytle();
     mutate({ currentUserId, lookId: id });
   };
 
   useEffect(() => {
-    setFavValue(fav?.length);
-
-    fav?.forEach((item: { userId: number }) => {
-      item.userId === currentUserId && setIsFavActive(true);
-    });
-  }, []);
+    if (!fav) return;
+    updateFavCount(fav.length);
+    initialButtonStyle(fav);
+  }, [fav]);
 
   return (
     <>
@@ -93,7 +83,7 @@ const PostItem: NextPage<PostItemProps> = ({
         <div>
           <div className="mb-3 flex gap-2 text-xs text-commom-gray">
             <div>2023.03.11</div>
-            <div>좋아요 {favValue}</div>
+            <div>좋아요 {favCount}</div>
           </div>
           {(description || hashTag[0]?.tag !== "") && (
             <p className="mb-2">

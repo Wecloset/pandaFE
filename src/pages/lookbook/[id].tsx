@@ -30,21 +30,12 @@ const Post: NextPage = () => {
 
   const submitComment = async (comment?: string) => {
     const payload = { comment, userId };
+    const url = isUpdating
+      ? `/api/look/comment?commentId=${commentId}`
+      : `/api/look/comment?postId=${postId}`;
 
-    if (!isUpdating) {
-      const { data } = await axios.post(`/api/look/comment?postId=${postId}`, {
-        payload,
-      });
-      return data;
-    } else {
-      const { data } = await axios.post(
-        `/api/look/comment?commentId=${commentId}`,
-        {
-          payload,
-        },
-      );
-      return data;
-    }
+    const { data } = await axios.post(url, payload);
+    return data;
   };
 
   const getOnePost = async () => {

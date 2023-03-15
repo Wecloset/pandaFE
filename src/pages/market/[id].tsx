@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ProductData, UserData } from "../../types/data-type";
 import Button from "../../components/button";
 import Header from "../../components/header";
@@ -17,7 +17,7 @@ import { useRouter } from "next/router";
 import { updateViews } from "../../utils/market-view";
 import { useMutation, useQuery } from "react-query";
 import LoadingSpinner from "../../components/loading-spinner";
-import axios from "axios";
+import useFav from "../../hooks/useFav";
 
 interface Product {
   productData: {
@@ -32,8 +32,15 @@ const Product: NextPage<Product> = () => {
   const userData = useRecoilValue(currentUserState) as UserData;
   const { id: currentUserId } = userData;
 
-  const [isFavActive, setIsFavActive] = useState<boolean>(false);
-  const [favValue, setFavValue] = useState<number>(0);
+  const {
+    isFavActive,
+    favCount,
+    updateFav,
+    changeCount,
+    changeButtonSytle,
+    updateFavCount,
+    initialButtonStyle,
+  } = useFav(currentUserId);
 
   const getProductData = async () => {
     try {
@@ -46,24 +53,10 @@ const Product: NextPage<Product> = () => {
 
   const { data: product, isLoading } = useQuery("getProduct", getProductData);
 
-  const updateFav = async (payload: {
-    currentUserId: number;
-    lookId?: number;
-    productId?: number;
-  }) => {
-    const { currentUserId, productId, lookId } = payload;
-    const data = axios.post(`/api/user/fav`, {
-      currentUserId,
-      productId,
-    });
-    return data;
-  };
-
   const { mutate } = useMutation(updateFav, {
     onSuccess: ({ data }) => {
-      isFavActive
-        ? setFavValue(prev => prev - 1)
-        : setFavValue(prev => prev + 1);
+      console.log(data.message);
+      changeCount();
     },
     onError: ({ response }) => {
       alert(response.data.message);
@@ -72,16 +65,13 @@ const Product: NextPage<Product> = () => {
 
   const toggleFavButton = async () => {
     if (!productId) return;
-    setIsFavActive(prev => !prev);
+    changeButtonSytle();
     mutate({ currentUserId, productId: +productId });
   };
 
   const setInitialFav = () => {
-    setFavValue(product.fav.length);
-
-    product.fav.forEach((item: { userId: number }) => {
-      item.userId === currentUserId && setIsFavActive(true);
-    });
+    updateFavCount(product.fav.length);
+    initialButtonStyle(product.fav);
   };
 
   useEffect(() => {
@@ -140,7 +130,7 @@ const Product: NextPage<Product> = () => {
             </div>
             <div className="mb-4 flex text-xs text-commom-gray">
               <span className="mr-2">조회 {product.view}</span>
-              <span>찜 {favValue}</span>
+              <span>찜 {favCount}</span>
             </div>
             <div className="border-t border-b py-[18px]">
               <p className="mb-8 whitespace-pre-wrap">{product.description}</p>
