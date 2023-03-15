@@ -17,6 +17,7 @@ const updateLookbook = async (req: NextApiRequest, res: NextApiResponse) => {
             },
           },
           hashTag: true,
+          fav: true,
         },
       });
       res.status(200).send(allLookbooks);

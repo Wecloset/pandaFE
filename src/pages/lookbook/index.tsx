@@ -12,7 +12,7 @@ import { currentUserState } from "../../recoil/user";
 
 const Lookbook: NextPage = () => {
   const userData = useRecoilValue(currentUserState) as UserData;
-  console.log(userData);
+
   const getAllLooks = async () => {
     const { data } = await axiosGet("/api/look");
     return data;
@@ -29,9 +29,9 @@ const Lookbook: NextPage = () => {
         </div>
       )}
       <div>
-        <ul className="grid grid-cols-2 pb-10 [&>li]:border-r [&>li]:border-b [&>li]:odd:border-common-black">
+        <ul className="grid grid-cols-2 pb-10">
           {allData?.map((data: LookbookData) => (
-            <LookItem key={data.id} {...data} />
+            <LookItem key={data.id} {...data} currentUser={userData} />
           ))}
         </ul>
       </div>

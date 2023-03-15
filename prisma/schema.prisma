@@ -17,7 +17,8 @@ model User {
   product     Product[]
   followings  User[]    @relation("followRelation")
   followers   User[]    @relation("followRelation")
-  fav         Fav[]
+  fav         Fav?      @relation(fields: [favId], references: [id])
+  favId       Int?
   profileImg  String?
   nickname    String?   @unique
   keywords    HashTag[]

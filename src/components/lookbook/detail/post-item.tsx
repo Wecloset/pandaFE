@@ -1,6 +1,8 @@
 import { Icon } from "@iconify/react";
+import axios from "axios";
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
+import { useMutation } from "react-query";
 import { useRecoilValue } from "recoil";
 import { currentUserState } from "../../../recoil/user";
 import { LookbookData, UserData } from "../../../types/data-type";
@@ -32,8 +34,41 @@ const PostItem: NextPage<PostItemProps> = ({
   const { id: currentUserId } = userData;
   const [showComment, setShowComment] = useState<boolean>(false);
   const [isFavActive, setIsFavActive] = useState<boolean>(false);
+  const [favValue, setFavValue] = useState<number>(0);
+
+  const updateFav = async (payload: {
+    currentUserId: number;
+    lookId?: number;
+    productId?: number;
+  }) => {
+    const { currentUserId, productId, lookId } = payload;
+    const data = axios.post(`/api/user/fav`, {
+      currentUserId,
+      lookId,
+    });
+    return data;
+  };
+
+  const { mutate } = useMutation(updateFav, {
+    onSuccess: ({ data }) => {
+      console.log(data);
+      isFavActive
+        ? setFavValue(prev => prev - 1)
+        : setFavValue(prev => prev + 1);
+    },
+    onError: ({ response }) => {
+      alert(response.data.message);
+    },
+  });
+
+  const toggleFavButton = async () => {
+    setIsFavActive(prev => !prev);
+    mutate({ currentUserId, lookId: id });
+  };
 
   useEffect(() => {
+    setFavValue(fav?.length);
+
     fav?.forEach((item: { userId: number }) => {
       item.userId === currentUserId && setIsFavActive(true);
     });
@@ -58,16 +93,18 @@ const PostItem: NextPage<PostItemProps> = ({
         <div>
           <div className="mb-3 flex gap-2 text-xs text-commom-gray">
             <div>2023.03.11</div>
-            <div>좋아요 {fav?.length ?? 0}</div>
+            <div>좋아요 {favValue}</div>
           </div>
-          <p className="mb-2">
-            <span className="mr-2">{description}</span>
-            {hashTag?.map(({ tag }, i) => (
-              <span key={`태그${i}`} className="mr-1">
-                {tag !== "" && `#${tag}`}
-              </span>
-            ))}
-          </p>
+          {(description || hashTag[0]?.tag !== "") && (
+            <p className="mb-2">
+              {description && <span className="mr-2">{description}</span>}
+              {hashTag?.map(({ tag }, i) => (
+                <span key={`태그${i}`} className="mr-1">
+                  {tag !== "" && `#${tag}`}
+                </span>
+              ))}
+            </p>
+          )}
           <span
             className="cursor-pointer text-commom-gray hover:underline"
             onClick={() => setShowComment(true)}
@@ -78,9 +115,13 @@ const PostItem: NextPage<PostItemProps> = ({
         <div className="absolute top-4 right-4 flex items-center gap-3 text-2xl [&>svg]:cursor-pointer">
           <Icon icon="ci:chat-circle" onClick={() => setInput(id, true)} />
           {isFavActive ? (
-            <Icon icon="icon-park-solid:like" color="#ff5252" />
+            <Icon
+              icon="icon-park-solid:like"
+              color="#ff5252"
+              onClick={toggleFavButton}
+            />
           ) : (
-            <Icon icon="icon-park-outline:like" />
+            <Icon icon="icon-park-outline:like" onClick={toggleFavButton} />
           )}
         </div>
         {showComment && comment?.length > 0 && (

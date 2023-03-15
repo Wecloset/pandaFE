@@ -28,11 +28,6 @@ const Post: NextPage = () => {
   const [postId, setPostId] = useState<number>(0);
   const [commentId, setCommentId] = useState<number>(0);
 
-  // const updateFav = async () => {
-  //   const { data } = await axios.post(`api/look/post?fav=${lookbookId}`);
-  //   return data;
-  // };
-
   const submitComment = async (comment?: string) => {
     const payload = { comment, userId };
 

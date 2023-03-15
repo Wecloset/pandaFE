@@ -30,7 +30,6 @@ const Create: NextPage<CredentialProps> = ({
   const credentials = { region, accessKey, secretKey };
 
   const userData = useRecoilValue(currentUserState) as UserData;
-
   const { uploadImage, deleteImage, encodeFile, imgsrc } =
     useUpload(credentials);
 
