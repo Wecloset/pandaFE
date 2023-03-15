@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 
-const MainLookBook: NextPage<{ username: string }> = ({ username }) => {
+const MainLookBookItem: NextPage<{ username: string }> = ({ username }) => {
   return (
     <li className="border-r border-common-black py-4 px-3 first:pl-0">
       <div className="relative h-56 w-48 bg-borderColor-gray">
@@ -10,4 +10,4 @@ const MainLookBook: NextPage<{ username: string }> = ({ username }) => {
   );
 };
 
-export default MainLookBook;
+export default MainLookBookItem;
