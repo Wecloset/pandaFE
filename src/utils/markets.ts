@@ -18,5 +18,5 @@ export const firstToUppercase = (brand: string) => {
   return `${brand[0].toUpperCase()}${brand.slice(1)}`;
 };
 export const priceAddComma = (price: number) => {
-  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };

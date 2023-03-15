@@ -6,17 +6,19 @@ import FloatingButton from "../../components/floating-button";
 import { axiosGet } from "../../utils/services";
 import { useQuery } from "react-query";
 import LoadingSpinner from "../../components/loading-spinner";
-import { LookbookData } from "../../types/data-type";
+import { LookbookData, UserData } from "../../types/data-type";
+import { useRecoilValue } from "recoil";
+import { currentUserState } from "../../recoil/user";
 
 const Lookbook: NextPage = () => {
+  const userData = useRecoilValue(currentUserState) as UserData;
+
   const getAllLooks = async () => {
     const { data } = await axiosGet("/api/look");
     return data;
   };
 
   const { data: allData, isLoading } = useQuery("lookbooks", getAllLooks);
-
-  console.log(allData);
 
   return (
     <>
@@ -27,9 +29,9 @@ const Lookbook: NextPage = () => {
         </div>
       )}
       <div>
-        <ul className="grid grid-cols-2 [&>li]:border-r [&>li]:border-b [&>li]:odd:border-common-black">
+        <ul className="grid grid-cols-2 pb-10">
           {allData?.map((data: LookbookData) => (
-            <LookItem key={data.id} lookbooks={data} />
+            <LookItem key={data.id} {...data} currentUser={userData} />
           ))}
         </ul>
       </div>

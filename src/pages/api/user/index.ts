@@ -28,7 +28,12 @@ const getUser = async (req: NextApiRequest, res: NextApiResponse) => {
           },
           followers: true,
           followings: true,
-          fav: true,
+          fav: {
+            select: {
+              products: true,
+              looks: true,
+            },
+          },
         },
       });
       res.status(200).send({ message: "Getting user data success.", user });

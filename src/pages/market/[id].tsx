@@ -11,12 +11,13 @@ import {
   priceAddComma,
 } from "../../utils/markets";
 import { useRecoilValue } from "recoil";
-import { axiosGet, axiosPost } from "../../utils/services";
+import { axiosGet } from "../../utils/services";
 import { currentUserState } from "../../recoil/user";
 import { useRouter } from "next/router";
 import { updateViews } from "../../utils/market-view";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import LoadingSpinner from "../../components/loading-spinner";
+import axios from "axios";
 
 interface Product {
   productData: {
@@ -29,18 +30,10 @@ const Product: NextPage<Product> = () => {
   const router = useRouter();
   const { id: productId } = router.query;
   const userData = useRecoilValue(currentUserState) as UserData;
+  const { id: currentUserId } = userData;
 
-  const [isLikeActive, setIsLikeActive] = useState<boolean | null>(null);
-  const [likeValue, setLikeValue] = useState<number>(0);
-
-  const updateLikeCount = () => {
-    if (isLikeActive === null) setIsLikeActive(true);
-    else setIsLikeActive(prev => !prev);
-
-    isLikeActive
-      ? setLikeValue(prev => prev - 1)
-      : setLikeValue(prev => prev + 1);
-  };
+  const [isFavActive, setIsFavActive] = useState<boolean>(false);
+  const [favValue, setFavValue] = useState<number>(0);
 
   const getProductData = async () => {
     try {
@@ -53,43 +46,53 @@ const Product: NextPage<Product> = () => {
 
   const { data: product, isLoading } = useQuery("getProduct", getProductData);
 
-  const pageSetting = () => {
-    if (product && productId) {
-      setLikeValue(product.fav.length);
-
-      if (!userData) return;
-      const { email: userEmail, fav } = userData;
-      updateViews(userEmail, +productId, product.view);
-
-      // fav button style setting
-      fav?.forEach((item: { productId: number }) => {
-        item.productId === +productId && setIsLikeActive(true);
-      });
-    }
+  const updateFav = async (payload: {
+    currentUserId: number;
+    lookId?: number;
+    productId?: number;
+  }) => {
+    const { currentUserId, productId, lookId } = payload;
+    const data = axios.post(`/api/user/fav`, {
+      currentUserId,
+      productId,
+    });
+    return data;
   };
 
-  // update fav
+  const { mutate } = useMutation(updateFav, {
+    onSuccess: ({ data }) => {
+      isFavActive
+        ? setFavValue(prev => prev - 1)
+        : setFavValue(prev => prev + 1);
+    },
+    onError: ({ response }) => {
+      alert(response.data.message);
+    },
+  });
+
+  const toggleFavButton = async () => {
+    if (!productId) return;
+    setIsFavActive(prev => !prev);
+    mutate({ currentUserId, productId: +productId });
+  };
+
+  const setInitialFav = () => {
+    setFavValue(product.fav.length);
+
+    product.fav.forEach((item: { userId: number }) => {
+      item.userId === currentUserId && setIsFavActive(true);
+    });
+  };
+
   useEffect(() => {
-    if (!product) return;
+    if (product && productId) {
+      setInitialFav();
 
-    let isExisted = false;
-    const { fav } = product;
-    const { id: userId } = userData;
-
-    if (fav?.length > 0)
-      fav.forEach(
-        (item: { userId: number }) =>
-          (isExisted = item.userId === userId ? true : false),
-      );
-    // 첫 렌더링 요청X or 이미 찜한상품일 경우 요청X
-    if (isLikeActive === null || (isLikeActive && isExisted)) return;
-
-    axiosPost("/api/user/fav", { userId, productId, isLikeActive });
-  }, [isLikeActive]);
-
-  useEffect(() => {
-    pageSetting();
-  }, [userData]);
+      if (!userData) return;
+      const { email: userEmail } = userData;
+      updateViews(userEmail, +productId, product.view);
+    }
+  }, [currentUserId, product]);
 
   return (
     <>
@@ -108,12 +111,12 @@ const Product: NextPage<Product> = () => {
                 <p className="text-base">{firstToUppercase(product.brand)}</p>
                 <h1 className="text-xl font-bold">{product.title}</h1>
               </div>
-              {!isLikeActive ? (
+              {!isFavActive ? (
                 <div className="flex h-7 w-7 items-center justify-center rounded-full border-[1.5px] border-common-black">
                   <Icon
                     icon="icon-park-outline:like"
                     className="text-lg"
-                    onClick={updateLikeCount}
+                    onClick={toggleFavButton}
                   />
                 </div>
               ) : (
@@ -122,7 +125,7 @@ const Product: NextPage<Product> = () => {
                     icon="icon-park-solid:like"
                     color="#ff5252"
                     className=" border border-common-black text-lg"
-                    onClick={updateLikeCount}
+                    onClick={toggleFavButton}
                   />
                 </div>
               )}
@@ -137,7 +140,7 @@ const Product: NextPage<Product> = () => {
             </div>
             <div className="mb-4 flex text-xs text-commom-gray">
               <span className="mr-2">조회 {product.view}</span>
-              <span>찜 {likeValue}</span>
+              <span>찜 {favValue}</span>
             </div>
             <div className="border-t border-b py-[18px]">
               <p className="mb-8 whitespace-pre-wrap">{product.description}</p>
