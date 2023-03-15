@@ -35,6 +35,31 @@ const updateLookbook = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(400).json({ message: "업로드 실패." });
     }
   }
+
+  if (req.method === "GET") {
+    try {
+      const allLookbooks = await client.look.findMany({
+        include: {
+          imgurl: true,
+          user: true,
+          product: {
+            select: {
+              imgurl: {
+                select: {
+                  id: true,
+                  img: true,
+                },
+              },
+            },
+          },
+          hashTag: true,
+        },
+      });
+      res.status(200).send(allLookbooks);
+    } catch (err) {
+      res.status(400).send({ message: "리스트 가져오는데 실패했습니다." });
+    }
+  }
 };
 
 export default updateLookbook;

@@ -69,8 +69,8 @@ const SignProfile: NextPage<CredentialProps> = ({
   );
 
   const createProfile = async (userProfile: any) => {
-    uploadImage(imgsrc[0].file);
-    const imageurl = createImageUrl(imgsrc[0].file);
+    uploadImage(imgsrc[0].file, "profile");
+    const imageurl = createImageUrl(imgsrc[0].file, "profile");
     userProfile.image = imageurl;
     const { data: response } = await axios.post("/api/profile", {
       userProfile,

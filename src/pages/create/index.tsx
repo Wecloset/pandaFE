@@ -110,9 +110,9 @@ const Create: NextPage<CredentialProps> = ({
     const imageurlList: string[] = [];
     imgsrc.forEach(item => {
       // s3 upload
-      uploadImage(item.file);
+      uploadImage(item.file, "products");
 
-      const imageurl = createImageUrl(item.file);
+      const imageurl = createImageUrl(item.file, "products");
       imageurlList.push(imageurl);
     });
     mutate({ data, imageurlList });
