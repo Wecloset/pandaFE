@@ -1,10 +1,9 @@
 import type { NextPage } from "next";
 import { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
-import { userState } from "../recoil/user";
+import { useResetRecoilState, useSetRecoilState } from "recoil";
+import { currentUserState, userState } from "../recoil/user";
 import { getSession } from "next-auth/react";
-import { useMutation } from "react-query";
-import axios from "axios";
+import { useQuery } from "react-query";
 import Header from "../components/header";
 import Navigation from "../components/navigation";
 import Button from "../components/button";
@@ -12,19 +11,22 @@ import FloatingButton from "../components/floating-button";
 import RecommentList from "../components/main/recommend";
 import RecentStyle from "../components/main/recent-style";
 import MainLookbook from "../components/main/lookbook";
+import { axiosGet } from "../utils/services";
+import { UserData } from "../types/data-type";
 
 const Home: NextPage = () => {
   const [userEmail, setUserEmail] = useState<string>("");
   const setUser = useSetRecoilState(userState);
-  const { mutate: getUser } = useMutation(
-    async (email: string) => {
-      const { data } = await axios.post(`/api/user`, {
-        headers: { "Content-Type": "application/json" },
-        data: { userEmail: email },
-      });
+  const resetUser = useResetRecoilState(currentUserState);
+
+  useQuery<UserData>(
+    "getUser",
+    async () => {
+      const { data } = await axiosGet(`/api/user?email=${userEmail}`);
       return data.user;
     },
     {
+      enabled: userEmail !== "",
       onSuccess: data => {
         setUser(data);
       },
@@ -38,16 +40,12 @@ const Home: NextPage = () => {
     const fetchSession = async () => {
       const session = await getSession();
       const email = session?.user?.email;
-      if (email) setUserEmail(email);
+
+      if (!email) resetUser();
+      else setUserEmail(email);
     };
     fetchSession();
-  }, []);
-
-  useEffect(() => {
-    if (userEmail) {
-      getUser(userEmail);
-    }
-  }, [userEmail, getUser]);
+  }, [userEmail]);
 
   return (
     <>

@@ -79,6 +79,7 @@ const ImageSlide: NextPage<{ images: Images[]; isLoading?: boolean }> = ({
               width={390}
               height={370}
               className="h-[370px] w-[390px] object-cover"
+              priority
             />
           </li>
           {images.map(item => (

@@ -2,13 +2,13 @@ import { NextApiRequest, NextApiResponse } from "next";
 import client from "../../../lib/client";
 
 const getUser = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
-    const { userEmail } = req.body.data;
+  if (req.method === "GET") {
+    const { email } = req.query;
 
     try {
       const user = await client.user.findUnique({
         where: {
-          email: userEmail,
+          email: email as string,
         },
         include: {
           keywords: true,
