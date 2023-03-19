@@ -10,14 +10,21 @@ const userSignTag = async (req: NextApiRequest, res: NextApiResponse) => {
     });
     res.json(signUserData);
   }
+
   const { userData, tags } = req.body;
-  console.log(tags);
   if (req.method === "POST") {
     try {
-      await client.hashTag.create({
+      await client.user.update({
+        where: {
+          id: userData,
+        },
         data: {
-          userId: userData,
-          tag: tags,
+          keywords: {
+            connectOrCreate: tags.map((tagName: string) => ({
+              create: { tag: tagName },
+              where: { tag: tagName },
+            })),
+          },
         },
       });
       res.status(201).json({ message: "태그 저장이 완료되었습니다" });

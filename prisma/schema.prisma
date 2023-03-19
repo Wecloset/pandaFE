@@ -50,8 +50,7 @@ model HashTag {
   tag     String    @unique
   product Product[]
   look    Look[]
-  user    User?     @relation(fields: [userId], references: [id])
-  userId  Int?
+  user    User[]
 }
 
 model Img {

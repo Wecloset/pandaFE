@@ -23,6 +23,7 @@ const Home: NextPage = () => {
     "getUser",
     async () => {
       const { data } = await axiosGet(`/api/user?email=${userEmail}`);
+      console.log(data);
       return data.user;
     },
     {
@@ -41,11 +42,14 @@ const Home: NextPage = () => {
       const session = await getSession();
       const email = session?.user?.email;
 
-      if (!email) resetUser();
-      else setUserEmail(email);
+      if (!email) {
+        resetUser();
+        const localData = localStorage.getItem("current_user");
+        if (localData) localStorage.removeItem("current_user");
+      } else setUserEmail(email);
     };
     fetchSession();
-  }, [userEmail]);
+  }, []);
 
   return (
     <>

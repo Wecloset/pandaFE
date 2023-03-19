@@ -13,7 +13,10 @@ const localStorageEffect: <T>(key: string) => AtomEffect<T> =
 
     if (trigger === "get") {
       getSession().then(session => {
-        if (!session) return localStorage.removeItem(key);
+        if (!session) {
+          localStorage.removeItem(key);
+          return;
+        }
       });
       loadPersisted();
     }
