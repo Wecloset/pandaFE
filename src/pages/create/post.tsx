@@ -130,7 +130,7 @@ const CreatePost: NextPage<CredentialProps> = ({
                 )}
                 onChange={textAreaValue}
               />
-              <div className="text-/common-gray pointer-events-none absolute top-5 left-5 bg-transparent peer-focus:hidden peer-[.is-valid]:hidden">
+              <div className="pointer-events-none absolute top-5 left-5 bg-transparent text-common-gray peer-focus:hidden peer-[.is-valid]:hidden">
                 <p>문구를 작성해주세요.</p>
               </div>
             </div>
