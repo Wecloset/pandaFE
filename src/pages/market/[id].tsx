@@ -21,7 +21,7 @@ import { useRouter } from "next/router";
 
 const Product: NextPage = () => {
   const userData = useRecoilValue(currentUserState) as UserData;
-  const { id: currentUserId } = userData;
+  const currentUserId = userData ? userData.id : 0;
 
   const router = useRouter();
   const { id: productId } = router.query;
@@ -123,7 +123,7 @@ const Product: NextPage = () => {
                 {firstToUppercase(product.brand)}
               </div>
             </div>
-            <div className="mb-4 flex text-xs text-commom-gray">
+            <div className="text-commom-gray mb-4 flex text-xs">
               <span className="mr-2">조회 {product.view}</span>
               <span>찜 {favCount}</span>
             </div>

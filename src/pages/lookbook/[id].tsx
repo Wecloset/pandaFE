@@ -1,6 +1,11 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
-import { useInfiniteQuery, useMutation, useQuery } from "react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "react-query";
 import Header from "../../components/header";
 import LoadingSpinner from "../../components/loading-spinner";
 import PostItem from "../../components/lookbook/detail/post-item";
@@ -16,10 +21,12 @@ import { useRouter } from "next/router";
 
 const Post: NextPage = () => {
   const userData = useRecoilValue(currentUserState) as UserData;
-  const { id: userId } = userData;
+  const userId = userData ? userData.id : 0;
 
   const router = useRouter();
   const { id: lookbookId } = router.query;
+
+  const queryClient = useQueryClient();
 
   const { ref, inView } = useInView();
   const { register, handleSubmit } = useForm();
@@ -29,31 +36,7 @@ const Post: NextPage = () => {
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [postId, setPostId] = useState<number>(0);
   const [commentId, setCommentId] = useState<number>(0);
-
-  const submitComment = async (comment?: string) => {
-    const payload = { comment, userId };
-    const url = isUpdating
-      ? `/api/look/comment?commentId=${commentId}`
-      : `/api/look/comment?postId=${postId}`;
-
-    const { data } = await axios.post(url, payload);
-    return data;
-  };
-
-  const { mutate, isLoading: loadingComment } = useMutation(
-    "comment",
-    submitComment,
-    {
-      onSuccess: ({ message }) => {
-        alert(message);
-        setShowInput(false);
-        setCommentValue("");
-      },
-      onError: ({ response }) => {
-        alert(response.data.message);
-      },
-    },
-  );
+  const [confirm, setConfirm] = useState<boolean>(false);
 
   const getOnePost = async () => {
     try {
@@ -94,6 +77,8 @@ const Post: NextPage = () => {
     ({ pageParam = 1 }) => getAllPost({ pageParam }),
     {
       getNextPageParam: lastPage => lastPage?.nextId ?? false,
+      enabled: !!lookbookId,
+      notifyOnChangeProps: "tracked",
     },
   );
 
@@ -103,6 +88,39 @@ const Post: NextPage = () => {
     }
   }, [inView]);
 
+  const reset = () => {
+    setCommentValue("");
+    setIsUpdating(false);
+    setShowInput(false);
+    setConfirm(false);
+  };
+
+  const submitComment = async (comment?: string) => {
+    const payload = { comment, userId };
+    const url = isUpdating
+      ? `/api/look/comment?commentId=${commentId}`
+      : `/api/look/comment?postId=${postId}`;
+
+    const { data } = await axios.post(url, payload);
+    return data;
+  };
+
+  const { mutate: commentMutate, isLoading: loadingComment } = useMutation(
+    "comment",
+    submitComment,
+    {
+      onSuccess: data => {
+        alert(data.message);
+        queryClient.invalidateQueries("getPost");
+        reset();
+      },
+      onError: ({ response }) => {
+        alert(response.data.message);
+        reset();
+      },
+    },
+  );
+
   const updateComment = (commentId: number, text: string) => {
     setCommentValue(text);
     setCommentId(commentId);
@@ -111,18 +129,24 @@ const Post: NextPage = () => {
   };
 
   const deleteComment = (commentId: number) => {
+    setConfirm(true);
+    setIsUpdating(true);
     setCommentId(commentId);
-    mutate(undefined);
   };
 
   const setInput = (postId: number, val?: boolean) => {
+    reset();
     setShowInput(val as boolean);
     setPostId(postId);
   };
 
   const submit = async (data: FieldValues) => {
+    if (!data.comment) {
+      commentMutate(undefined);
+      return;
+    }
     if (data.comment.trim === "") return;
-    mutate(data.comment);
+    commentMutate(data.comment);
   };
 
   return (
@@ -133,8 +157,11 @@ const Post: NextPage = () => {
         {postData && (
           <PostItem
             setInput={setInput}
+            modal={confirm}
+            submit={submit}
             updateComment={updateComment}
             deleteComment={deleteComment}
+            reset={reset}
             {...postData}
           />
         )}
@@ -145,8 +172,11 @@ const Post: NextPage = () => {
                 <PostItem
                   key={look.id}
                   setInput={setInput}
+                  modal={confirm}
+                  submit={submit}
                   updateComment={updateComment}
                   deleteComment={deleteComment}
+                  reset={reset}
                   {...look}
                 />
               ))}
@@ -166,7 +196,10 @@ const Post: NextPage = () => {
           <input
             type="text"
             placeholder="댓글을 입력해주세요."
-            {...register("comment", { value: commentValue })}
+            value={commentValue}
+            {...register("comment", {
+              onChange: e => setCommentValue(e.target.value),
+            })}
           />
           <Icon
             icon="tabler:mood-smile"

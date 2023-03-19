@@ -5,10 +5,10 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useMutation } from "react-query";
 import useFav from "../../hooks/useFav";
-import { LookbookData, UserData } from "../../types/data-type";
+import { LookbookData } from "../../types/data-type";
 
 interface LookItemProps extends LookbookData {
-  currentUser: UserData;
+  userId: number;
 }
 
 const LookItem: NextPage<LookItemProps> = ({
@@ -16,11 +16,10 @@ const LookItem: NextPage<LookItemProps> = ({
   imgurl,
   id,
   fav,
-  currentUser,
+  userId,
 }) => {
-  const { id: currentUserId } = currentUser;
   const { isFavActive, updateFav, changeButtonSytle, initialButtonStyle } =
-    useFav(currentUserId);
+    useFav(userId);
 
   const { mutate } = useMutation(updateFav, {
     onSuccess: ({ data }) => {
@@ -32,8 +31,11 @@ const LookItem: NextPage<LookItemProps> = ({
   });
 
   const toggleFavButton = async () => {
+    if (userId === 0) {
+      return alert("로그인 후 이용가능합니다.");
+    }
     changeButtonSytle();
-    mutate({ currentUserId, lookId: id });
+    mutate({ currentUserId: userId, lookId: id });
   };
 
   useEffect(() => {
@@ -59,18 +61,18 @@ const LookItem: NextPage<LookItemProps> = ({
         <p className="text-common-black">@{user.nickname}</p>
         <div className="absolute top-3 right-3 z-10 flex h-7 w-7 items-center justify-center rounded-full border-[1.5px] border-common-black">
           {isFavActive ? (
-            <div className="flex h-7 w-7 items-center justify-center rounded-full border-[1.5px] border-common-black bg-common-black ">
+            <div className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-[1.5px] border-common-black bg-common-black">
               <Icon
                 icon="icon-park-solid:like"
                 color="#ff5252"
-                className=" border border-common-black text-lg"
+                className="border border-common-black text-lg"
                 onClick={toggleFavButton}
               />
             </div>
           ) : (
             <Icon
               icon="icon-park-outline:like"
-              className="text-lg"
+              className="cursor-pointer text-lg transition hover:scale-110"
               onClick={toggleFavButton}
             />
           )}

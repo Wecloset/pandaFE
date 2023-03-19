@@ -1,3 +1,4 @@
+import { getSession } from "next-auth/react";
 import { atom, AtomEffect, DefaultValue, selector } from "recoil";
 import { v1 } from "uuid";
 import { UserData } from "../types/data-type";
@@ -7,10 +8,13 @@ const localStorageEffect: <T>(key: string) => AtomEffect<T> =
   ({ setSelf, onSet, trigger }) => {
     const loadPersisted = async () => {
       const savedValue = localStorage.getItem(key);
-      if (savedValue != null) setSelf(JSON.parse(savedValue));
+      if (savedValue !== null) setSelf(JSON.parse(savedValue));
     };
 
     if (trigger === "get") {
+      getSession().then(session => {
+        if (!session) return localStorage.removeItem(key);
+      });
       loadPersisted();
     }
 
