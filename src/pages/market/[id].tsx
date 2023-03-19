@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
-import { useEffect, useState } from "react";
-import { ProductData, UserData } from "../../types/data-type";
+import { useEffect } from "react";
+import { UserData } from "../../types/data-type";
 import Button from "../../components/button";
 import Header from "../../components/header";
 import ImageSlide from "../../components/market/detail/image-slide";
@@ -13,30 +13,32 @@ import {
 import { useRecoilValue } from "recoil";
 import { axiosGet } from "../../utils/services";
 import { currentUserState } from "../../recoil/user";
-import { useRouter } from "next/router";
 import { updateViews } from "../../utils/market-view";
 import { useMutation, useQuery } from "react-query";
 import LoadingSpinner from "../../components/loading-spinner";
-import axios from "axios";
+import useFav from "../../hooks/useFav";
+import { useRouter } from "next/router";
 
-interface Product {
-  productData: {
-    message: string;
-    data: ProductData;
-  };
-}
+const Product: NextPage = () => {
+  const userData = useRecoilValue(currentUserState) as UserData;
+  const currentUserId = userData ? userData.id : 0;
 
-const Product: NextPage<Product> = () => {
   const router = useRouter();
   const { id: productId } = router.query;
-  const userData = useRecoilValue(currentUserState) as UserData;
-  const { id: currentUserId } = userData;
 
-  const [isFavActive, setIsFavActive] = useState<boolean>(false);
-  const [favValue, setFavValue] = useState<number>(0);
+  const {
+    isFavActive,
+    favCount,
+    updateFav,
+    changeCount,
+    changeButtonSytle,
+    updateFavCount,
+    initialButtonStyle,
+  } = useFav(currentUserId);
 
-  const getProductData = async () => {
+  const getProduct = async () => {
     try {
+      console.log("get data");
       const { data } = await axiosGet(`/api/products/${productId}`);
       return data.product;
     } catch (err) {
@@ -44,26 +46,15 @@ const Product: NextPage<Product> = () => {
     }
   };
 
-  const { data: product, isLoading } = useQuery("getProduct", getProductData);
-
-  const updateFav = async (payload: {
-    currentUserId: number;
-    lookId?: number;
-    productId?: number;
-  }) => {
-    const { currentUserId, productId, lookId } = payload;
-    const data = axios.post(`/api/user/fav`, {
-      currentUserId,
-      productId,
-    });
-    return data;
-  };
+  const { data: product, isLoading } = useQuery("getData", getProduct, {
+    enabled: !!productId,
+    notifyOnChangeProps: "tracked",
+  });
 
   const { mutate } = useMutation(updateFav, {
     onSuccess: ({ data }) => {
-      isFavActive
-        ? setFavValue(prev => prev - 1)
-        : setFavValue(prev => prev + 1);
+      console.log(data.message);
+      changeCount();
     },
     onError: ({ response }) => {
       alert(response.data.message);
@@ -71,40 +62,34 @@ const Product: NextPage<Product> = () => {
   });
 
   const toggleFavButton = async () => {
-    if (!productId) return;
-    setIsFavActive(prev => !prev);
-    mutate({ currentUserId, productId: +productId });
+    changeButtonSytle();
+    mutate({ currentUserId, productId: +(productId as string) });
   };
 
   const setInitialFav = () => {
-    setFavValue(product.fav.length);
-
-    product.fav.forEach((item: { userId: number }) => {
-      item.userId === currentUserId && setIsFavActive(true);
-    });
+    updateFavCount(product.fav.length);
+    initialButtonStyle(product.fav);
   };
 
   useEffect(() => {
-    if (product && productId) {
-      setInitialFav();
+    if (!product) return;
+    setInitialFav();
 
-      if (!userData) return;
-      const { email: userEmail } = userData;
-      updateViews(userEmail, +productId, product.view);
-    }
+    if (!userData) return;
+    const { email: userEmail } = userData;
+    updateViews(userEmail, +(productId as string), product.view);
   }, [currentUserId, product]);
 
   return (
     <>
       <Header goBack />
-      {product && (
+      {isLoading ? (
+        <div className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
+          <LoadingSpinner />
+        </div>
+      ) : (
         <>
           <ImageSlide images={product.imgurl} isLoading={isLoading} />
-          {isLoading && (
-            <div className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
-              <LoadingSpinner />
-            </div>
-          )}
           <div className="p-5">
             <div className="flex justify-between">
               <div>
@@ -138,9 +123,9 @@ const Product: NextPage<Product> = () => {
                 {firstToUppercase(product.brand)}
               </div>
             </div>
-            <div className="mb-4 flex text-xs text-commom-gray">
+            <div className="mb-4 flex text-xs text-common-gray">
               <span className="mr-2">조회 {product.view}</span>
-              <span>찜 {favValue}</span>
+              <span>찜 {favCount}</span>
             </div>
             <div className="border-t border-b py-[18px]">
               <p className="mb-8 whitespace-pre-wrap">{product.description}</p>

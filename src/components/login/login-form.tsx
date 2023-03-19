@@ -59,7 +59,7 @@ const LoginForm: NextPage = () => {
       )}
       <button
         type="submit"
-        className="mt-3 h-12 w-full bg-commom-gray hover:bg-primary-green"
+        className="mt-3 h-12 w-full bg-common-gray hover:bg-primary-green"
       >
         로그인
       </button>

@@ -2,7 +2,6 @@ import { NextPage } from "next";
 import { useContext } from "react";
 import { cls } from "../../utils/class";
 import { FilterContext } from "../../store/filter-context";
-import { cls } from "../../utils/class";
 
 const navigationList = ["전체", "상의", "하의", "아우터", "가방", "기타"];
 const CategoryNavigation: NextPage = () => {

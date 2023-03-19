@@ -1,9 +1,10 @@
 import { Icon } from "@iconify/react";
-import axios from "axios";
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
+import { FieldValues } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useRecoilValue } from "recoil";
+import useFav from "../../../hooks/useFav";
 import { currentUserState } from "../../../recoil/user";
 import { LookbookData, UserData } from "../../../types/data-type";
 import ImageSlide from "../../market/detail/image-slide";
@@ -13,7 +14,9 @@ interface PostItemProps extends LookbookData {
   setInput: (postId: number, val?: boolean) => void;
   updateComment: (commentId: number, text: string) => void;
   deleteComment: (commentId: number) => void;
-  currentUser?: UserData;
+  submit: (data: FieldValues) => void;
+  reset: () => void;
+  modal: boolean;
 }
 
 const PostItem: NextPage<PostItemProps> = ({
@@ -27,55 +30,74 @@ const PostItem: NextPage<PostItemProps> = ({
   comment,
   updateComment,
   deleteComment,
+  modal,
   setInput,
+  submit,
+  reset,
 }) => {
   const userData = useRecoilValue(currentUserState) as UserData;
-  const { nickname: currentUserNickname } = userData;
-  const { id: currentUserId } = userData;
-  const [showComment, setShowComment] = useState<boolean>(false);
-  const [isFavActive, setIsFavActive] = useState<boolean>(false);
-  const [favValue, setFavValue] = useState<number>(0);
+  const currentUserNickname = userData ? userData.nickname : "";
+  const currentUserId = userData ? userData.id : 0;
+  const {
+    isFavActive,
+    favCount,
+    updateFav,
+    changeCount,
+    changeButtonSytle,
+    updateFavCount,
+    initialButtonStyle,
+  } = useFav(currentUserId);
 
-  const updateFav = async (payload: {
-    currentUserId: number;
-    lookId?: number;
-    productId?: number;
-  }) => {
-    const { currentUserId, productId, lookId } = payload;
-    const data = axios.post(`/api/user/fav`, {
-      currentUserId,
-      lookId,
-    });
-    return data;
-  };
+  const [showComment, setShowComment] = useState<boolean>(false);
 
   const { mutate } = useMutation(updateFav, {
     onSuccess: ({ data }) => {
-      console.log(data);
-      isFavActive
-        ? setFavValue(prev => prev - 1)
-        : setFavValue(prev => prev + 1);
+      console.log(data.message);
+      changeCount();
     },
     onError: ({ response }) => {
       alert(response.data.message);
     },
   });
 
+  const clickComment = () => {
+    if (!currentUserId) return alert("로그인 후 이용가능합니다.");
+    setInput(id, true);
+  };
+
   const toggleFavButton = async () => {
-    setIsFavActive(prev => !prev);
+    if (currentUserId === 0) return alert("로그인 후 이용가능합니다.");
+    changeButtonSytle();
     mutate({ currentUserId, lookId: id });
   };
 
   useEffect(() => {
-    setFavValue(fav?.length);
-
-    fav?.forEach((item: { userId: number }) => {
-      item.userId === currentUserId && setIsFavActive(true);
-    });
-  }, []);
+    if (!fav) return;
+    updateFavCount(fav.length);
+    initialButtonStyle(fav);
+  }, [fav]);
 
   return (
     <>
+      {modal && (
+        <div className="fixed top-1/2 left-1/2 z-50 w-52 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white text-center shadow-md">
+          <p className="py-4">댓글을 삭제할까요?</p>
+          <div className="flex w-full divide-x border-t">
+            <button
+              onClick={submit}
+              className="w-1/2 cursor-pointer py-2 hover:rounded-bl-lg hover:bg-slate-100"
+            >
+              삭제
+            </button>
+            <button
+              onClick={reset}
+              className="w-1/2 cursor-pointer py-2 hover:rounded-br-lg hover:bg-slate-100"
+            >
+              취소
+            </button>
+          </div>
+        </div>
+      )}
       <div className="flex items-center justify-between px-5 py-3">
         <div className="flex items-center">
           <img
@@ -91,9 +113,9 @@ const PostItem: NextPage<PostItemProps> = ({
       <ImageSlide images={imgurl} />
       <div className="relative p-5">
         <div>
-          <div className="mb-3 flex gap-2 text-xs text-commom-gray">
+          <div className="mb-3 flex gap-2 text-xs text-common-gray">
             <div>2023.03.11</div>
-            <div>좋아요 {favValue}</div>
+            <div>좋아요 {favCount}</div>
           </div>
           {(description || hashTag[0]?.tag !== "") && (
             <p className="mb-2">
@@ -106,14 +128,14 @@ const PostItem: NextPage<PostItemProps> = ({
             </p>
           )}
           <span
-            className="cursor-pointer text-commom-gray hover:underline"
+            className="cursor-pointer text-common-gray hover:underline"
             onClick={() => setShowComment(true)}
           >
             댓글 {comment ? comment.length : 0}개
           </span>
         </div>
         <div className="absolute top-4 right-4 flex items-center gap-3 text-2xl [&>svg]:cursor-pointer">
-          <Icon icon="ci:chat-circle" onClick={() => setInput(id, true)} />
+          <Icon icon="ci:chat-circle" onClick={clickComment} />
           {isFavActive ? (
             <Icon
               icon="icon-park-solid:like"
@@ -138,7 +160,7 @@ const PostItem: NextPage<PostItemProps> = ({
                     {text}
                   </div>
                   {author.nickname == currentUserNickname && (
-                    <div className="flex gap-3">
+                    <div className="flex gap-3 text-textColor-gray-100">
                       <button onClick={() => updateComment(id, text)}>
                         수정
                       </button>

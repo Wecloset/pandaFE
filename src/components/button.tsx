@@ -46,7 +46,7 @@ const Button: NextPage<buttonInterface> = ({
         className={`${height ? height : "h-[50px]"} ${
           width ? width : "w-full"
         } ${border} ${color} ${fontColor ?? "text-black"} ${logo} ${hover} ${
-          disabled ? "cursor-not-allowed disabled:bg-commom-gray" : ""
+          disabled ? "cursor-not-allowed disabled:bg-common-gray" : ""
         }`}
         disabled={disabled ? true : false}
         onClick={onClick}

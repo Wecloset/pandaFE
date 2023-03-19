@@ -3,10 +3,9 @@ import client from "../../../lib/client";
 
 const updateComment = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
-    const { comment, userId } = req.body.payload;
+    const { comment, userId } = req.body;
     const { postId, commentId } = req.query;
     const update = commentId ? true : false;
-    // console.log(update, comment, commentId);
 
     try {
       if (!comment) {

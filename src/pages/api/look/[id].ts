@@ -9,7 +9,7 @@ const lookbookDetail = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const post = await client.look.findUnique({
         where: {
-          id: +id!, // non-null필수. 제거시 '`undefined` cannot be serialized as JSON.' 에러발생함.
+          id: parseInt(id as string),
         },
         include: {
           user: true,
