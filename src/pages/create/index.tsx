@@ -176,7 +176,7 @@ const Create: NextPage<CredentialProps> = ({
                 onChange={textAreaValue}
               />
               <div
-                className="pointer-events-none absolute top-5 left-5 bg-transparent text-commom-gray 
+                className="text-/common-gray pointer-events-none absolute top-5 left-5 bg-transparent 
               peer-focus:hidden peer-[.is-valid]:hidden"
               >
                 <p>아이템에 대한 설명을 작성해주세요.</p>

@@ -97,7 +97,7 @@ const SignForm: NextPage = () => {
       ) : (
         <input
           type="submit"
-          className="mt-5 mb-10 h-12 bg-commom-gray hover:bg-primary-green"
+          className="bg-/common-gray mt-5 mb-10 h-12 hover:bg-primary-green"
         />
       )}
     </form>

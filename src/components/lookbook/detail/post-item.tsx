@@ -113,7 +113,7 @@ const PostItem: NextPage<PostItemProps> = ({
       <ImageSlide images={imgurl} />
       <div className="relative p-5">
         <div>
-          <div className="text-commom-gray mb-3 flex gap-2 text-xs">
+          <div className="text-/common-gray mb-3 flex gap-2 text-xs">
             <div>2023.03.11</div>
             <div>좋아요 {favCount}</div>
           </div>
@@ -128,7 +128,7 @@ const PostItem: NextPage<PostItemProps> = ({
             </p>
           )}
           <span
-            className="text-commom-gray cursor-pointer hover:underline"
+            className="text-/common-gray cursor-pointer hover:underline"
             onClick={() => setShowComment(true)}
           >
             댓글 {comment ? comment.length : 0}개

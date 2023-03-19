@@ -123,7 +123,7 @@ const Product: NextPage = () => {
                 {firstToUppercase(product.brand)}
               </div>
             </div>
-            <div className="text-commom-gray mb-4 flex text-xs">
+            <div className="text-/common-gray mb-4 flex text-xs">
               <span className="mr-2">조회 {product.view}</span>
               <span>찜 {favCount}</span>
             </div>

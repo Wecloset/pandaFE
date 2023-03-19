@@ -10,7 +10,7 @@ const ViewBox: NextPage<{
   }[];
 }> = ({ view, likes }) => {
   return (
-    <div className="absolute right-3 bottom-3 flex text-xs text-commom-gray">
+    <div className="text-/common-gray absolute right-3 bottom-3 flex text-xs">
       <span className="mr-3 flex items-center [&>svg]:-mt-[1px] [&>svg]:mr-0.5">
         <Icon icon="ic:outline-remove-red-eye" /> <span>조회 {view}</span>
       </span>

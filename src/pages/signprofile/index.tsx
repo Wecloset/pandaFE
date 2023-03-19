@@ -154,7 +154,7 @@ const SignProfile: NextPage<CredentialProps> = ({
           <input
             disabled={!pass}
             type="submit"
-            className="mt-5 mb-10 h-12 bg-commom-gray px-2 hover:cursor-pointer hover:bg-primary-green"
+            className="bg-/common-gray mt-5 mb-10 h-12 px-2 hover:cursor-pointer hover:bg-primary-green"
           />
         )}
       </form>

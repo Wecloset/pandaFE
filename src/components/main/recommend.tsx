@@ -43,7 +43,7 @@ const RecommentList = () => {
           조은님의 키워드에 적합한 아이템
         </p>
       </div>
-      <div className="flex w-full items-center gap-[6px] overflow-hidden overflow-x-scroll font-bold text-commom-gray scrollbar-hide">
+      <div className="text-/common-gray flex w-full items-center gap-[6px] overflow-hidden overflow-x-scroll font-bold scrollbar-hide">
         <button className="h-9 rounded-lg bg-common-black px-3 text-white">
           키워드
         </button>
