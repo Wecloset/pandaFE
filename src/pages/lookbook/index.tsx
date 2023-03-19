@@ -15,8 +15,12 @@ const Lookbook: NextPage = () => {
   const currentUserId = userData ? userData.id : 0;
 
   const getAllLooks = async () => {
-    const { data } = await axiosGet("/api/look");
-    return data;
+    try {
+      const { data } = await axiosGet("/api/look");
+      return data;
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const { data: allData, isLoading } = useQuery("lookbooks", getAllLooks);

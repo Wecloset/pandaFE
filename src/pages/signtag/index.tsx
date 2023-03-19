@@ -10,14 +10,14 @@ import LoadingSpinner from "../../components/loading-spinner";
 
 interface TagData {
   userData: number;
-  tags: string;
+  tags: string[];
 }
 
 const SignTag: NextPage = () => {
   const router = useRouter();
   const [selectedTag, setSelectedTag] = useState<string[]>([]);
 
-  const { data } = useQuery("userData", async () => {
+  const { data: signedUser } = useQuery("userData", async () => {
     const { data } = await axios.get("/api/signtag");
     return data.length === 0 ? data[data.length] : data[data.length - 1];
   });
@@ -40,8 +40,8 @@ const SignTag: NextPage = () => {
   const handleFormSubmit = (event: FormEvent) => {
     event.preventDefault();
     const tagData: TagData = {
-      userData: data.id,
-      tags: selectedTag.toString(),
+      userData: signedUser.id,
+      tags: selectedTag,
     };
     mutate(tagData);
   };
