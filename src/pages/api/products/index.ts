@@ -4,27 +4,37 @@ import client from "../../../lib/client";
 const productHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const { data, imageurlList, options, userId } = req.body;
-    const tagList = data.tag
-      .split(" ")
-      .map((tag: string) => tag.replace("#", ""));
+    const { title, price, desc } = data;
+    const category = options.category.name;
+    const style = options.style.name === "스타일" ? "" : options.style.name;
+    const rental = options.rental.name === "대여 가능" ? true : false;
+    const brand =
+      options.brand.name === "브랜드" ? "Vintage" : options.brand.name;
+
+    const setTagList = () => {
+      let tags = data.tag.split(" ").map((tag: string) => tag.replace("#", ""));
+      if (tags[0] === "") tags = [category, brand];
+      return tags;
+    };
+
+    const tagList = setTagList();
 
     try {
       await client.product.create({
         data: {
           userId,
-          title: data.title,
-          price: +data.price,
-          description: data.desc,
+          title,
+          price: +price,
+          description: desc,
           imgurl: {
             create: imageurlList.map((image: string) => ({
               img: image,
             })),
           },
-          category: options.category.name,
-          style: options.style.name === "스타일" ? "" : options.style.name,
-          brand:
-            options.brand.name === "브랜드" ? "Vintage" : options.brand.name,
-          rental: options.rental.name === "대여 가능" ? true : false,
+          category,
+          style,
+          brand,
+          rental,
           hashTag: {
             // @unique
             connectOrCreate: tagList.map((tagName: string) => ({

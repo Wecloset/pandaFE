@@ -1,25 +1,18 @@
 import { NextPage } from "next";
+import Image from "next/image";
 import Link from "next/link";
+import { ProductData } from "../../types/data-type";
 
-interface MainDataProps {
-  id: number;
-  title: string;
-  subtitle: string;
-  rental: string;
-  price: string;
-  view?: number;
-  like?: number;
-}
-
-interface MainListProps extends MainDataProps {
+interface MainListProps extends ProductData {
   imgw?: string;
   imgh?: string;
 }
 
 const MainProduct: NextPage<MainListProps> = ({
   id,
+  imgurl,
   title,
-  subtitle,
+  brand,
   rental,
   price,
   imgw,
@@ -27,20 +20,26 @@ const MainProduct: NextPage<MainListProps> = ({
 }) => {
   return (
     <li>
-      <Link href="">
-        <div className="mb-2 border border-common-black bg-borderColor-gray ">
-          <div className={`${imgw} ${imgh}`} />
+      <Link href={`/market/${id}`}>
+        <div className="mb-2 border border-common-black bg-borderColor-gray">
+          {imgurl && (
+            <img
+              src={imgurl[0]?.img}
+              alt={title}
+              className={`${imgw} ${imgh} object-cover`}
+            />
+          )}
         </div>
       </Link>
       <dl className="w-40">
-        <dt className="truncate">{subtitle}</dt>
+        <dt className="truncate">{brand}</dt>
         <dd className="truncate text-xs text-textColor-gray-100">{title}</dd>
         <dd className="mt-1 flex items-center">
           <span
             aria-label="판매상품"
             className="mr-[6px] -mt-1 bg-primary-green px-1 pt-0.5 text-xs text-white"
           >
-            {rental}
+            {rental ? "대여" : "판매"}
           </span>
           <span aria-label="가격" className="text-base font-bold">
             {price}

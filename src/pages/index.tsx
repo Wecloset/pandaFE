@@ -8,18 +8,18 @@ import Header from "../components/header";
 import Navigation from "../components/navigation";
 import Button from "../components/button";
 import FloatingButton from "../components/floating-button";
-import RecommentList from "../components/main/recommend";
 import RecentStyle from "../components/main/recent-style";
 import MainLookbook from "../components/main/lookbook";
 import { axiosGet } from "../utils/services";
 import { UserData } from "../types/data-type";
+import RecommendList from "../components/main/recommend";
 
 const Home: NextPage = () => {
   const [userEmail, setUserEmail] = useState<string>("");
   const setUser = useSetRecoilState(userState);
   const resetUser = useResetRecoilState(currentUserState);
 
-  useQuery<UserData>(
+  const { data: user } = useQuery<UserData>(
     "getUser",
     async () => {
       const { data } = await axiosGet(`/api/user?email=${userEmail}`);
@@ -56,7 +56,7 @@ const Home: NextPage = () => {
       <Header />
       <div className="h-72 w-full bg-borderColor-gray" />
       <div className="space-y-10 py-10">
-        <RecommentList />
+        <RecommendList {...(user as UserData)} />
         <RecentStyle />
         <MainLookbook />
         <div className="h-56 w-full bg-borderColor-gray py-10 text-center text-white">

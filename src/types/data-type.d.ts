@@ -29,6 +29,8 @@ export interface ProductData {
   price: number;
   title: string;
   view: number;
+  style: string;
+  rental: boolean;
   fav: {
     id: number;
     productId: number;
@@ -71,7 +73,6 @@ export interface UserData {
   keywords: {
     id: number;
     tag: string;
-    userId: number;
   }[];
   nickname: string;
   password: string;

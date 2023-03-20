@@ -85,10 +85,12 @@ const Create: NextPage<CredentialProps> = ({
   const validation = (data: CreateState) => {
     let isNotTag;
     if (typeof data.tag === "string") {
-      isNotTag = data.tag
-        .trim()
-        .split(" ")
-        .every((tag: string) => tag.includes("#"));
+      if (data.tag.trim() === "") isNotTag = true;
+      else
+        isNotTag = data.tag
+          .trim()
+          .split(" ")
+          .every((tag: string) => tag.includes("#"));
     }
     const numberCheck = /[0-9]/g;
     if (!numberCheck.test(data.price as string)) {
