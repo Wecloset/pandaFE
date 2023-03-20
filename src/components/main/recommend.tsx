@@ -1,22 +1,25 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
 import { ProductData } from "../../types/data-type";
 import { cls } from "../../utils/class";
-import { axiosGet } from "../../utils/services";
 import MainProduct from "./product-item";
 
 interface RecommendProps {
   keywords: { id: number; tag: string }[];
   nickname: string;
+  productsData: ProductData[];
 }
 
 interface Recommends {
   [key: string]: ProductData[];
 }
 
-const RecommendList: NextPage<RecommendProps> = ({ keywords, nickname }) => {
+const RecommendList: NextPage<RecommendProps> = ({
+  keywords,
+  nickname,
+  productsData,
+}) => {
   const [keyword, setKeyword] = useState<string>("");
   const [keywordItems, setKeywordItems] = useState<Recommends>({});
   const [recommendList, setRecommendList] = useState<Recommends>({});
@@ -32,15 +35,6 @@ const RecommendList: NextPage<RecommendProps> = ({ keywords, nickname }) => {
       itemList.push(...randomItem);
     }
     return itemList;
-  };
-
-  const getItems = async () => {
-    try {
-      const { data } = await axiosGet(`/api/products`);
-      return data;
-    } catch (err) {
-      console.log(err);
-    }
   };
 
   const setRecommends = (products: ProductData[]) => {
@@ -64,21 +58,6 @@ const RecommendList: NextPage<RecommendProps> = ({ keywords, nickname }) => {
     setRecommendList(randoms);
   };
 
-  useQuery("products", getItems, {
-    onSuccess: data => {
-      if (keywords) {
-        setRecommends(data);
-      } else {
-        const randomList = random(data);
-        setKeywordItems({ 추천아이템: data });
-        setRecommendList({ 추천아이템: randomList });
-      }
-    },
-    onError: ({ message }) => {
-      console.log(message);
-    },
-  });
-
   const clickKeyword = (tagName: string) => {
     setKeyword(tagName);
   };
@@ -92,9 +71,20 @@ const RecommendList: NextPage<RecommendProps> = ({ keywords, nickname }) => {
     }));
   };
 
+  const setContents = () => {
+    if (keywords) {
+      setRecommends(productsData);
+    } else {
+      const randomList = random(productsData);
+      setKeywordItems({ 추천아이템: productsData });
+      setRecommendList({ 추천아이템: randomList });
+    }
+  };
+
   useEffect(() => {
     if (keywords) setKeyword(keywords[0].tag);
-  }, [keywords]);
+    if (productsData) setContents();
+  }, [keywords, productsData]);
 
   const contents =
     recommendList[keyword]?.length > 0
@@ -129,11 +119,12 @@ const RecommendList: NextPage<RecommendProps> = ({ keywords, nickname }) => {
           ))}
         </div>
       )}
-      <ul className="grid grid-cols-2 gap-3">
-        {contents.map((data: ProductData) => (
-          <MainProduct key={data.id} {...data} imgw="w-full" imgh="h-[190px]" />
-        ))}
-      </ul>
+      <div className="grid grid-cols-2 gap-3">
+        {recommendList[keyword]?.length > 0 &&
+          contents.map((data: ProductData) => (
+            <MainProduct key={data.id} {...data} imgh="h-[190px]" />
+          ))}
+      </div>
       <button
         className="flex h-10 w-full items-center justify-center border-2 border-textColor-gray-50"
         onClick={refresh}

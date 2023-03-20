@@ -19,6 +19,17 @@ const Home: NextPage = () => {
   const setUser = useSetRecoilState(userState);
   const resetUser = useResetRecoilState(currentUserState);
 
+  const getItems = async () => {
+    try {
+      const { data } = await axiosGet(`/api/products`);
+      return data;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const { data: products } = useQuery("products", getItems);
+
   const { data: user } = useQuery<UserData>(
     "getUser",
     async () => {
@@ -56,8 +67,8 @@ const Home: NextPage = () => {
       <Header />
       <div className="h-72 w-full bg-borderColor-gray" />
       <div className="space-y-10 py-10">
-        <RecommendList {...(user as UserData)} />
-        <RecentStyle />
+        <RecommendList {...(user as UserData)} productsData={products} />
+        <RecentStyle productsData={products} />
         <MainLookbook />
         <div className="h-56 w-full bg-borderColor-gray py-10 text-center text-white">
           <p className="text-base">매일 수익이 발생하는 옷장공유</p>

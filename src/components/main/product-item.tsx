@@ -1,5 +1,4 @@
 import { NextPage } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { ProductData } from "../../types/data-type";
 
@@ -19,19 +18,19 @@ const MainProduct: NextPage<MainListProps> = ({
   imgh,
 }) => {
   return (
-    <li>
+    <div>
       <Link href={`/market/${id}`}>
         <div className="mb-2 border border-common-black bg-borderColor-gray">
           {imgurl && (
             <img
               src={imgurl[0]?.img}
               alt={title}
-              className={`${imgw} ${imgh} object-cover`}
+              className={`w-full ${imgh} object-cover`}
             />
           )}
         </div>
       </Link>
-      <dl className="w-40">
+      <dl className={imgw}>
         <dt className="truncate">{brand}</dt>
         <dd className="truncate text-xs text-textColor-gray-100">{title}</dd>
         <dd className="mt-1 flex items-center">
@@ -46,7 +45,7 @@ const MainProduct: NextPage<MainListProps> = ({
           </span>
         </dd>
       </dl>
-    </li>
+    </div>
   );
 };
 

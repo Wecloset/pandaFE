@@ -1,0 +1,28 @@
+export const translateClasses: { [key: string]: string[] } = {
+  recentStyle: [
+    "transform -translate-x-[0px]",
+    "transform -translate-x-[152px]",
+    "transform -translate-x-[304px]",
+    "transform -translate-x-[456px]",
+    "transform -translate-x-[608px]",
+    "transform -translate-x-[760px]",
+    "transform -translate-x-[912px]",
+    "transform -translate-x-[1064px]",
+    "transform -translate-x-[1216px]",
+    "transform -translate-x-[1368px]",
+    "transform -translate-x-[1520px]",
+  ],
+  detailSlide: [
+    "transform -translate-x-[0px]",
+    "transform -translate-x-[390px]",
+    "transform -translate-x-[780px]",
+    "transform -translate-x-[1170px]",
+    "transform -translate-x-[1560px]",
+    "transform -translate-x-[1950px]",
+    "transform -translate-x-[2340px]",
+    "transform -translate-x-[2730px]",
+    "transform -translate-x-[3120px]",
+    "transform -translate-x-[3510px]",
+    "transform -translate-x-[3900px]",
+  ],
+};
