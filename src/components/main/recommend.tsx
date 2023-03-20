@@ -65,9 +65,14 @@ const RecommendList: NextPage<RecommendProps> = ({ keywords, nickname }) => {
   };
 
   useQuery("products", getItems, {
-    enabled: !!keywords,
     onSuccess: data => {
-      setRecommends(data);
+      if (keywords) {
+        setRecommends(data);
+      } else {
+        const randomList = random(data);
+        setKeywordItems({ 추천아이템: data });
+        setRecommendList({ 추천아이템: randomList });
+      }
     },
     onError: ({ message }) => {
       console.log(message);
@@ -79,10 +84,11 @@ const RecommendList: NextPage<RecommendProps> = ({ keywords, nickname }) => {
   };
 
   const refresh = () => {
-    const newRandomItems = random(keywordItems[keyword]);
+    const key = keyword !== "" ? keyword : "추천아이템";
+    const newRandomItems = random(keywordItems[key]);
     setRecommendList((prev: Recommends) => ({
       ...prev,
-      [keyword]: newRandomItems,
+      [key]: newRandomItems,
     }));
   };
 
@@ -90,28 +96,19 @@ const RecommendList: NextPage<RecommendProps> = ({ keywords, nickname }) => {
     if (keywords) setKeyword(keywords[0].tag);
   }, [keywords]);
 
-  /*
-  id: 11
-  brand: "Hai"
-  category: "가방"
-  description: "새상품 급 컨디션\n택있음/더스트백있음\n구매가와 사이즈는 사진 확인해주세요!"
-  price: 140000
-  title: "Hai 넬리 토드백"
-  view: 0
-  style: "레트로"
-  fav: []
-  imgurl: (4) [{…}, {…}, {…}, {…}]
-  createdDate: "2023-03-19T18:00:36.197Z"
-  rental: true
-  userId: 1
-  */
+  const contents =
+    recommendList[keyword]?.length > 0
+      ? recommendList[keyword]
+      : recommendList["추천아이템"];
 
   return (
     <div className="space-y-5 px-5">
       <div>
         <h2 className="text-xl">Style for You</h2>
-        <p className="text-textColor-gray-100">
-          {nickname}님의 키워드에 적합한 아이템
+        <p className="mt-1 text-textColor-gray-100">
+          {nickname
+            ? `${nickname}님의 키워드에 적합한 아이템`
+            : "지금 핫한 아이템"}
         </p>
       </div>
       {keywords && (
@@ -133,22 +130,20 @@ const RecommendList: NextPage<RecommendProps> = ({ keywords, nickname }) => {
         </div>
       )}
       <ul className="grid grid-cols-2 gap-3">
-        {recommendList[keyword]?.length > 0 &&
-          recommendList[keyword].map((data: any) => (
-            <MainProduct
-              key={data.id}
-              {...data}
-              imgw="w-full"
-              imgh="h-[190px]"
-            />
-          ))}
+        {contents.map((data: ProductData) => (
+          <MainProduct key={data.id} {...data} imgw="w-full" imgh="h-[190px]" />
+        ))}
       </ul>
       <button
         className="flex h-10 w-full items-center justify-center border-2 border-textColor-gray-50"
         onClick={refresh}
       >
         <Icon icon="ic:baseline-refresh" className="mr-1 -mt-1 text-lg" />
-        <span>{`${keyword} 아이템`}</span>
+        {keyword !== "" ? (
+          <span>{`${keyword} 아이템`}</span>
+        ) : (
+          <span>추천 아이템</span>
+        )}
       </button>
     </div>
   );
