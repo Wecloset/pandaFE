@@ -23,7 +23,9 @@ const ProfileEdit: NextPage = () => {
   const [nick, setNick] = useState("");
   const allSelectedTag = taglist.value;
   const newArray: string[] = [];
-  const [selectedTag, setSelectedTag] = useState<string[]>([]);
+  const [selectedTag, setSelectedTag] = useState<string[]>(
+    userData.keywords.map(keyword => keyword.tag),
+  );
   const tagButtonText = isTag ? "완료" : "변경";
   const nickButtonText = isNick ? "완료" : "변경";
 
@@ -76,12 +78,10 @@ const ProfileEdit: NextPage = () => {
   );
 
   const { mutate: tagMutate } = useMutation(
-    async (tag: string[]) => {
+    async (tags: string[]) => {
       const { data } = await axios.post(
-        `/api/user/tag?id=${userData.keywords[0].id}`,
-        {
-          tags: tag,
-        },
+        `/api/user/tag?update=${userData.keywords[0].id}`,
+        tags,
       );
       return data;
     },

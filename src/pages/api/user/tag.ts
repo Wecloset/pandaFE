@@ -2,28 +2,38 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import client from "../../../lib/client";
 
 const signTag = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { id } = req.query;
-  const { userData, tags } = req.body;
+  const { update: updateId, post: postId } = req.query;
+  const { tags } = req.body;
 
   if (req.method !== "POST") return;
 
-  if (id) {
-    // change tag
-    const tagChange = await client.hashTag.update({
-      where: {
-        id: Number(id),
-      },
-      data: {
-        tag: tags.join(","),
-      },
-    });
-    res.json(tagChange);
+  if (updateId) {
+    // update tag
+    try {
+      const tagChange = await client.user.update({
+        where: {
+          id: Number(updateId),
+        },
+        data: {
+          keywords: {
+            disconnect: [],
+            connectOrCreate: tags.map((tagName: string) => ({
+              create: { tag: tagName },
+              where: { tag: tagName },
+            })),
+          },
+        },
+      });
+      res.json(tagChange);
+    } catch (err) {
+      res.json(err);
+    }
   } else {
     // post tag data
     try {
       await client.user.update({
         where: {
-          id: userData,
+          id: Number(postId),
         },
         data: {
           keywords: {
