@@ -24,7 +24,7 @@ const ProfileEdit: NextPage = () => {
   const allSelectedTag = taglist.value;
   const newArray: string[] = [];
   const [selectedTag, setSelectedTag] = useState<string[]>(
-    userData.keywords[0].tag.split(","),
+    userData.keywords.map(keyword => keyword.tag),
   );
   const tagButtonText = isTag ? "완료" : "변경";
   const nickButtonText = isNick ? "완료" : "변경";
@@ -63,9 +63,7 @@ const ProfileEdit: NextPage = () => {
           nickname: data.nickname,
         });
         axios
-          .post("/api/user", {
-            data: { userEmail: userData.email },
-          })
+          .get(`/api/user?email=${userData.email}`)
           .then(res => setUser(res.data.user));
       },
       onError: error => {
@@ -78,18 +76,17 @@ const ProfileEdit: NextPage = () => {
     async (tag: string[]) => {
       const { data } = await axios.post("/api/tagchange", {
         tags: tag,
-        id: userData.keywords[0].id,
+        id: userData.id,
       });
       return data;
     },
     {
       onSuccess: data => {
+        // console.log(data);
         alert("태그변경이 완료되었습니다.");
         setIsTag(false);
         axios
-          .post("/api/user", {
-            data: { userEmail: userData.email },
-          })
+          .get(`/api/user?email=${userData.email}`)
           .then(res => setUser(res.data.user));
       },
       onError: error => {
@@ -121,8 +118,6 @@ const ProfileEdit: NextPage = () => {
     setNick(value);
   };
 
-  console.log(nick);
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formId = (event.target as HTMLFormElement).id;
@@ -142,6 +137,7 @@ const ProfileEdit: NextPage = () => {
   const handleDelete = () => {
     userMutate(userData.id);
   };
+
   return (
     <>
       <Header goBack text="PROFILE" />
@@ -164,6 +160,7 @@ const ProfileEdit: NextPage = () => {
             onSubmit={handleSubmit}
           >
             <input
+              ref={input => input && input.focus()}
               placeholder={userData.nickname}
               className="border-b-[1px] border-solid border-black bg-transparent text-black outline-0 placeholder:text-textColor-gray-100"
               disabled={!isNick}
@@ -181,7 +178,7 @@ const ProfileEdit: NextPage = () => {
           <form onSubmit={handleTagSubmit} id="tag-form">
             <div className="my-2 flex w-full justify-between px-3">
               <div className=" flex w-full items-center whitespace-nowrap border-b-[1px] border-solid border-black text-textColor-gray-100 outline-0">
-                {userData.keywords[0].tag.split(",") === selectedTag
+                {userData.keywords.map(keyword => keyword.tag) === selectedTag
                   ? userData.keywords[0].tag
                   : selectedTag.length < 20
                   ? selectedTag.join(", ").slice(0, 22) + " ..."
@@ -202,7 +199,7 @@ const ProfileEdit: NextPage = () => {
       </div>
 
       {isTab && (
-        <div className="fixed bottom-0 z-30 w-[390px]">
+        <div className="fixed bottom-0 z-30  w-[390px]">
           <div className="h-16 w-full justify-center border-b-[1px] border-solid border-black bg-white p-5 text-center shadow-2xl shadow-black ">
             <span className="text-base font-bold">키워드 선택</span>
             <Icon

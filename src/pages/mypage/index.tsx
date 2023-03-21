@@ -11,17 +11,17 @@ import { UserData } from "../../types/data-type";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import Navigation from "../../components/navigation";
-import LoadingSpinner from "../../components/loading-spinner";
+//import LoadingSpinner from "../../components/loading-spinner";
 
 const MyPage: NextPage = () => {
   const userData = useRecoilValue(currentUserState) as UserData;
-  console.log(userData);
   const router = useRouter();
   const [category, setCategory] = useState<string>("items");
   const categoryClick = (event: React.MouseEvent) => {
     const target = event.target as HTMLButtonElement;
     setCategory(target.name);
   };
+
   return (
     <>
       <Header />
