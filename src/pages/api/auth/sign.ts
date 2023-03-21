@@ -1,9 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import client from "../../lib/client";
-import createHashedPassword from "../../utils/hash";
+import client from "../../../lib/client";
+import createHashedPassword from "../../../utils/hash";
 
 const userSign = async (req: NextApiRequest, res: NextApiResponse) => {
   const { email, password } = req.body;
+
   if (req.method === "POST") {
     try {
       await client.user.create({

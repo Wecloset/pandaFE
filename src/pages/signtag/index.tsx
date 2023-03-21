@@ -18,12 +18,12 @@ const SignTag: NextPage = () => {
   const [selectedTag, setSelectedTag] = useState<string[]>([]);
 
   const { data: signedUser } = useQuery("userData", async () => {
-    const { data } = await axios.get("/api/signtag");
-    return data.length === 0 ? data[data.length] : data[data.length - 1];
+    const { data } = await axios.get("/api/user");
+    return data[data.length - 1];
   });
 
   const postTagData = async (tagData: TagData) => {
-    const { data: response } = await axios.post("/api/signtag", tagData);
+    const { data: response } = await axios.post("/api/user/tag", tagData);
     return response;
   };
 
