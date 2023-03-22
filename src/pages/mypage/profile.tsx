@@ -121,6 +121,11 @@ const ProfileEdit: NextPage = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formId = (event.target as HTMLFormElement).id;
+    if (!nick && isNick) {
+      alert("닉네임을 변경해주세요");
+      return;
+    }
+    setIsNick(true);
     nickButtonText === "완료" &&
       formId === "nickname-form" &&
       isNick &&
@@ -169,7 +174,6 @@ const ProfileEdit: NextPage = () => {
             <button
               type="submit"
               className=" ml-3 h-9 w-2/5 bg-black text-white hover:bg-primary-green"
-              onClick={() => nickButtonText === "변경" && setIsNick(true)}
             >
               {nickButtonText}
             </button>
