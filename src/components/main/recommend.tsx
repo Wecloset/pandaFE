@@ -1,13 +1,15 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
+import { currentUserInfoQuery } from "../../recoil/user";
 import { ProductData } from "../../types/data-type";
 import { cls } from "../../utils/class";
 import MainProduct from "./product-item";
 
 interface RecommendProps {
-  keywords: { id: number; tag: string }[];
-  nickname: string;
+  keywords?: { id: number; tag: string }[];
+  nickname?: string;
   productsData: ProductData[];
 }
 
@@ -15,11 +17,10 @@ interface Recommends {
   [key: string]: ProductData[];
 }
 
-const RecommendList: NextPage<RecommendProps> = ({
-  keywords,
-  nickname,
-  productsData,
-}) => {
+const RecommendList: NextPage<RecommendProps> = ({ productsData }) => {
+  const userInfo = useRecoilValue(currentUserInfoQuery);
+  const keywords = userInfo ? userInfo.keywords : null;
+  const nickname = userInfo ? userInfo.nickname : "";
   const [keyword, setKeyword] = useState<string>("");
   const [keywordItems, setKeywordItems] = useState<Recommends>({});
   const [recommendList, setRecommendList] = useState<Recommends>({});
@@ -41,7 +42,7 @@ const RecommendList: NextPage<RecommendProps> = ({
     const recommends: Recommends = {};
     const randoms: Recommends = {};
 
-    keywords.forEach(({ tag }) => {
+    keywords.forEach(({ tag }: { tag: string }) => {
       const recommendItems = products.filter(product => product.style === tag);
       recommends[tag] = recommendItems;
     });
@@ -71,26 +72,26 @@ const RecommendList: NextPage<RecommendProps> = ({
     }));
   };
 
-  const setContents = () => {
-    if (keywords) {
-      setRecommends(productsData);
+  const setContents = (products: ProductData[]) => {
+    if (userInfo) {
+      setRecommends(products);
     } else {
-      const randomList = random(productsData);
-      setKeywordItems({ 추천아이템: productsData });
+      const randomList = random(products);
+      setKeywordItems({ 추천아이템: products });
       setRecommendList({ 추천아이템: randomList });
     }
   };
 
   useEffect(() => {
-    if (keywords?.length === 0 || !keywords) return;
     setKeyword(keywords[0].tag);
-    setContents();
-  }, [keywords, productsData]);
+  }, [keywords]);
+
+  useEffect(() => {
+    if (productsData) setContents(productsData);
+  }, [productsData]);
 
   const contents =
-    recommendList[keyword]?.length > 0
-      ? recommendList[keyword]
-      : recommendList["추천아이템"];
+    keyword !== "" ? recommendList[keyword] : recommendList["추천아이템"];
 
   return (
     <div className="space-y-5 px-5">
@@ -104,7 +105,7 @@ const RecommendList: NextPage<RecommendProps> = ({
       </div>
       {keywords && (
         <div className="flex w-full items-center gap-[6px] overflow-hidden overflow-x-scroll font-bold text-common-gray scrollbar-hide">
-          {keywords.map(({ tag, id }) => (
+          {keywords.map(({ tag, id }: { tag: string; id: number }) => (
             <button
               key={id}
               className={cls(
@@ -121,7 +122,7 @@ const RecommendList: NextPage<RecommendProps> = ({
         </div>
       )}
       <div className="grid grid-cols-2 gap-3">
-        {recommendList[keyword]?.length > 0 &&
+        {contents &&
           contents.map((data: ProductData) => (
             <MainProduct key={data.id} {...data} imgh="h-[190px]" />
           ))}

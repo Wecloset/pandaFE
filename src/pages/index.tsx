@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
-import { useEffect, useState } from "react";
-import { useResetRecoilState, useSetRecoilState } from "recoil";
-import { currentUserState, userState } from "../recoil/user";
+import { useEffect } from "react";
+import { useSetRecoilState } from "recoil";
+import { userEmailState } from "../recoil/user";
 import { getSession } from "next-auth/react";
 import { useQuery } from "react-query";
 import Header from "../components/header";
@@ -11,13 +11,10 @@ import FloatingButton from "../components/floating-button";
 import RecentStyle from "../components/main/recent-style";
 import MainLookbook from "../components/main/lookbook";
 import { axiosGet } from "../utils/services";
-import { UserData } from "../types/data-type";
 import RecommendList from "../components/main/recommend";
 
 const Home: NextPage = () => {
-  const [userEmail, setUserEmail] = useState<string>("");
-  const setUser = useSetRecoilState(userState);
-  const resetUser = useResetRecoilState(currentUserState);
+  const setEmail = useSetRecoilState(userEmailState);
 
   const getItems = async () => {
     try {
@@ -30,34 +27,14 @@ const Home: NextPage = () => {
 
   const { data: products } = useQuery("products", getItems);
 
-  const { data: user } = useQuery<UserData>(
-    "getUser",
-    async () => {
-      const { data } = await axiosGet(`/api/user?email=${userEmail}`);
-      console.log(data);
-      return data.user;
-    },
-    {
-      enabled: userEmail !== "",
-      onSuccess: data => {
-        setUser(data);
-      },
-      onError: err => {
-        alert(err);
-      },
-    },
-  );
-
   useEffect(() => {
     const fetchSession = async () => {
-      const session = await getSession();
-      const email = session?.user?.email;
-
-      if (!email) {
-        resetUser();
-        const localData = localStorage.getItem("current_user");
-        if (localData) localStorage.removeItem("current_user");
-      } else setUserEmail(email);
+      getSession().then(session => {
+        if (session) {
+          const email = session.user?.email as string;
+          setEmail(email);
+        }
+      });
     };
     fetchSession();
   }, []);
@@ -67,7 +44,7 @@ const Home: NextPage = () => {
       <Header />
       <div className="h-72 w-full bg-borderColor-gray" />
       <div className="space-y-10 py-10">
-        <RecommendList {...(user as UserData)} productsData={products} />
+        <RecommendList productsData={products} />
         <RecentStyle productsData={products} />
         <MainLookbook />
         <div className="h-56 w-full bg-borderColor-gray py-10 text-center text-white">
