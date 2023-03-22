@@ -12,7 +12,7 @@ const UserTagChange = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         data: {
           keywords: {
-            disconnect: [],
+            set: [],
             connectOrCreate: tags.map((tagName: string) => ({
               create: { tag: tagName },
               where: { tag: tagName },

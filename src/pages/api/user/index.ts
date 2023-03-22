@@ -4,7 +4,6 @@ import client from "../../../lib/client";
 const getUser = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
     const { email } = req.query;
-    console.log(email);
 
     try {
       const user = await client.user.findUnique({

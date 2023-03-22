@@ -19,14 +19,14 @@ const ProfileEdit: NextPage = () => {
   const router = useRouter();
   const [isTab, setIsTab] = useState<boolean>(false);
   const [isNick, setIsNick] = useState<boolean>(false);
-  const [isTag, setIsTag] = useState<boolean>(false);
+
   const [nick, setNick] = useState("");
   const allSelectedTag = taglist.value;
   const newArray: string[] = [];
   const [selectedTag, setSelectedTag] = useState<string[]>(
     userData.keywords.map(keyword => keyword.tag),
   );
-  const tagButtonText = isTag ? "완료" : "변경";
+
   const nickButtonText = isNick ? "완료" : "변경";
 
   const onClick = (data: string) => {
@@ -84,7 +84,7 @@ const ProfileEdit: NextPage = () => {
       onSuccess: data => {
         // console.log(data);
         alert("태그변경이 완료되었습니다.");
-        setIsTag(false);
+        setIsTab(false);
         axios
           .get(`/api/user?email=${userData.email}`)
           .then(res => setUser(res.data.user));
@@ -120,23 +120,17 @@ const ProfileEdit: NextPage = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formId = (event.target as HTMLFormElement).id;
     if (!nick && isNick) {
       alert("닉네임을 변경해주세요");
       return;
     }
     setIsNick(true);
-    nickButtonText === "완료" &&
-      formId === "nickname-form" &&
-      isNick &&
-      nick !== "" &&
-      nickMutate(nick);
+    nickButtonText === "완료" && isNick && nick !== "" && nickMutate(nick);
   };
 
   const handleTagSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formId = (event.target as HTMLFormElement).id;
-    tagButtonText === "완료" && formId === "tag-form" && tagMutate(selectedTag);
+    tagMutate(selectedTag);
   };
 
   const handleDelete = () => {
@@ -146,7 +140,7 @@ const ProfileEdit: NextPage = () => {
   return (
     <>
       <Header goBack text="PROFILE" />
-      <div className={`${isTab ? " opacity-30" : ""}`}>
+      <div className={`${isTab ? "opacity-50" : ""}`}>
         <div className="relative h-44 bg-gray-300">
           <Image
             src={`${userData.profileImg}`}
@@ -160,7 +154,6 @@ const ProfileEdit: NextPage = () => {
           <p className="px-2 text-base font-bold">유저정보 수정</p>
           <p className="text-textColor-gr ay-100 mt-5 px-2 text-sm">닉네임</p>
           <form
-            id="nickname-form"
             className="my-2 flex w-full justify-between px-3"
             onSubmit={handleSubmit}
           >
@@ -179,23 +172,24 @@ const ProfileEdit: NextPage = () => {
             </button>
           </form>
           <p className="mt-5 px-2 text-sm text-textColor-gray-100">키워드</p>
-          <form onSubmit={handleTagSubmit} id="tag-form">
+          <form>
             <div className="my-2 flex w-full justify-between px-3">
               <div className=" flex w-full items-center whitespace-nowrap border-b-[1px] border-solid border-black text-textColor-gray-100 outline-0">
                 {userData.keywords.map(keyword => keyword.tag) === selectedTag
-                  ? userData.keywords[0].tag
-                  : selectedTag.length < 20
-                  ? selectedTag.join(", ").slice(0, 22) + " ..."
-                  : selectedTag.join(", ")}
+                  ? userData.keywords.map(keyword => keyword.tag)
+                  : userData.keywords.map(keyword => keyword.tag).join()
+                      .length < 20
+                  ? selectedTag.join(", ")
+                  : selectedTag.join(", ").slice(0, 22) + " ..."}
               </div>
               <button
-                type="submit"
+                type="button"
                 className=" ml-3 h-9 w-2/5 bg-black text-white hover:bg-primary-green"
                 onClick={() => {
-                  tagButtonText === "변경" && setIsTab(true);
+                  setIsTab(true);
                 }}
               >
-                {tagButtonText}
+                변경
               </button>
             </div>
           </form>
@@ -203,24 +197,28 @@ const ProfileEdit: NextPage = () => {
       </div>
 
       {isTab && (
-        <div className="fixed bottom-0 z-30  w-[390px]">
-          <div className="h-16 w-full justify-center border-b-[1px] border-solid border-black bg-white p-5 text-center shadow-2xl shadow-black ">
+        <div className="fixed bottom-0 z-30 w-[390px]">
+          <form
+            onSubmit={handleTagSubmit}
+            className="h-16 w-full justify-center border-b-[1px] border-solid border-black bg-white p-5 text-center shadow-2xl shadow-black "
+          >
             <span className="text-base font-bold">키워드 선택</span>
             <Icon
+              type="button"
               icon="carbon:close"
               className="absolute top-4 right-4 z-50 h-7 w-7 cursor-pointer"
-              onClick={() => setIsTab(false)}
+              onClick={() => {
+                setIsTab(false),
+                  setSelectedTag(userData.keywords.map(kewyord => kewyord.tag));
+              }}
             />
             <button
-              type="button"
+              type="submit"
               className="absolute bottom-5 right-5 z-50 cursor-pointer font-bold"
-              onClick={() => {
-                setIsTab(false), setIsTag(true);
-              }}
             >
               완료
             </button>
-          </div>
+          </form>
           <div className="h-[300px] w-full bg-white p-5 pt-0">
             <ul className="flex w-full flex-wrap gap-2 py-3 px-2">
               {allSelectedTag.map((ele, index) => {
