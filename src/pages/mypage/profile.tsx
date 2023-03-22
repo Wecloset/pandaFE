@@ -162,7 +162,7 @@ const ProfileEdit: NextPage = () => {
             <input
               ref={input => input && input.focus()}
               placeholder={userData.nickname}
-              className="border-b-[1px] border-solid border-black bg-transparent text-black outline-0 placeholder:text-textColor-gray-100"
+              className="border-b-[1px] border-solid border-black bg-transparent text-black outline-0 placeholder:text-textColor-gray-100 disabled:text-textColor-gray-100"
               disabled={!isNick}
               onChange={onChange}
             />
