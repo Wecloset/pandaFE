@@ -9,7 +9,7 @@ import { useMutation, useQuery } from "react-query";
 import LoadingSpinner from "../../components/loading-spinner";
 
 interface TagData {
-  userData: number;
+  userId: number;
   tags: string[];
 }
 
@@ -18,12 +18,16 @@ const SignTag: NextPage = () => {
   const [selectedTag, setSelectedTag] = useState<string[]>([]);
 
   const { data: signedUser } = useQuery("userData", async () => {
-    const { data } = await axios.get("/api/signtag");
-    return data.length === 0 ? data[data.length] : data[data.length - 1];
+    const { data } = await axios.get("/api/user");
+    return data[data.length - 1];
   });
 
   const postTagData = async (tagData: TagData) => {
-    const { data: response } = await axios.post("/api/signtag", tagData);
+    const { userId, tags } = tagData;
+    const { data: response } = await axios.post(
+      `/api/user/tag?post=${userId}`,
+      tags,
+    );
     return response;
   };
 
@@ -40,7 +44,7 @@ const SignTag: NextPage = () => {
   const handleFormSubmit = (event: FormEvent) => {
     event.preventDefault();
     const tagData: TagData = {
-      userData: signedUser.id,
+      userId: signedUser.id,
       tags: selectedTag,
     };
     mutate(tagData);

@@ -82,8 +82,9 @@ const RecommendList: NextPage<RecommendProps> = ({
   };
 
   useEffect(() => {
-    if (keywords) setKeyword(keywords[0].tag);
-    if (productsData) setContents();
+    if (keywords?.length === 0 || !keywords) return;
+    setKeyword(keywords[0].tag);
+    setContents();
   }, [keywords, productsData]);
 
   const contents =

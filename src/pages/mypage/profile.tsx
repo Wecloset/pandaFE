@@ -24,7 +24,7 @@ const ProfileEdit: NextPage = () => {
   const allSelectedTag = taglist.value;
   const newArray: string[] = [];
   const [selectedTag, setSelectedTag] = useState<string[]>(
-    userData.keywords[0].tag.split(","),
+    userData.keywords.map(keyword => keyword.tag),
   );
   const tagButtonText = isTag ? "완료" : "변경";
   const nickButtonText = isNick ? "완료" : "변경";
@@ -50,7 +50,13 @@ const ProfileEdit: NextPage = () => {
 
   const { mutate: nickMutate } = useMutation(
     async (nick: string) => {
-      const { data } = await axios.post("/api/nickname", { nickname: nick });
+      const { data } = await axios.post(
+        `/api/user/nickname?id=${userData.id}`,
+        {
+          nickname: nick,
+        },
+      );
+      console.log(data);
       return data;
     },
     {
@@ -58,28 +64,25 @@ const ProfileEdit: NextPage = () => {
         alert("닉네임변경이 완료되었습니다.");
         setIsNick(false);
         setNick("");
-        axios.post("/api/nickchange", {
-          id: userData.id,
+        axios.post(`/api/user/nickname?id=${userData.id}`, {
           nickname: data.nickname,
         });
         axios
-          .post("/api/user", {
-            data: { userEmail: userData.email },
-          })
+          .get(`/api/user?email=${userData.email}`)
           .then(res => setUser(res.data.user));
       },
       onError: error => {
-        alert("닉네임이 중복됩니다");
+        alert("중복된 닉네임입니다.");
       },
     },
   );
 
   const { mutate: tagMutate } = useMutation(
-    async (tag: string[]) => {
-      const { data } = await axios.post("/api/tagchange", {
-        tags: tag,
-        id: userData.keywords[0].id,
-      });
+    async (tags: string[]) => {
+      const { data } = await axios.post(
+        `/api/user/tag?update=${userData.keywords[0].id}`,
+        tags,
+      );
       return data;
     },
     {
@@ -87,9 +90,7 @@ const ProfileEdit: NextPage = () => {
         alert("태그변경이 완료되었습니다.");
         setIsTag(false);
         axios
-          .post("/api/user", {
-            data: { userEmail: userData.email },
-          })
+          .get(`/api/user?email=${userData.email}`)
           .then(res => setUser(res.data.user));
       },
       onError: error => {
@@ -100,9 +101,7 @@ const ProfileEdit: NextPage = () => {
 
   const { mutate: userMutate } = useMutation(
     async (id: number) => {
-      const response = await axios.delete("/api/userdelete", {
-        data: { userId: id },
-      });
+      const response = await axios.delete(`/api/user/${id}`);
       return response;
     },
     {
@@ -120,8 +119,6 @@ const ProfileEdit: NextPage = () => {
     const { value } = event.target;
     setNick(value);
   };
-
-  console.log(nick);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -142,6 +139,7 @@ const ProfileEdit: NextPage = () => {
   const handleDelete = () => {
     userMutate(userData.id);
   };
+
   return (
     <>
       <Header goBack text="PROFILE" />
