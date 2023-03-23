@@ -1,31 +1,42 @@
 import { Icon } from "@iconify/react";
 import axios from "axios";
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { FieldValues, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import Header from "../../components/header";
 import Navigation from "../../components/navigation";
+import useUpload from "../../hooks/useUpload";
 import { taglist } from "../../lib/tag-data";
 import { currentUserState, userState } from "../../recoil/user";
+import { CredentialProps } from "../../types/create-type";
 import { UserData } from "../../types/data-type";
+import { createImageUrl } from "../../utils/image-url";
 
-const ProfileEdit: NextPage = () => {
+const ProfileEdit: NextPage<CredentialProps> = ({
+  region,
+  accessKey,
+  secretKey,
+}) => {
   const userData = useRecoilValue(currentUserState) as UserData;
   const setUser = useSetRecoilState(userState);
   const router = useRouter();
   const [isTab, setIsTab] = useState<boolean>(false);
   const [isNick, setIsNick] = useState<boolean>(false);
-
   const [nick, setNick] = useState("");
   const allSelectedTag = taglist.value;
   const newArray: string[] = [];
   const [selectedTag, setSelectedTag] = useState<string[]>(
     userData.keywords.map(keyword => keyword.tag),
   );
+
+  const { handleSubmit, register } = useForm({});
+  const credentials = { region, accessKey, secretKey };
+  const { uploadImage, encodeFile, imgsrc } = useUpload(credentials);
 
   const nickButtonText = isNick ? "완료" : "변경";
 
@@ -82,7 +93,6 @@ const ProfileEdit: NextPage = () => {
     },
     {
       onSuccess: data => {
-        // console.log(data);
         alert("태그변경이 완료되었습니다.");
         setIsTab(false);
         axios
@@ -118,7 +128,7 @@ const ProfileEdit: NextPage = () => {
     setNick(value);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleNickSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!nick && isNick) {
       alert("닉네임을 변경해주세요");
@@ -137,25 +147,73 @@ const ProfileEdit: NextPage = () => {
     userMutate(userData.id);
   };
 
+  const changeProfileImage = async () => {
+    uploadImage(imgsrc[0].file, "profile");
+    const imageurl = createImageUrl(imgsrc[0].file, "profile");
+
+    const { data: response } = await axios.post("/api/imagechange", {
+      imageurl,
+      userData: userData.id,
+    });
+
+    return response;
+  };
+
+  const { mutate: profileMutate } = useMutation(changeProfileImage, {
+    onSuccess: ({ message }) => {
+      imgsrc.length = 0;
+      alert(message);
+    },
+    onError: ({ response }) => {
+      alert(response.data.message);
+    },
+  });
+
+  const updateProfileImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    encodeFile(event);
+  };
+
+  useEffect(() => {
+    if (imgsrc.length === 0) return;
+    profileMutate();
+  }, [imgsrc]);
+
   return (
     <>
       <Header goBack text="PROFILE" />
-      <div className={`${isTab ? "opacity-50" : ""}`}>
-        <div className="relative h-44 bg-gray-300">
-          <Image
-            src={`${userData.profileImg}`}
-            alt="유저이미지"
-            width={50}
-            height={50}
-            className=" absolute  left-[155px] top-32 h-20 w-20 rounded-full"
-          />
+      {isTab && (
+        <div className="fixed z-10 h-[calc(100%-300px)] w-[390px] bg-black pt-10 opacity-50" />
+      )}
+      <div>
+        <div className="h-44 bg-gray-300">
+          <div className="relative top-32 h-20 w-20 translate-x-[155px] transform overflow-hidden rounded-full bg-slate-700">
+            <Image
+              src={`${userData.profileImg}`}
+              alt="유저이미지"
+              width={50}
+              height={50}
+              className="w-full object-cover"
+            />
+            <label className="absolute bottom-0 z-10 h-[22px] w-20 bg-black text-center text-white">
+              <input
+                {...register("image")}
+                id="picture"
+                type="file"
+                accept="image/png, image/jpeg"
+                multiple={false}
+                onChange={updateProfileImage}
+                className="hidden"
+              />
+              변경
+            </label>
+          </div>
         </div>
         <div className="px-5 py-10">
           <p className="px-2 text-base font-bold">유저정보 수정</p>
           <p className="text-textColor-gr ay-100 mt-5 px-2 text-sm">닉네임</p>
           <form
             className="my-2 flex w-full justify-between px-3"
-            onSubmit={handleSubmit}
+            onSubmit={handleNickSubmit}
           >
             <input
               ref={input => input && input.focus()}
@@ -195,7 +253,6 @@ const ProfileEdit: NextPage = () => {
           </form>
         </div>
       </div>
-
       {isTab && (
         <div className="fixed bottom-0 z-30 w-[390px]">
           <form
@@ -273,6 +330,22 @@ const ProfileEdit: NextPage = () => {
       <Navigation />
     </>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const REGION = process.env.AWS_REGION ? process.env.AWS_REGION : null;
+  const ACCESS_KEY = process.env.AWS_KEY ? process.env.AWS_KEY : null;
+  const SECRECT_KEY = process.env.AWS_SECRET_KEY
+    ? process.env.AWS_SECRET_KEY
+    : null;
+
+  return {
+    props: {
+      region: REGION,
+      accessKey: ACCESS_KEY,
+      secretKey: SECRECT_KEY,
+    },
+  };
 };
 
 export default ProfileEdit;
