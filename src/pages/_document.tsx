@@ -5,7 +5,6 @@ import Document, {
   NextScript,
   DocumentContext,
 } from "next/document";
-import MainLayout from "../styles/global-layout";
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
@@ -18,10 +17,7 @@ class MyDocument extends Document {
       <Html lang="ko">
         <Head></Head>
         <body className="font-myfont text-sm text-common-black">
-          <MainLayout>
-            <div id="overlay-root" />
-            <Main />
-          </MainLayout>
+          <Main />
           <NextScript />
         </body>
       </Html>

@@ -1,8 +1,29 @@
 import { NextPage } from "next";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import logo from "../../public/asset/image/full-logo-white.png";
 
 const MainLayout: NextPage<{ children: React.ReactNode }> = ({ children }) => {
+  const [search, setSearch] = useState<string>("");
+  const router = useRouter();
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
+  const onSearch = () => {
+    router
+      .push({
+        pathname: "/search",
+        query: { word: search },
+      })
+      .then(res => res && setSearch(""));
+  };
+  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      onSearch();
+    }
+  };
+
   return (
     <div className="h-screen w-full bg-gray-800">
       <div className="mx-auto flex h-screen w-[900px] justify-between bg-gray-800 max-xl:w-auto">
@@ -19,11 +40,15 @@ const MainLayout: NextPage<{ children: React.ReactNode }> = ({ children }) => {
             </div>
             <div className="relative mt-6 flex items-center">
               <input
+                value={search}
+                onChange={onChange}
+                onKeyDown={onKeyDown}
                 type="text"
                 className="w-[400px] rounded-full py-4 px-7 text-xl text-gray-700 focus:outline-none"
               />
               <button
-                type="button"
+                onClick={onSearch}
+                type="submit"
                 className="absolute right-4 cursor-pointer text-3xl text-black"
               >
                 <svg
