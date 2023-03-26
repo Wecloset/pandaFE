@@ -29,6 +29,8 @@ export interface ProductData {
   price: number;
   title: string;
   view: number;
+  style: string;
+  rental: boolean;
   fav: {
     id: number;
     productId: number;
@@ -55,6 +57,7 @@ export interface ProductDataMin {
   id: string | number;
   price: number;
   title: string;
+  rental: boolean;
   imgurl: { id: number; img: string }[];
 }
 
@@ -68,10 +71,10 @@ export interface UserData {
     looks: LookbookData[];
   }[];
   product: ProductData[] | ProductDataMin[];
+  look: LookbookData[] | LookbookDataMin[];
   keywords: {
     id: number;
     tag: string;
-    userId: number;
   }[];
   nickname: string;
   password: string;
@@ -102,4 +105,9 @@ export interface LookbookData {
     nickname: string;
     profileImg: string;
   };
+}
+
+export interface LookbookDataMin {
+  id: number;
+  imgurl: { id: number; img: string }[];
 }

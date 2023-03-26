@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { SessionProvider } from "next-auth/react";
 import { RecoilRoot } from "recoil";
 import MainLayout from "../styles/global-layout";
+import React from "react";
+
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const queryClient = new QueryClient();

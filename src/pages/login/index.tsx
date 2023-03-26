@@ -18,8 +18,8 @@ const Login: NextPage = () => {
   const alerted = useRef(false);
   const router = useRouter();
 
-  const findUser = async (findUser: string) => {
-    const { data: response } = await axios.post("/api/find", findUser);
+  const findUser = async (userEmail: string) => {
+    const { data: response } = await axios.post(`/api/user?email=${userEmail}`);
     return response;
   };
 

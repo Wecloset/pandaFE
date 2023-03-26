@@ -2,10 +2,20 @@ import { NextApiRequest, NextApiResponse } from "next";
 import client from "../../../lib/client";
 
 const updateFav = async (req: NextApiRequest, res: NextApiResponse) => {
+  const { id } = req.query;
+  const currentUserId = Number(id);
+
+  if (req.method === "DELETE") {
+    const deleteUser = await client.user.delete({
+      where: {
+        id: currentUserId,
+      },
+    });
+    res.json(deleteUser);
+  }
+
   if (req.method === "POST") {
-    const { id } = req.query;
     const { productId, lookId } = req.body;
-    const currentUserId = Number(id);
 
     const fav = await client.user.findUnique({
       where: {

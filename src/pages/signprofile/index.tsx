@@ -25,8 +25,8 @@ const SignProfile: NextPage<CredentialProps> = ({
   secretKey,
 }) => {
   const { data } = useQuery("userData", async () => {
-    const { data } = await axios.get("/api/signtag");
-    return data.length === 0 ? data[data.length] : data[data.length - 1];
+    const { data } = await axios.get("/api/user");
+    return data[data.length - 1];
   });
   const router = useRouter();
   const credentials = { region, accessKey, secretKey };
@@ -49,7 +49,7 @@ const SignProfile: NextPage<CredentialProps> = ({
   };
 
   const createNickName = async (createNick: string) => {
-    const { data } = await axios.post("/api/nickname", {
+    const { data } = await axios.post("/api/user/nickname", {
       nickname: createNick,
     });
     return data;
@@ -72,7 +72,7 @@ const SignProfile: NextPage<CredentialProps> = ({
     uploadImage(imgsrc[0].file, "profile");
     const imageurl = createImageUrl(imgsrc[0].file, "profile");
     userProfile.image = imageurl;
-    const { data: response } = await axios.post("/api/profile", {
+    const { data: response } = await axios.post("/api/auth/profile", {
       userProfile,
       userData: data?.id,
     });
