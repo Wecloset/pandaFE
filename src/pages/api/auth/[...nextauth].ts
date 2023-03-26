@@ -1,3 +1,4 @@
+import axios from "axios";
 import NextAuth, { User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
@@ -19,6 +20,7 @@ export default NextAuth({
   providers: [
     CredentialsProvider({
       name: "Credentials",
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       async authorize(credentials: Credentials) {
         const { email, password, nickname } = credentials;

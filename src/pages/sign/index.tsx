@@ -14,7 +14,7 @@ const Sign: NextPage = () => {
   const alerted = useRef(false);
 
   const findUser = async (findUser: string) => {
-    const { data: response } = await axios.post("/api/find", findUser);
+    const { data: response } = await axios.get(`/api/user?email=${findUser}`);
     return response;
   };
 
@@ -32,8 +32,8 @@ const Sign: NextPage = () => {
   }, [session]);
 
   useEffect(() => {
-    if (session && data && data[0].HashTag) {
-      if (data[0].HashTag.length === 0 && !alerted.current) {
+    if (session && data && data.user.keywords) {
+      if (data.user.keywords.length === 0 && !alerted.current) {
         alerted.current = true;
         alert("유저 정보가 존재하지 않습니다. 회원가입을 진행하겠습니다");
         router.push("/signtag");

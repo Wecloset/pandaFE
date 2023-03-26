@@ -1,7 +1,6 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
-import { useEffect } from "react";
-import { UserData } from "../../types/data-type";
+import { useEffect, useState } from "react";
 import Button from "../../components/button";
 import Header from "../../components/header";
 import ImageSlide from "../../components/market/detail/image-slide";
@@ -10,18 +9,23 @@ import {
   firstToUppercase,
   priceAddComma,
 } from "../../utils/markets";
-import { useRecoilValue } from "recoil";
+import { useRecoilValueLoadable } from "recoil";
 import { axiosGet } from "../../utils/services";
-import { currentUserState } from "../../recoil/user";
 import { updateViews } from "../../utils/market-view";
 import { useMutation, useQuery } from "react-query";
 import LoadingSpinner from "../../components/loading-spinner";
 import useFav from "../../hooks/useFav";
 import { useRouter } from "next/router";
+import { currentUserInfoQuery } from "../../recoil/user";
 
 const Product: NextPage = () => {
-  const userData = useRecoilValue(currentUserState) as UserData;
-  const currentUserId = userData ? userData.id : 0;
+  const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
+  const { state, contents: userContents } = userInfo;
+  const [currentUserId, setCurrentUserId] = useState<number>(0);
+
+  useEffect(() => {
+    if (userContents) setCurrentUserId(userContents.id);
+  }, [state]);
 
   const router = useRouter();
   const { id: productId } = router.query;
@@ -63,7 +67,10 @@ const Product: NextPage = () => {
 
   const toggleFavButton = async () => {
     changeButtonSytle();
-    mutate({ currentUserId, productId: +(productId as string) });
+    mutate({
+      currentUserId,
+      productId: +(productId as string),
+    });
   };
 
   const setInitialFav = () => {
@@ -75,19 +82,20 @@ const Product: NextPage = () => {
     if (!product) return;
     setInitialFav();
 
-    if (!userData) return;
-    const { email: userEmail } = userData;
+    if (!userContents) return;
+    const { email: userEmail } = userContents;
     updateViews(userEmail, +(productId as string), product.view);
-  }, [currentUserId, product]);
+  }, [userInfo, product]);
 
   return (
     <>
       <Header goBack />
-      {isLoading ? (
+      {isLoading && (
         <div className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
           <LoadingSpinner />
         </div>
-      ) : (
+      )}
+      {product && (
         <>
           <ImageSlide images={product.imgurl} isLoading={isLoading} />
           <div className="p-5">

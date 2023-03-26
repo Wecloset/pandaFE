@@ -9,19 +9,24 @@ import {
 import Header from "../../components/header";
 import LoadingSpinner from "../../components/loading-spinner";
 import PostItem from "../../components/lookbook/detail/post-item";
-import { LookbookData, UserData } from "../../types/data-type";
+import { LookbookData } from "../../types/data-type";
 import { axiosGet } from "../../utils/services";
 import { useInView } from "react-intersection-observer";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FieldValues, useForm } from "react-hook-form";
-import { useRecoilValue } from "recoil";
-import { currentUserState } from "../../recoil/user";
+import { useRecoilValueLoadable } from "recoil";
+import { currentUserInfoQuery } from "../../recoil/user";
 import { useRouter } from "next/router";
 
 const Post: NextPage = () => {
-  const userData = useRecoilValue(currentUserState) as UserData;
-  const userId = userData ? userData.id : 0;
+  const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
+  const { state, contents: userContents } = userInfo;
+  const [userId, setUserId] = useState<number>(0);
+
+  useEffect(() => {
+    if (userContents) setUserId(userContents.id);
+  }, [state]);
 
   const router = useRouter();
   const { id: lookbookId } = router.query;
@@ -156,6 +161,7 @@ const Post: NextPage = () => {
         {isLoading && <LoadingSpinner />}
         {postData && (
           <PostItem
+            userData={userContents}
             setInput={setInput}
             modal={confirm}
             submit={submit}
@@ -171,6 +177,7 @@ const Post: NextPage = () => {
               {page?.posts.map((look: LookbookData) => (
                 <PostItem
                   key={look.id}
+                  userData={userContents}
                   setInput={setInput}
                   modal={confirm}
                   submit={submit}
