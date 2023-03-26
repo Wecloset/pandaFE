@@ -2,14 +2,14 @@ import { NextApiRequest, NextApiResponse } from "next";
 import client from "../../../lib/client";
 
 const searchKeywords = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { item } = req.query;
+  const { keyword } = req.query;
   if (req.method === "GET") {
     try {
       const allKeywords = await client.product.findMany({
         where: {
           OR: [
-            { title: { contains: item as string } },
-            { hashTag: { some: { tag: { contains: item as string } } } },
+            { title: { contains: keyword as string } },
+            { hashTag: { some: { tag: { contains: keyword as string } } } },
           ],
         },
         include: {

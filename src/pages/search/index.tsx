@@ -40,7 +40,7 @@ const Search: NextPage = () => {
     "getProduct",
     async () => {
       const { data } = await axios.get(
-        `/api/search/keywords?item=${router.query.word}`,
+        `/api/search?keyword=${router.query.word}`,
       );
 
       return data;
