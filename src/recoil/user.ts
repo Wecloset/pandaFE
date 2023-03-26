@@ -1,4 +1,3 @@
-import { getSession } from "next-auth/react";
 import { atom, AtomEffect, selector, selectorFamily } from "recoil";
 import { v1 } from "uuid";
 import { axiosGet } from "../utils/services";
@@ -57,6 +56,9 @@ const currentUserInfoQuery = selector({
     if (currentUserEmail === "") return undefined;
     const userInfo = get(userInfoQuery(currentUserEmail));
     return userInfo;
+  },
+  cachePolicy_UNSTABLE: {
+    eviction: "most-recent",
   },
 });
 
