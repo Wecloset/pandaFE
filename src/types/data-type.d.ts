@@ -57,6 +57,7 @@ export interface ProductDataMin {
   id: string | number;
   price: number;
   title: string;
+  rental: boolean;
   imgurl: { id: number; img: string }[];
 }
 
@@ -70,6 +71,7 @@ export interface UserData {
     looks: LookbookData[];
   }[];
   product: ProductData[] | ProductDataMin[];
+  look: LookbookData[] | LookbookDataMin[];
   keywords: {
     id: number;
     tag: string;
@@ -103,4 +105,9 @@ export interface LookbookData {
     nickname: string;
     profileImg: string;
   };
+}
+
+export interface LookbookDataMin {
+  id: number;
+  imgurl: { id: number; img: string }[];
 }

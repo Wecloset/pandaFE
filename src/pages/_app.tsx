@@ -11,9 +11,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     <QueryClientProvider client={queryClient}>
       <SessionProvider session={session}>
         <RecoilRoot>
-          <React.Suspense fallback={<div>Loading...</div>}>
-            <Component {...pageProps} />
-          </React.Suspense>
+          <Component {...pageProps} />
         </RecoilRoot>
       </SessionProvider>
     </QueryClientProvider>

@@ -33,6 +33,9 @@ const Home: NextPage = () => {
         if (session) {
           const email = session.user?.email as string;
           setEmail(email);
+        } else {
+          setEmail("");
+          localStorage.removeItem("current_user");
         }
       });
     };

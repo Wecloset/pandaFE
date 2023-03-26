@@ -3,14 +3,13 @@ import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { useMutation } from "react-query";
-import { useRecoilValue } from "recoil";
 import useFav from "../../../hooks/useFav";
-import { currentUserState } from "../../../recoil/user";
 import { LookbookData, UserData } from "../../../types/data-type";
 import ImageSlide from "../../market/detail/image-slide";
 import TagItem from "./tag-item";
 
 interface PostItemProps extends LookbookData {
+  userData: UserData;
   setInput: (postId: number, val?: boolean) => void;
   updateComment: (commentId: number, text: string) => void;
   deleteComment: (commentId: number) => void;
@@ -20,6 +19,7 @@ interface PostItemProps extends LookbookData {
 }
 
 const PostItem: NextPage<PostItemProps> = ({
+  userData,
   id,
   user,
   imgurl,
@@ -35,7 +35,6 @@ const PostItem: NextPage<PostItemProps> = ({
   submit,
   reset,
 }) => {
-  const userData = useRecoilValue(currentUserState) as UserData;
   const currentUserNickname = userData ? userData.nickname : "";
   const currentUserId = userData ? userData.id : 0;
   const {
