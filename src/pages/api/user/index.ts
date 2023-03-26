@@ -13,6 +13,17 @@ const getUser = async (req: NextApiRequest, res: NextApiResponse) => {
           },
           include: {
             keywords: true,
+            look: {
+              select: {
+                id: true,
+                imgurl: {
+                  select: {
+                    id: true,
+                    img: true,
+                  },
+                },
+              },
+            },
             product: {
               select: {
                 id: true,

@@ -1,12 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import client from "../../../lib/client";
 
-const nickCheck = async (req: NextApiRequest, res: NextApiResponse) => {
+const nickNameHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
   const { nickname } = req.body;
 
   if (req.method !== "POST") return;
-
   if (id) {
     // change nickname
     const nickChange = await client.user.update({
@@ -38,4 +37,4 @@ const nickCheck = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default nickCheck;
+export default nickNameHandler;

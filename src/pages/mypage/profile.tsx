@@ -4,28 +4,45 @@ import type { NextPage } from "next";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation } from "react-query";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
 import Header from "../../components/header";
 import Navigation from "../../components/navigation";
 import { taglist } from "../../lib/tag-data";
-import { currentUserState, userState } from "../../recoil/user";
+import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
 import { UserData } from "../../types/data-type";
+import { axiosGet } from "../../utils/services";
 
 const ProfileEdit: NextPage = () => {
-  const userData = useRecoilValue(currentUserState) as UserData;
-  const setUser = useSetRecoilState(userState);
+  const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
+  const { state, contents: userContents } = userInfo;
+  const refreshUserInfo = useRecoilRefresher_UNSTABLE(
+    userInfoQuery(userContents.email),
+  );
+
   const router = useRouter();
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [userData, setUserData] = useState<UserData>();
   const [isTab, setIsTab] = useState<boolean>(false);
   const [isNick, setIsNick] = useState<boolean>(false);
   const [isTag, setIsTag] = useState<boolean>(false);
   const [nick, setNick] = useState("");
   const allSelectedTag = taglist.value;
   const newArray: string[] = [];
-  const [selectedTag, setSelectedTag] = useState<string[]>(
-    userData.keywords.map(keyword => keyword.tag),
-  );
+  const [selectedTag, setSelectedTag] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (state === "hasValue") {
+      setUserData(userContents);
+      setSelectedTag(
+        userContents.keywords.map(({ tag }: { tag: string }) => tag),
+      );
+      setIsLoading(false);
+    }
+  }, [state]);
+
   const tagButtonText = isTag ? "완료" : "변경";
   const nickButtonText = isNick ? "완료" : "변경";
 
@@ -36,6 +53,7 @@ const ProfileEdit: NextPage = () => {
       setSelectedTag([...selectedTag]);
     }
   };
+
   const onDelete = (x: string) => {
     const deleteItem = selectedTag.indexOf(x);
     const cutone = selectedTag.slice(0, deleteItem);
@@ -44,19 +62,25 @@ const ProfileEdit: NextPage = () => {
     newArray.push(...cuttwo);
     setSelectedTag(newArray);
   };
+
   const onResetBtn = () => {
     setSelectedTag([]);
   };
 
+  const getUser = async (email: string) => {
+    console.log("get user");
+    const { data } = await axiosGet(`/api/user?email=${email}`);
+    return data.user;
+  };
+
   const { mutate: nickMutate } = useMutation(
     async (nick: string) => {
-      const { data } = await axios.post(
-        `/api/user/nickname?id=${userData.id}`,
-        {
-          nickname: nick,
-        },
-      );
-      console.log(data);
+      if (!userData) return;
+      // 중복확인
+      const { data } = await axios.post("/api/user/nickname", {
+        headers: { "Content-Type": "application/json" },
+        nickname: nick,
+      });
       return data;
     },
     {
@@ -64,21 +88,23 @@ const ProfileEdit: NextPage = () => {
         alert("닉네임변경이 완료되었습니다.");
         setIsNick(false);
         setNick("");
-        axios.post(`/api/user/nickname?id=${userData.id}`, {
-          nickname: data.nickname,
-        });
+        // 닉네임 변경
         axios
-          .get(`/api/user?email=${userData.email}`)
-          .then(res => setUser(res.data.user));
+          .post(`/api/user/nickname?id=${userContents.id}`, {
+            headers: { "Content-Type": "application/json" },
+            nickname: nick,
+          })
+          .then(res => refreshUserInfo());
       },
-      onError: error => {
-        alert("중복된 닉네임입니다.");
+      onError: ({ response }) => {
+        alert(response.data.message);
       },
     },
   );
 
   const { mutate: tagMutate } = useMutation(
     async (tags: string[]) => {
+      if (!userData) return;
       const { data } = await axios.post(
         `/api/user/tag?update=${userData.keywords[0].id}`,
         tags,
@@ -87,14 +113,12 @@ const ProfileEdit: NextPage = () => {
     },
     {
       onSuccess: data => {
-        alert("태그변경이 완료되었습니다.");
+        alert("키워드 변경이 완료되었습니다.");
         setIsTag(false);
-        axios
-          .get(`/api/user?email=${userData.email}`)
-          .then(res => setUser(res.data.user));
+        refreshUserInfo(); // refresh user
       },
       onError: error => {
-        alert("태그변경이 잘못됫습니다");
+        alert("키워드 변경실패");
       },
     },
   );
@@ -137,67 +161,75 @@ const ProfileEdit: NextPage = () => {
   };
 
   const handleDelete = () => {
+    if (!userData) return;
     userMutate(userData.id);
+  };
+
+  const signout = () => {
+    alert("로그아웃이 완료되었습니다.");
+    router.replace("/").then(() => signOut());
   };
 
   return (
     <>
       <Header goBack text="PROFILE" />
-      <div className={`${isTab ? " opacity-30" : ""}`}>
-        <div className="relative h-44 bg-gray-300">
-          <Image
-            src={`${userData.profileImg}`}
-            alt="유저이미지"
-            width={50}
-            height={50}
-            className=" absolute  left-[155px] top-32 h-20 w-20 rounded-full"
-          />
-        </div>
-        <div className="px-5 py-10">
-          <p className="px-2 text-base font-bold">유저정보 수정</p>
-          <p className="text-textColor-gr ay-100 mt-5 px-2 text-sm">닉네임</p>
-          <form
-            id="nickname-form"
-            className="my-2 flex w-full justify-between px-3"
-            onSubmit={handleSubmit}
-          >
-            <input
-              placeholder={userData.nickname}
-              className="border-b-[1px] border-solid border-black bg-transparent text-black outline-0 placeholder:text-textColor-gray-100"
-              disabled={!isNick}
-              onChange={onChange}
+      {!isLoading && userData && (
+        <div className={`${isTab ? " opacity-30" : ""}`}>
+          <div className="relative h-44 bg-gray-300">
+            <Image
+              src={`${userData.profileImg}`}
+              alt="유저이미지"
+              width={50}
+              height={50}
+              className=" absolute  left-[155px] top-32 h-20 w-20 rounded-full"
             />
-            <button
-              type="submit"
-              className=" ml-3 h-9 w-2/5 bg-black text-white hover:bg-primary-green"
-              onClick={() => nickButtonText === "변경" && setIsNick(true)}
+          </div>
+          <div className="px-5 py-10">
+            <p className="px-2 text-base font-bold">유저정보 수정</p>
+            <p className="text-textColor-gr ay-100 mt-5 px-2 text-sm">닉네임</p>
+            <form
+              id="nickname-form"
+              className="my-2 flex w-full justify-between px-3"
+              onSubmit={handleSubmit}
             >
-              {nickButtonText}
-            </button>
-          </form>
-          <p className="mt-5 px-2 text-sm text-textColor-gray-100">키워드</p>
-          <form onSubmit={handleTagSubmit} id="tag-form">
-            <div className="my-2 flex w-full justify-between px-3">
-              <div className=" flex w-full items-center whitespace-nowrap border-b-[1px] border-solid border-black text-textColor-gray-100 outline-0">
-                {userData.keywords[0].tag.split(",") === selectedTag
-                  ? userData.keywords[0].tag
-                  : selectedTag.length < 20
-                  ? selectedTag.join(", ").slice(0, 22) + " ..."
-                  : selectedTag.join(", ")}
-              </div>
+              <input
+                placeholder={userData.nickname}
+                className="border-b-[1px] border-solid border-black bg-transparent text-black outline-0 placeholder:text-textColor-gray-100"
+                disabled={!isNick}
+                onChange={onChange}
+              />
               <button
                 type="submit"
                 className=" ml-3 h-9 w-2/5 bg-black text-white hover:bg-primary-green"
-                onClick={() => {
-                  tagButtonText === "변경" && setIsTab(true);
-                }}
+                onClick={() => nickButtonText === "변경" && setIsNick(true)}
               >
-                {tagButtonText}
+                {nickButtonText}
               </button>
-            </div>
-          </form>
+            </form>
+            <p className="mt-5 px-2 text-sm text-textColor-gray-100">키워드</p>
+            <form onSubmit={handleTagSubmit} id="tag-form">
+              <div className="my-2 flex w-full justify-between px-3">
+                <div className=" flex w-full items-center whitespace-nowrap border-b-[1px] border-solid border-black text-textColor-gray-100 outline-0">
+                  {userData.keywords[0].tag.split(",") === selectedTag
+                    ? userData.keywords[0].tag
+                    : selectedTag.length < 20
+                    ? selectedTag.join(", ").slice(0, 22) + " ..."
+                    : selectedTag.join(", ")}
+                </div>
+                <button
+                  type="submit"
+                  className=" ml-3 h-9 w-2/5 bg-black text-white hover:bg-primary-green"
+                  onClick={() => {
+                    tagButtonText === "변경" && setIsTab(true);
+                  }}
+                >
+                  {tagButtonText}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
+      )}
 
       {isTab && (
         <div className="fixed bottom-0 z-30 w-[390px]">
@@ -247,10 +279,7 @@ const ProfileEdit: NextPage = () => {
       <div className="  fixed bottom-0 w-[390px] py-14 px-6">
         <div
           className="flex cursor-pointer items-center justify-between py-3 hover:scale-105 hover:duration-150"
-          onClick={() => (
-            alert("로그아웃이 완료되었습니다."),
-            router.push("/").then(() => signOut())
-          )}
+          onClick={signout}
         >
           <p className=" text-base font-bold">로그아웃</p>
           <Icon
