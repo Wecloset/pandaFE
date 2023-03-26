@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply text-common-black;
+  }
+  input {
+    @apply block w-full focus:outline-none;
+  }
+  textarea {
+    @apply focus:outline-none;
+  }
+}
+
+@font-face {
+  font-family: worksans;
+  font-style: normal;
+  font-weight: 400;
+  src: url("../../public/asset/font/WorkSans-Regular.ttf") format("ttf");
+}
+
+@font-face {
+  font-family: worksans;
+  font-style: bold;
+  font-weight: 700;
+  src: url("../../public/asset/font/WorkSans-Bold.ttf") format("ttf");
+}
