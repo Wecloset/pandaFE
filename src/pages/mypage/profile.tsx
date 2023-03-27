@@ -22,27 +22,24 @@ const ProfileEdit: NextPage<CredentialProps> = ({
   accessKey,
   secretKey,
 }) => {
+  const router = useRouter();
   const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
+  const credentials = { region, accessKey, secretKey };
+  const { uploadImage, encodeFile, imgsrc } = useUpload(credentials);
   const { state, contents: userContents } = userInfo;
+
   const refreshUserInfo = useRecoilRefresher_UNSTABLE(
     userInfoQuery(userContents?.email),
   );
 
-  const router = useRouter();
-
   const { register } = useForm({});
-  const credentials = { region, accessKey, secretKey };
-  const { uploadImage, encodeFile, imgsrc } = useUpload(credentials);
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userData, setUserData] = useState<UserData>();
   const [isTab, setIsTab] = useState<boolean>(false);
-  console.log(isTab);
+
   const [isNick, setIsNick] = useState<boolean>(false);
   const [nick, setNick] = useState("");
-  const allSelectedTag = taglist.value;
-  const newArray: string[] = [];
-  const [selectedTag, setSelectedTag] = useState<string[]>([]);
 
   useEffect(() => {
     if (state === "hasValue") {
@@ -56,21 +53,15 @@ const ProfileEdit: NextPage<CredentialProps> = ({
 
   const nickButtonText = isNick ? "완료" : "변경";
 
-  const onClick = (data: string) => {
-    setSelectedTag([...selectedTag, data]);
-    const deduplication = selectedTag.includes(data);
-    if (deduplication) {
-      setSelectedTag([...selectedTag]);
-    }
-  };
+  const [selectedTag, setSelectedTag] = useState<string[]>([]);
+  const allSelectedTag = taglist.value;
 
-  const onDelete = (x: string) => {
-    const deleteItem = selectedTag.indexOf(x);
-    const cutone = selectedTag.slice(0, deleteItem);
-    const cuttwo = selectedTag.slice(deleteItem + 1, selectedTag.length);
-    newArray.push(...cutone);
-    newArray.push(...cuttwo);
-    setSelectedTag(newArray);
+  const handleTagSelection = (data: string) => {
+    setSelectedTag(prevTags =>
+      prevTags.includes(data)
+        ? prevTags.filter(tag => tag !== data)
+        : [...prevTags, data],
+    );
   };
 
   const onResetBtn = () => {
@@ -110,7 +101,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
     async (tags: string[]) => {
       if (!userData) return;
       const { data } = await axios.post(
-        `/api/user/tag?update=${userData.keywords[0].id}`,
+        `/api/user/tag?update=${userData.id}`,
         tags,
       );
       return data;
@@ -122,7 +113,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
         refreshUserInfo(); // refresh user
       },
       onError: error => {
-        alert("키워드 변경실패");
+        alert("키워드 변경이 실패되었습니다.");
       },
     },
   );
@@ -261,13 +252,8 @@ const ProfileEdit: NextPage<CredentialProps> = ({
             <p className="mt-5 px-2 text-sm text-textColor-gray-100">키워드</p>
             <form>
               <div className="my-2 flex w-full justify-between px-3">
-                <div className=" flex w-full items-center whitespace-nowrap border-b-[1px] border-solid border-black text-textColor-gray-100 outline-0">
-                  {userData.keywords.map(keyword => keyword.tag) === selectedTag
-                    ? userData.keywords.map(keyword => keyword.tag)
-                    : userData.keywords.map(keyword => keyword.tag).join()
-                        .length < 20
-                    ? selectedTag.join(", ")
-                    : selectedTag.join(", ").slice(0, 22) + " ..."}
+                <div className=" -0 flex w-full items-center whitespace-nowrap border-b-[1px] border-solid border-black  text-textColor-gray-100">
+                  {userData.keywords.map(keyword => keyword.tag)}
                 </div>
                 <button
                   type="button"
@@ -318,11 +304,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
                       selectedTag.includes(ele) ? "bg-black text-white" : ""
                     } `}
                     key={index}
-                    onClick={
-                      selectedTag.includes(ele)
-                        ? () => onDelete(ele)
-                        : () => onClick(ele)
-                    }
+                    onClick={() => handleTagSelection(ele)}
                   >
                     {ele}
                   </div>
