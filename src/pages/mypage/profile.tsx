@@ -89,7 +89,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
             headers: { "Content-Type": "application/json" },
             nickname: nick,
           })
-          .then(res => refreshUserInfo());
+          .then(() => refreshUserInfo());
       },
       onError: ({ response }) => {
         alert(response.data.message);
@@ -175,6 +175,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
     onSuccess: ({ message }) => {
       imgsrc.length = 0;
       alert(message);
+      refreshUserInfo();
     },
     onError: ({ response }) => {
       alert(response.data.message);
