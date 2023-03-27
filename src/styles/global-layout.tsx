@@ -18,10 +18,15 @@ const MainLayout: NextPage<{ children: React.ReactNode }> = ({ children }) => {
       })
       .then(res => res && setSearch(""));
   };
+
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       onSearch();
     }
+  };
+
+  const goHome = () => {
+    router.push("/");
   };
 
   return (
@@ -29,7 +34,12 @@ const MainLayout: NextPage<{ children: React.ReactNode }> = ({ children }) => {
       <div className="mx-auto flex h-screen w-[900px] justify-between bg-gray-800 max-xl:w-auto">
         <div className="flex flex-col justify-between py-7 max-xl:hidden">
           <div>
-            <Image src={logo} alt="logo" className="w-28" />
+            <Image
+              src={logo}
+              alt="logo"
+              className="w-28 cursor-pointer"
+              onClick={goHome}
+            />
           </div>
           <div>
             <div className="-mt-20 space-y-4 text-white">

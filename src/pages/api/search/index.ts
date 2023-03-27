@@ -13,6 +13,7 @@ const searchKeywords = async (req: NextApiRequest, res: NextApiResponse) => {
           ],
         },
         include: {
+          imgurl: true,
           hashTag: true,
         },
       });

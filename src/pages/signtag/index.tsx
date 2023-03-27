@@ -10,17 +10,24 @@ import LoadingSpinner from "../../components/loading-spinner";
 
 interface TagData {
   userId: number;
+  email?: string;
   tags: string[];
 }
 
 const SignTag: NextPage = () => {
   const router = useRouter();
+
   const [selectedTag, setSelectedTag] = useState<string[]>([]);
 
-  const { data: signedUser } = useQuery("userData", async () => {
-    const { data } = await axios.get("/api/user");
-    return data[data.length - 1];
+  const allSelectedTag = taglist.value;
+
+  //유저 정보를 query 로 전달받아서 signUser 의 user.id 을 이용해 다음단계이어감
+  const { data: signUser } = useQuery("userData", async () => {
+    const { data } = await axios.get(`/api/user?email=${router.query.email}`);
+    return data;
   });
+
+  //태그 등록
 
   const postTagData = async (tagData: TagData) => {
     const { userId, tags } = tagData;
@@ -34,7 +41,15 @@ const SignTag: NextPage = () => {
   const { mutate, isLoading } = useMutation(postTagData, {
     onSuccess: ({ message }) => {
       alert(message);
-      router.replace("/signprofile");
+      router.replace(
+        {
+          pathname: "/signprofile",
+          query: {
+            email: router.query.email,
+          },
+        },
+        "/signprofile",
+      );
     },
     onError: ({ response }) => {
       alert(response.data.message);
@@ -44,34 +59,22 @@ const SignTag: NextPage = () => {
   const handleFormSubmit = (event: FormEvent) => {
     event.preventDefault();
     const tagData: TagData = {
-      userId: signedUser.id,
+      userId: signUser?.user?.id,
       tags: selectedTag,
     };
     mutate(tagData);
   };
 
-  // ------------------------------------------------------------
-
-  const newArray: string[] = [];
   const onResetBtn = () => {
     setSelectedTag([]);
   };
-  const allSelectedTag = taglist.value;
 
-  const onClick = (data: string) => {
-    setSelectedTag([...selectedTag, data]);
-    const deduplication = selectedTag.includes(data);
-    if (deduplication) {
-      setSelectedTag([...selectedTag]);
-    }
-  };
-  const onDelete = (x: string) => {
-    const deleteItem = selectedTag.indexOf(x);
-    const cutone = selectedTag.slice(0, deleteItem);
-    const cuttwo = selectedTag.slice(deleteItem + 1, selectedTag.length);
-    newArray.push(...cutone);
-    newArray.push(...cuttwo);
-    setSelectedTag(newArray);
+  const handleTagSelection = (data: string) => {
+    setSelectedTag(prevTags =>
+      prevTags.includes(data)
+        ? prevTags.filter(tag => tag !== data)
+        : [...prevTags, data],
+    );
   };
 
   return (
@@ -94,11 +97,7 @@ const SignTag: NextPage = () => {
                     selectedTag.includes(ele) ? "bg-black text-white" : ""
                   } `}
                   key={index}
-                  onClick={
-                    selectedTag.includes(ele)
-                      ? () => onDelete(ele)
-                      : () => onClick(ele)
-                  }
+                  onClick={() => handleTagSelection(ele)}
                 >
                   {ele}
                 </div>
