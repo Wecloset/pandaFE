@@ -3,7 +3,7 @@ import client from "../../../lib/client";
 
 const signTag = async (req: NextApiRequest, res: NextApiResponse) => {
   const { update: updateId, post: postId } = req.query;
-  const { tags } = req.body;
+  const tags = req.body;
 
   if (req.method !== "POST") return;
 
@@ -38,8 +38,8 @@ const signTag = async (req: NextApiRequest, res: NextApiResponse) => {
         data: {
           keywords: {
             connectOrCreate: tags.map((tagName: string) => ({
-              create: { tag: tagName },
               where: { tag: tagName },
+              create: { tag: tagName },
             })),
           },
         },

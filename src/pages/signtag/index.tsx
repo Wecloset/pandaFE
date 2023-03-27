@@ -10,6 +10,7 @@ import LoadingSpinner from "../../components/loading-spinner";
 
 interface TagData {
   userId: number;
+  email?: string;
   tags: string[];
 }
 
@@ -17,9 +18,9 @@ const SignTag: NextPage = () => {
   const router = useRouter();
   const [selectedTag, setSelectedTag] = useState<string[]>([]);
 
-  const { data: signedUser } = useQuery("userData", async () => {
-    const { data } = await axios.get("/api/user");
-    return data[data.length - 1];
+  const { data: signUser } = useQuery("userData", async () => {
+    const { data } = await axios.get(`/api/user?email=${router.query.email}`);
+    return data;
   });
 
   const postTagData = async (tagData: TagData) => {
@@ -34,7 +35,15 @@ const SignTag: NextPage = () => {
   const { mutate, isLoading } = useMutation(postTagData, {
     onSuccess: ({ message }) => {
       alert(message);
-      router.replace("/signprofile");
+      router.replace(
+        {
+          pathname: "/signprofile",
+          query: {
+            email: router.query.email,
+          },
+        },
+        "/signprofile",
+      );
     },
     onError: ({ response }) => {
       alert(response.data.message);
@@ -44,13 +53,11 @@ const SignTag: NextPage = () => {
   const handleFormSubmit = (event: FormEvent) => {
     event.preventDefault();
     const tagData: TagData = {
-      userId: signedUser.id,
+      userId: signUser.user.id,
       tags: selectedTag,
     };
     mutate(tagData);
   };
-
-  // ------------------------------------------------------------
 
   const newArray: string[] = [];
   const onResetBtn = () => {

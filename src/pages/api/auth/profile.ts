@@ -8,7 +8,7 @@ const userSignTag = async (req: NextApiRequest, res: NextApiResponse) => {
     userData,
     userProfile: { image, nickname },
   } = req.body;
-
+  console.log(req.body);
   const UpdateProfile = await client.user.update({
     where: {
       id: userData,

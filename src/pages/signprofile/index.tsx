@@ -24,11 +24,11 @@ const SignProfile: NextPage<CredentialProps> = ({
   accessKey,
   secretKey,
 }) => {
-  const { data } = useQuery("userData", async () => {
-    const { data } = await axios.get("/api/user");
-    return data[data.length - 1];
-  });
   const router = useRouter();
+  const { data: signUser } = useQuery("userData", async () => {
+    const { data } = await axios.get(`/api/user?email=${router.query.email}`);
+    return data;
+  });
   const credentials = { region, accessKey, secretKey };
 
   const { uploadImage, encodeFile, imgsrc } = useUpload(credentials);
@@ -74,7 +74,7 @@ const SignProfile: NextPage<CredentialProps> = ({
     userProfile.image = imageurl;
     const { data: response } = await axios.post("/api/auth/profile", {
       userProfile,
-      userData: data?.id,
+      userData: signUser.user.id,
     });
 
     return response;
