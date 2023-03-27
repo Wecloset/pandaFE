@@ -1,20 +1,18 @@
 import { Icon } from "@iconify/react";
 import axios from "axios";
 import type { GetServerSideProps, NextPage } from "next";
-import { signOut } from "next-auth/react";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
 import Header from "../../components/header";
 import Navigation from "../../components/navigation";
+import UserManage from "../../components/user/manage";
 import useUpload from "../../hooks/useUpload";
 import { taglist } from "../../lib/tag-data";
 import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
 import { CredentialProps } from "../../types/create-type";
-import { UserData } from "../../types/data-type";
 import { createImageUrl } from "../../utils/image-url";
 
 const ProfileEdit: NextPage<CredentialProps> = ({
@@ -22,7 +20,6 @@ const ProfileEdit: NextPage<CredentialProps> = ({
   accessKey,
   secretKey,
 }) => {
-  const router = useRouter();
   const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
   const credentials = { region, accessKey, secretKey };
   const { uploadImage, encodeFile, imgsrc } = useUpload(credentials);
@@ -35,15 +32,19 @@ const ProfileEdit: NextPage<CredentialProps> = ({
   const { register } = useForm({});
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [userData, setUserData] = useState<UserData>();
+
   const [isTab, setIsTab] = useState<boolean>(false);
 
   const [isNick, setIsNick] = useState<boolean>(false);
   const [nick, setNick] = useState("");
+  const [selectedTag, setSelectedTag] = useState<string[]>([]);
+  const allSelectedTag = taglist.value;
+
+  const nickButtonText = isNick ? "완료" : "변경";
 
   useEffect(() => {
     if (state === "hasValue") {
-      setUserData(userContents);
+      // setUserData(userContents);
       setSelectedTag(
         userContents.keywords.map(({ tag }: { tag: string }) => tag),
       );
@@ -51,88 +52,10 @@ const ProfileEdit: NextPage<CredentialProps> = ({
     }
   }, [state]);
 
-  const nickButtonText = isNick ? "완료" : "변경";
-
-  const [selectedTag, setSelectedTag] = useState<string[]>([]);
-  const allSelectedTag = taglist.value;
-
-  const handleTagSelection = (data: string) => {
-    setSelectedTag(prevTags =>
-      prevTags.includes(data)
-        ? prevTags.filter(tag => tag !== data)
-        : [...prevTags, data],
-    );
-  };
-
-  const onResetBtn = () => {
-    setSelectedTag([]);
-  };
-
-  const { mutate: nickMutate } = useMutation(
-    async (nick: string) => {
-      if (!userData) return;
-      // 중복확인
-      const { data } = await axios.post("/api/user/nickname", {
-        headers: { "Content-Type": "application/json" },
-        nickname: nick,
-      });
-      return data;
-    },
-    {
-      onSuccess: data => {
-        alert("닉네임변경이 완료되었습니다.");
-        setIsNick(false);
-        setNick("");
-        // 닉네임 변경
-        axios
-          .post(`/api/user/nickname?id=${userContents.id}`, {
-            headers: { "Content-Type": "application/json" },
-            nickname: nick,
-          })
-          .then(() => refreshUserInfo());
-      },
-      onError: ({ response }) => {
-        alert(response.data.message);
-      },
-    },
-  );
-
-  const { mutate: tagMutate } = useMutation(
-    async (tags: string[]) => {
-      if (!userData) return;
-      const { data } = await axios.post(
-        `/api/user/tag?update=${userData.id}`,
-        tags,
-      );
-      return data;
-    },
-    {
-      onSuccess: data => {
-        alert("키워드 변경이 완료되었습니다.");
-        setIsTab(false);
-        refreshUserInfo(); // refresh user
-      },
-      onError: error => {
-        alert("키워드 변경이 실패되었습니다.");
-      },
-    },
-  );
-
-  const { mutate: userMutate } = useMutation(
-    async (id: number) => {
-      const response = await axios.delete(`/api/user/${id}`);
-      return response;
-    },
-    {
-      onSuccess: data => {
-        alert("회원탈퇴가 완료되었습니다");
-        router.push("/").then(() => signOut());
-      },
-      onError: error => {
-        alert("다시 시도해주세요");
-      },
-    },
-  );
+  useEffect(() => {
+    if (imgsrc.length === 0) return;
+    profileMutate();
+  }, [imgsrc]);
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -149,14 +72,82 @@ const ProfileEdit: NextPage<CredentialProps> = ({
     nickButtonText === "완료" && isNick && nick !== "" && nickMutate(nick);
   };
 
+  const { mutate: nickMutate } = useMutation(
+    async (nick: string) => {
+      if (!userContents) return;
+      // 중복확인
+      const { data } = await axios.post("/api/user/nickname", {
+        headers: { "Content-Type": "application/json" },
+        nickname: nick,
+      });
+      return data;
+    },
+    {
+      onSuccess: () => {
+        alert("닉네임변경이 완료되었습니다.");
+        setIsNick(false);
+        setNick("");
+        // 중복확인 통과하면 닉네임변경
+        axios
+          .post(`/api/user/nickname?id=${userContents.id}`, {
+            headers: { "Content-Type": "application/json" },
+            nickname: nick,
+          })
+          .then(() => refreshUserInfo());
+      },
+      onError: ({ response }) => {
+        alert(response.data.message);
+      },
+    },
+  );
+
+  //------------------------------------------------------------
+
+  const handleTagSelection = (data: string) => {
+    setSelectedTag(prevTags =>
+      prevTags.includes(data)
+        ? prevTags.filter(tag => tag !== data)
+        : [...prevTags, data],
+    );
+  };
+
   const handleTagSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     tagMutate(selectedTag);
   };
 
-  const handleDelete = () => {
-    if (!userData) return;
-    userMutate(userData.id);
+  const onResetBtn = () => {
+    setSelectedTag([]);
+  };
+
+  //태그 변경
+  const { mutate: tagMutate } = useMutation(
+    async (tags: string[]) => {
+      if (!userContents) return;
+      const { data } = await axios.post(
+        `/api/user/tag?update=${userContents.id}`,
+        tags,
+      );
+      return data;
+    },
+    {
+      onSuccess: () => {
+        alert("키워드 변경이 완료되었습니다.");
+        setIsTab(false);
+        refreshUserInfo(); // refresh user
+      },
+      onError: () => {
+        alert("키워드 변경이 실패되었습니다.");
+      },
+    },
+  );
+
+  //------------------------------------------------------------
+
+  //이미지변경
+
+  const updateProfileImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    encodeFile(event);
   };
 
   const changeProfileImage = async () => {
@@ -182,33 +173,19 @@ const ProfileEdit: NextPage<CredentialProps> = ({
     },
   });
 
-  const updateProfileImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    encodeFile(event);
-  };
-
-  const signout = () => {
-    alert("로그아웃이 완료되었습니다.");
-    router.replace("/").then(() => signOut());
-  };
-
-  useEffect(() => {
-    if (imgsrc.length === 0) return;
-    profileMutate();
-  }, [imgsrc]);
-
   return (
     <>
       <Header goBack text="PROFILE" />
       {isTab && (
         <div className="fixed z-10 h-[calc(100%-300px)] w-[390px] bg-black pt-10 opacity-80" />
       )}
-      {!isLoading && userData && (
+      {!isLoading && (
         <>
           <div className={`${isTab ? " opacity-30" : ""}`}>
             <div className="relative h-44 bg-gray-300">
               <div className="relative top-32 h-20 w-20 translate-x-[155px] transform overflow-hidden rounded-full bg-slate-700">
                 <Image
-                  src={`${userData.profileImg}`}
+                  src={`${userContents.profileImg}`}
                   alt="유저이미지"
                   width={50}
                   height={50}
@@ -238,7 +215,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
             >
               <input
                 ref={input => input && input.focus()}
-                placeholder={userData.nickname}
+                placeholder={userContents.nickname}
                 className="border-b-[1px] border-solid border-black bg-transparent text-black outline-0 placeholder:text-textColor-gray-100 disabled:text-textColor-gray-100"
                 disabled={!isNick}
                 onChange={onChange}
@@ -254,7 +231,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
             <form>
               <div className="my-2 flex w-full justify-between px-3">
                 <div className=" -0 flex w-full items-center whitespace-nowrap border-b-[1px] border-solid border-black  text-textColor-gray-100">
-                  {userData.keywords.map(keyword => keyword.tag)}
+                  {userContents.keywords.map(({ tag }: { tag: string }) => tag)}
                 </div>
                 <button
                   type="button"
@@ -318,28 +295,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
           </div>
         </div>
       )}
-      <div className="  fixed bottom-0 w-[390px] py-14 px-6">
-        <div
-          className="flex cursor-pointer items-center justify-between py-3 hover:scale-105 hover:duration-150"
-          onClick={signout}
-        >
-          <p className=" text-base font-bold">로그아웃</p>
-          <Icon
-            icon="material-symbols:chevron-right-sharp"
-            className=" text-xl font-bold"
-          />
-        </div>
-        <div
-          className="flex cursor-pointer items-center justify-between py-3 hover:scale-105 hover:duration-150"
-          onClick={handleDelete}
-        >
-          <p className=" text-base font-bold">회원탈퇴</p>
-          <Icon
-            icon="material-symbols:chevron-right-sharp"
-            className=" text-xl font-bold"
-          />
-        </div>
-      </div>
+      <UserManage userData={userContents} />
       <Navigation />
     </>
   );
