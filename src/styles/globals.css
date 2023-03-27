@@ -12,6 +12,10 @@
   textarea {
     @apply focus:outline-none;
   }
+
+  .signup-minheight {
+    min-height: 70vh;
+  }
 }
 
 @font-face {

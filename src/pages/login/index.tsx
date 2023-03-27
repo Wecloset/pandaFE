@@ -68,24 +68,26 @@ const Login: NextPage = () => {
         </div>
         <LoginForm />
         <Button
-          onClick={GoogleLogin}
+          type="button"
           text="Continue With Google"
-          color="bg-white"
+          onClick={GoogleLogin}
+          classes="bg-white"
+          btnWrapClasses="px-8"
           icon="ph:google-logo"
-          logo="flex items-center"
-          textWidth="w-4/5"
-          padding="px-8"
           position="absolute left-0 bottom-[60px]"
+          textWidth="w-3/5"
+          fontColor="text-black"
         />
         <Button
+          type="button"
           onClick={KakaoLogin}
           text="Continue With Kakao"
-          color="bg-primary-yellow"
           icon="ri:kakao-talk-fill"
-          logo="flex items-center"
-          textWidth="w-4/5"
-          padding="px-8"
+          classes="bg-primary-yellow"
+          btnWrapClasses="px-8"
+          textWidth="w-3/5"
           position="absolute left-0 bottom-0"
+          fontColor="text-black"
         />
       </div>
     </div>

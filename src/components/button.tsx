@@ -1,60 +1,61 @@
 import { NextPage } from "next";
 import { Icon } from "@iconify/react";
+import { FormEvent } from "react";
 
-interface buttonInterface {
-  text?: string;
-  color?: string;
-  fontColor?: string;
-  icon?: string | any;
-  logo?: string;
-  textWidth?: string;
-  hover?: string;
-  border?: string;
+interface ButtonProps {
+  type: "button" | "submit" | "reset";
+  icon?: string;
+  disabled?: boolean;
+  onClick?: (event: FormEvent) => void;
+  divWidth?: string;
   position?: string;
   width?: string;
-  padding?: string;
-  divWidth?: string;
   height?: string;
-  disabled?: boolean;
-  onClick?: () => void;
+  fontColor?: string;
+  textWidth?: string;
+  text: string;
+  btnWrapClasses?: string;
+  classes?: string;
 }
 
-const Button: NextPage<buttonInterface> = ({
-  text,
-  color,
-  fontColor,
+const Button: NextPage<ButtonProps> = ({
+  type,
   icon,
-  logo,
-  textWidth,
-  hover,
-  border,
-  position,
-  width,
-  divWidth,
-  padding,
-  height,
   disabled,
   onClick,
+  divWidth,
+  position,
+  width,
+  height,
+  textWidth,
+  text,
+  fontColor,
+  btnWrapClasses,
+  classes,
 }) => {
   return (
     <div
-      className={`${divWidth ? divWidth : "w-full"} ${
-        padding ? padding : "px-4"
-      } pb-3 ${position}`}
+      className={`
+        ${divWidth ? divWidth : "w-full"} 
+        ${position}
+        ${btnWrapClasses}
+        `}
     >
       <button
-        className={`${height ? height : "h-[50px]"} ${
-          width ? width : "w-full"
-        } ${border} ${color} ${fontColor ?? "text-black"} ${logo} ${hover} ${
-          disabled ? "cursor-not-allowed disabled:bg-common-gray" : ""
-        }`}
+        type={type}
+        className={`
+        flex items-center 
+        ${height ? height : "h-[52px]"}
+        ${fontColor ? fontColor : "text-white"} 
+        ${width ? width : "w-full"}
+        ${disabled ? "cursor-not-allowed" : ""}
+        ${classes}
+        `}
         disabled={disabled ? true : false}
         onClick={onClick}
       >
-        <div className="flex w-1/5 justify-center">
-          <Icon icon={icon} width="20" />
-        </div>
-        <div className={`${textWidth}`}>{text}</div>
+        {icon && <Icon icon={icon} width="24" className="mr-2 w-1/5" />}
+        <span className={`${textWidth ? textWidth : "w-full"}`}>{text}</span>
       </button>
     </div>
   );

@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}", "./app/**/*.{js,ts,jsx,tsx}"],
+  mode: "jit",
   theme: {
     extend: {
       colors: {
@@ -14,9 +15,6 @@ module.exports = {
         "borderColor-gray": "#D9D9D9",
         error: "#FF5252",
       },
-      // backgroundImage: {
-      //   mainImg: "url('../../../public/asset/image/main-img.png')",
-      // },
       fontFamily: {
         myfont: ["worksans", "sans-serif"],
       },

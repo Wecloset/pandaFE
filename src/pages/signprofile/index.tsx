@@ -12,6 +12,8 @@ import { useMutation, useQuery } from "react-query";
 import LoadingSpinner from "../../components/loading-spinner";
 import { createImageUrl } from "../../utils/image-url";
 import { signOut } from "next-auth/react";
+import Button from "../../components/button";
+import { cls } from "../../utils/class";
 
 interface CredentialProps {
   region: string;
@@ -24,10 +26,11 @@ const SignProfile: NextPage<CredentialProps> = ({
   accessKey,
   secretKey,
 }) => {
-  const { data } = useQuery("userData", async () => {
-    const { data } = await axios.get("/api/user");
-    return data[data.length - 1];
-  });
+  // const { data } = useQuery("userData", async () => {
+  //   const { data } = await axios.get("/api/user");
+  //   return data[data.length - 1];
+  // });
+
   const router = useRouter();
   const credentials = { region, accessKey, secretKey };
 
@@ -97,64 +100,77 @@ const SignProfile: NextPage<CredentialProps> = ({
   return (
     <>
       <Header text="SIGNUP" goBack noGoBack />
-      <div className="px-5">
-        <p className="mb-3 px-2 text-xl">마지막입니다!</p>
-        <p className="px-2 text-base">
+      <div className="px-8">
+        <p className="mb-1 mt-7 text-xl">마지막이에요!</p>
+        <p className="text-textColor-gray-100">
           사용하실 닉네임과 프로필사진을 설정해주세요.
         </p>
       </div>
       <form
         onSubmit={handleSubmit(submitData => profileMutate({ ...submitData }))}
-        className="mt-32 flex flex-col items-center justify-center px-5"
       >
-        <label className="text-textCol or-gray-100 flex h-[178px] w-[178px] flex-shrink-0 cursor-pointer gap-1 rounded-full bg-textColor-gray-100 hover:scale-105 hover:transition hover:duration-150  hover:ease-in-out">
-          {imgsrc.length !== 0 ? (
-            <Image
-              src={imgsrc[0]?.dataUrl}
-              alt="업로드이미지"
-              width={178}
-              height={178}
-              className="rounded-full"
+        <div className="signup-minheight mt-24 flex flex-col items-center px-5">
+          <label className="relative h-[178px] w-[178px] cursor-pointer rounded-full bg-textColor-gray-100">
+            {imgsrc.length !== 0 ? (
+              <Image
+                src={imgsrc[0]?.dataUrl}
+                alt="업로드이미지"
+                width={178}
+                height={178}
+                className="rounded-full"
+              />
+            ) : (
+              <Image
+                src={profile}
+                alt="기본이미지"
+                width={160}
+                height={160}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+              />
+            )}
+            <input
+              {...register("image", { required: "이미지를 등록해주세요." })}
+              id="picture"
+              type="file"
+              accept="image/png, image/jpeg"
+              className="hidden"
+              multiple={false}
+              onChange={encodeFile}
             />
-          ) : (
-            <Image src={profile} alt="test" width={178} height={178} />
-          )}
-          <input
-            {...register("image", { required: "이미지를 등록해주세요." })}
-            id="picture"
-            type="file"
-            accept="image/png, image/jpeg"
-            className="hidden"
-            multiple={false}
-            onChange={encodeFile}
-          />
-        </label>
-
-        <div className="mt-8 flex w-full justify-between px-3">
-          <input
-            {...register("nickname", { minLength: 1 })}
-            placeholder="닉네임"
-            className={errorLine(errors.nickname)}
-          />
-          {nickLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <button
-              type="button"
-              onClick={onDuplication}
-              className=" ml-3 h-9 w-2/5 bg-black text-white hover:bg-primary-green"
-            >
-              중복확인
-            </button>
-          )}
+          </label>
+          <div className="mt-8 flex w-full items-center justify-between gap-4 px-3">
+            <input
+              {...register("nickname", { minLength: 1 })}
+              placeholder="닉네임"
+              className={cls(
+                "h-[42px] w-full border-b border-black",
+                errors.nickname ? "border-error" : "",
+              )}
+            />
+            {nickLoading ? (
+              <LoadingSpinner />
+            ) : (
+              <Button
+                type="button"
+                text="중복확인"
+                onClick={onDuplication}
+                classes="bg-black"
+                divWidth="w-[115px]"
+                width="w-[115px]"
+                height="h-[42px]"
+              />
+            )}
+          </div>
         </div>
         {profileLoading ? (
           <LoadingSpinner />
         ) : (
-          <input
+          <Button
             disabled={!pass}
             type="submit"
-            className="mt-5 mb-10 h-12 bg-common-gray px-2 hover:cursor-pointer hover:bg-primary-green"
+            text="완료"
+            classes="bg-black"
+            btnWrapClasses="px-8"
           />
         )}
       </form>
