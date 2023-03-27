@@ -31,9 +31,17 @@ const SignForm: NextPage = () => {
   };
 
   const { mutate, isLoading } = useMutation(createUser, {
-    onSuccess: ({ message }) => {
+    onSuccess: ({ message }, data) => {
       alert(message);
-      router.replace("/signtag");
+      router.replace(
+        {
+          pathname: "/signtag",
+          query: {
+            email: data.email,
+          },
+        },
+        "/signtag",
+      );
     },
     onError: ({ response }) => {
       alert(response.data.message);

@@ -11,7 +11,9 @@ import SignForm from "../../components/sign/sign-form";
 
 const Sign: NextPage = () => {
   const router = useRouter();
+
   const { data: session } = useSession();
+
   const alerted = useRef(false);
 
   const findUser = async (findUser: string) => {
@@ -34,14 +36,24 @@ const Sign: NextPage = () => {
 
   useEffect(() => {
     if (session && data && data.user.keywords) {
+      // 키워드가 존재하면 존재하는 회원이기때문에 여기서 구문처리
+
       if (data.user.keywords.length === 0 && !alerted.current) {
         alerted.current = true;
         alert("유저 정보가 존재하지 않습니다. 회원가입을 진행하겠습니다");
-        router.push("/signtag");
+        router.replace(
+          {
+            pathname: "/signtag",
+            query: {
+              email: session.user?.email,
+            },
+          },
+          "/signtag",
+        );
         return;
       } else {
         alert("유저 정보가 존재합니다. 로그인 되었습니다");
-        router.push("/");
+        router.replace("/");
         return;
       }
     }

@@ -14,9 +14,11 @@ import { currentUserInfoQuery } from "../../recoil/user";
 
 const MyPage: NextPage = () => {
   const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
+
   const { state, contents: userContents } = userInfo;
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const [userData, setUserData] = useState<UserData | null>(null);
 
   const router = useRouter();
@@ -28,7 +30,6 @@ const MyPage: NextPage = () => {
   };
 
   useEffect(() => {
-    console.log(state, userContents);
     if (state === "hasValue") {
       setUserData(userContents);
       setIsLoading(false);
@@ -81,13 +82,13 @@ const MyPage: NextPage = () => {
               </div>
             </div>
             <div className="flex flex-wrap justify-center">
-              {userData.keywords[0].tag.split(",").map((item, index) => {
+              {userData.keywords.map((keyword, index) => {
                 return (
                   <div
                     key={index}
                     className="mx-1 my-1 rounded-xl border-[1px] border-solid border-black px-1 py-1"
                   >
-                    {`#${item}`}
+                    {`#${keyword.tag}`}
                   </div>
                 );
               })}

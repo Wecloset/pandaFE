@@ -26,17 +26,19 @@ const SignProfile: NextPage<CredentialProps> = ({
   accessKey,
   secretKey,
 }) => {
-  // const { data } = useQuery("userData", async () => {
-  //   const { data } = await axios.get("/api/user");
-  //   return data[data.length - 1];
-  // });
-
   const router = useRouter();
+
   const credentials = { region, accessKey, secretKey };
 
   const { uploadImage, encodeFile, imgsrc } = useUpload(credentials);
 
-  const [pass, setPass] = useState<boolean>(false);
+  const [pass, setPass] = useState<boolean>(false); //닉네임 중복 통과 state
+
+  //유저 정보를 query 로 전달받아서 signUser 의 user.id 을 이용해 다음단계이어감
+  const { data: signUser } = useQuery("userData", async () => {
+    const { data } = await axios.get(`/api/user?email=${router.query.email}`);
+    return data;
+  });
 
   const {
     register,
@@ -45,18 +47,21 @@ const SignProfile: NextPage<CredentialProps> = ({
     formState: { errors },
   } = useForm({});
 
+  //닉네임 중복확인
   const onDuplication = (event: FormEvent) => {
     event.preventDefault();
     const nickname = getValues("nickname");
     nickMutate(nickname);
   };
 
+  //닉네임 등록
   const createNickName = async (createNick: string) => {
     const { data } = await axios.post("/api/user/nickname", {
       nickname: createNick,
     });
     return data;
   };
+
   const { mutate: nickMutate, isLoading: nickLoading } = useMutation(
     createNickName,
     {
@@ -71,13 +76,14 @@ const SignProfile: NextPage<CredentialProps> = ({
     },
   );
 
+  //프로필 이미지 등록
   const createProfile = async (userProfile: any) => {
     uploadImage(imgsrc[0].file, "profile");
     const imageurl = createImageUrl(imgsrc[0].file, "profile");
     userProfile.image = imageurl;
     const { data: response } = await axios.post("/api/auth/profile", {
       userProfile,
-      userData: data?.id,
+      userData: signUser.user.id,
     });
 
     return response;
@@ -89,7 +95,7 @@ const SignProfile: NextPage<CredentialProps> = ({
       onSuccess: ({ message }) => {
         alert(message);
         router.replace("/login");
-        signOut({ redirect: false });
+        signOut({ redirect: false }); //회원가입을 할 경우에 로그인 되어있어서 강제 로그아웃시킴
       },
       onError: ({ response }) => {
         alert(response.data.message);

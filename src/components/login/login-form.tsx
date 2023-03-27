@@ -30,6 +30,7 @@ const LoginForm: NextPage = () => {
       password: createHashedPassword(data.password),
       nickname: data.nickname,
     });
+
     !result?.error ? router.replace("/") : alert(result.error);
   };
   return (

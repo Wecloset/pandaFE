@@ -19,7 +19,7 @@ const Login: NextPage = () => {
   const router = useRouter();
 
   const findUser = async (userEmail: string) => {
-    const { data: response } = await axios.post(`/api/user?email=${userEmail}`);
+    const { data: response } = await axios.get(`/api/user?email=${userEmail}`);
     return response;
   };
 
@@ -37,11 +37,19 @@ const Login: NextPage = () => {
   }, [session]);
 
   useEffect(() => {
-    if (session && data && data[0].keywords) {
-      if (data[0].keywords.length === 0 && !alerted.current) {
+    if (session && data) {
+      if (data.user.keywords.length === 0 && !alerted.current) {
         alerted.current = true;
         alert("유저 정보가 존재하지 않습니다. 회원가입으로 이동합니다");
-        router.push("/signtag");
+        router.push(
+          {
+            pathname: "/signtag",
+            query: {
+              email: session.user?.email,
+            },
+          },
+          "/signtag",
+        );
         return;
       } else {
         alert("로그인이 완료되었습니다");
