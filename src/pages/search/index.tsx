@@ -19,8 +19,43 @@ const Search: NextPage = () => {
     "",
   );
   const [searchData, setSearchData] = useState<string[]>([]);
+
   const [matchedKeywords, setMatchedKeywords] = useState<string[]>([]);
+
   const [focus, setFocus] = useState<boolean>(false);
+
+  // ------------------------------------------------------------------------------------
+  const CACHE_KEY = "recentSearches";
+
+  const [searches, setSearches] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    // Load saved searches from cache storage when the component mounts
+    caches.open("my-cache").then(cache => {
+      cache.match(CACHE_KEY).then(response => {
+        if (response) {
+          response.json().then(data => {
+            setSearches(data);
+          });
+        }
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    // Save searches to cache storage whenever they change
+    caches.open("my-cache").then(cache => {
+      cache.put(new Request(CACHE_KEY), new Response(JSON.stringify(searches)));
+    });
+  }, [searches]);
+
+  // ------------------------------------------------------------------------------------
+
+  useEffect(() => {
+    setInputValue(router.query.word);
+    refetch();
+  }, [router.query.word]);
 
   useQuery("taglist", async () => {
     const { data } = await axios.get("/api/search/hashtag");
@@ -28,6 +63,7 @@ const Search: NextPage = () => {
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
     const value = e.target.value.toLowerCase();
     setInputValue(value);
     const matched = keywords.filter(keyword =>
@@ -55,11 +91,6 @@ const Search: NextPage = () => {
     },
   );
 
-  useEffect(() => {
-    setInputValue(router.query.word);
-    refetch();
-  }, [router.query.word]);
-
   const searchKeyword = async (keyword: string) => {
     router.push({
       pathname: router.pathname,
@@ -74,6 +105,8 @@ const Search: NextPage = () => {
       pathname: router.pathname,
       query: { word: inputValue },
     });
+    setSearches([searchQuery, ...searches]);
+    setSearchQuery("");
     setFocus(false);
   };
 
@@ -131,18 +164,12 @@ const Search: NextPage = () => {
             <div className="mt-12">
               <h2 className="mb-3 text-base font-bold">최근 검색어</h2>
               <ul className="space-y-2 [&_svg]:-mt-0.5 [&_svg]:ml-2 [&_svg]:cursor-pointer [&_svg]:text-lg [&_svg]:text-textColor-gray-50">
-                <li className="flex items-center">
-                  하이엔드
-                  <Icon icon="ic:baseline-clear" aria-label="검색어 삭제" />
-                </li>
-                <li className="flex items-center">
-                  스투시
-                  <Icon icon="ic:baseline-clear" aria-label="검색어 삭제" />
-                </li>
-                <li className="flex items-center">
-                  빈티지
-                  <Icon icon="ic:baseline-clear" aria-label="검색어 삭제" />
-                </li>
+                {searches.map(query => (
+                  <li className="flex items-center" key={query}>
+                    {query}
+                    <Icon icon="ic:baseline-clear" aria-label="검색어 삭제" />
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
