@@ -4,6 +4,7 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { useMutation } from "react-query";
+import Button from "../../components/button";
 import ButtonItem from "../../components/button";
 import Header from "../../components/header";
 import SignForm from "../../components/sign/sign-form";
@@ -62,33 +63,36 @@ const Sign: NextPage = () => {
     <>
       <Header text="SIGNUP" goBack />
       <SignForm />
-      <div className="px-5">
+      <div className="w-full">
         <div className="my-8 mt-4 inline-flex w-full items-center justify-center">
-          <hr className=" h-px w-80 border-0 bg-black dark:bg-black" />
+          <hr className="h-px w-full border-0 bg-black dark:bg-black" />
           <span className="absolute left-1/2 -translate-x-1/2 bg-white px-3 font-medium text-gray-900 dark:bg-gray-900 dark:text-white">
             or
           </span>
         </div>
-        <div>
-          <ButtonItem
-            onClick={handleSignGoogle}
-            text="Continue With Google"
-            color="bg-white"
-            icon="ph:google-logo"
-            logo="flex items-center"
-            textWidth="w-4/5"
-            border="rounded border-solid border-2 border-black	"
+        <div className="px-5">
+          <div>
+            <Button
+              type="button"
+              onClick={handleSignGoogle}
+              text="Continue With Google"
+              icon="ph:google-logo"
+              textWidth="w-3/5"
+              classes="border-solid bg-white border border-black"
+              btnWrapClasses="pb-3"
+              fontColor="text-black"
+            />
+          </div>
+          <Button
+            type="button"
+            onClick={handleSignKakao}
+            text="Continue With Kakao"
+            icon="ri:kakao-talk-fill"
+            textWidth="w-3/5"
+            fontColor="text-black"
+            classes="border-solid border border-black bg-primary-yellow"
           />
         </div>
-        <ButtonItem
-          onClick={handleSignKakao}
-          text="Continue With Kakao"
-          color="bg-primary-yellow"
-          icon="ri:kakao-talk-fill"
-          logo="flex items-center"
-          textWidth="w-4/5"
-          border="rounded  border-solid border-2 border-black	"
-        />
       </div>
     </>
   );

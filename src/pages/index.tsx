@@ -54,6 +54,7 @@ const Home: NextPage = () => {
           <p className="text-base">매일 수익이 발생하는 옷장공유</p>
           <p className="mt-1 mb-5 text-2xl">지금 시작해보세요!</p>
           <Button
+            type="button"
             text="바로가기"
             fontColor="text-white"
             color="bg-black"

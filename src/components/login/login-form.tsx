@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { errorLine, errorMessage } from "../../lib/error";
+import { cls } from "../../utils/class";
 import createHashedPassword from "../../utils/hash";
 import { regExgPw, regExpEm } from "../../utils/regInput";
 
@@ -33,11 +34,14 @@ const LoginForm: NextPage = () => {
     !result?.error ? router.replace("/") : alert(result.error);
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="px-3 py-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="px-3">
       <input
         {...register("email", { required: true, pattern: regExpEm })}
         placeholder="아이디(이메일)"
-        className={errorLine(errors.email)}
+        className={cls(
+          "mb-2 h-14 border-b border-b-white bg-transparent text-base text-white placeholder:text-white",
+          errors.email ? "border-b-error" : "",
+        )}
       />
       {errorMessage(errors?.email?.type, "required", "이메일을 입력해주세요")}
       {errorMessage(errors?.email?.type, "pattern", "잘못된 이메일 형식입니다")}
@@ -46,7 +50,10 @@ const LoginForm: NextPage = () => {
         {...register("password", { required: true, pattern: regExgPw })}
         placeholder="비밀번호"
         autoComplete="false"
-        className={errorLine(errors.password)}
+        className={cls(
+          "mb-2 h-14 border-b border-b-white bg-transparent text-base text-white placeholder:text-white",
+          errors.email ? "border-b-error" : "",
+        )}
       />
       {errorMessage(
         errors?.password?.type,
@@ -60,13 +67,13 @@ const LoginForm: NextPage = () => {
       )}
       <button
         type="submit"
-        className="mt-3 h-12 w-full bg-common-gray hover:bg-primary-green"
+        className="mt-3 h-12 w-full bg-common-gray text-base text-white"
       >
-        로그인
+        SIGN IN
       </button>
       <button
         type="button"
-        className="mt-3 h-12 w-full bg-transparent text-white "
+        className="mt-3 h-12 w-full bg-transparent text-white hover:underline"
       >
         <Link href="/sign">회원가입</Link>
       </button>
