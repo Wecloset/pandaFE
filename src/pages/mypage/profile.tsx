@@ -163,7 +163,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
     uploadImage(imgsrc[0].file, "profile");
     const imageurl = createImageUrl(imgsrc[0].file, "profile");
 
-    const { data: response } = await axios.post("/api/imagechange", {
+    const { data: response } = await axios.post("/api/user/image", {
       imageurl,
       userData: userContents.id,
     });

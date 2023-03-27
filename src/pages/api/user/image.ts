@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import client from "../../lib/client";
+import client from "../../../lib/client";
 
-const useImageChange = async (req: NextApiRequest, res: NextApiResponse) => {
+const userImageChange = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const { userData, imageurl } = req.body;
 
@@ -22,4 +22,4 @@ const useImageChange = async (req: NextApiRequest, res: NextApiResponse) => {
         });
   }
 };
-export default useImageChange;
+export default userImageChange;
