@@ -57,7 +57,7 @@ const Home: NextPage = () => {
             type="button"
             text="바로가기"
             fontColor="text-white"
-            color="bg-black"
+            classes="bg-black"
             width="w-32"
           />
         </div>

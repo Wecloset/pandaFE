@@ -17,10 +17,7 @@ class MyDocument extends Document {
       <Html lang="ko">
         <Head></Head>
         <body className="font-worksans text-sm text-common-black">
-          <MainLayout>
-            <div id="overlay-root" />
-            <Main />
-          </MainLayout>
+          <Main />
           <NextScript />
         </body>
       </Html>
