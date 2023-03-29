@@ -6,7 +6,7 @@ interface ButtonProps {
   type: "button" | "submit" | "reset";
   icon?: string;
   disabled?: boolean;
-  onClick?: (event: FormEvent) => void;
+  onClick?: (event: FormEvent | any) => void;
   divWidth?: string;
   position?: string;
   width?: string;

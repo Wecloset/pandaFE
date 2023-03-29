@@ -18,6 +18,24 @@ module.exports = {
       fontFamily: {
         myfont: ["worksans", "sans-serif"],
       },
+      keyframes: {
+        popup: {
+          "0%": { transform: "translate(30px,-60px)", opacity: "0%" },
+          "50%": { transform: "translate(30px,-12px)" },
+          "80%": { opacity: "100%" },
+          "100%": { transform: "translate(30px,-24px)" },
+        },
+        hide: {
+          "0%": { transform: "translate(30px,-24px)", opacity: "100%" },
+          "50%": { transform: "translate(30px,-10px)", opacity: "100%" },
+          "80%": { opacity: "0%" },
+          "100%": { transform: "translate(30px,-100px)", opacity: "0%" },
+        },
+      },
+      animation: {
+        popup: "popup 1s ease-out forwards",
+        hide: "hide 1s ease-in forwards",
+      },
     },
   },
   plugins: [require("tailwind-scrollbar-hide")],
