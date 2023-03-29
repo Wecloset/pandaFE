@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import React, { useContext, useState } from "react";
 import { Icon } from "@iconify/react";
-import Button from "../../button";
+import Button from "../../ui/button";
 import FilterTab from "./filter-tab";
 import { priceList, tabData } from "../../../lib/fake-data";
 import { FilterContext } from "../../../store/filter-context";

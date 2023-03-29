@@ -1,19 +1,19 @@
 import { GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import Header from "../../components/header";
+import Header from "../../components/ui/header";
 import profile from "../../../public/asset/image/addprofile.png";
 import Image from "next/image";
 import axios from "axios";
 import { FormEvent, useState } from "react";
 import useUpload from "../../hooks/useUpload";
 import { useMutation, useQuery } from "react-query";
-import LoadingSpinner from "../../components/loading-spinner";
+import LoadingSpinner from "../../components/ui/loading-spinner";
 import { createImageUrl } from "../../utils/image-url";
 import { signOut } from "next-auth/react";
-import Button from "../../components/button";
+import Button from "../../components/ui/button";
 import { cls } from "../../utils/class";
-import Toast from "../../components/toast";
+import Toast from "../../components/ui/toast";
 
 interface CredentialProps {
   region: string;

@@ -1,8 +1,7 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
-import Button from "../../components/button";
-import Header from "../../components/header";
+import Button from "../../components/ui/button";
 import ImageSlide from "../../components/market/detail/image-slide";
 import {
   categoryToEng,
@@ -13,10 +12,11 @@ import { useRecoilValueLoadable } from "recoil";
 import { axiosGet } from "../../utils/services";
 import { updateViews } from "../../utils/market-view";
 import { useMutation, useQuery } from "react-query";
-import LoadingSpinner from "../../components/loading-spinner";
 import useFav from "../../hooks/useFav";
 import { useRouter } from "next/router";
 import { currentUserInfoQuery } from "../../recoil/user";
+import Header from "../../components/ui/header";
+import LoadingSpinner from "../../components/ui/loading-spinner";
 
 const Product: NextPage = () => {
   const userInfo = useRecoilValueLoadable(currentUserInfoQuery);

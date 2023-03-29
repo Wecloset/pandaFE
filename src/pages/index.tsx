@@ -4,14 +4,14 @@ import { useSetRecoilState } from "recoil";
 import { userEmailState } from "../recoil/user";
 import { getSession } from "next-auth/react";
 import { useQuery } from "react-query";
-import Header from "../components/header";
-import Navigation from "../components/navigation";
-import Button from "../components/button";
-import FloatingButton from "../components/floating-button";
+import Button from "../components/ui/button";
 import RecentStyle from "../components/main/recent-style";
 import MainLookbook from "../components/main/lookbook";
 import { axiosGet } from "../utils/services";
 import RecommendList from "../components/main/recommend";
+import Header from "../components/ui/header";
+import Navigation from "../components/ui/navigation";
+import FloatingButton from "../components/ui/floating-button";
 
 const Home: NextPage = () => {
   const setEmail = useSetRecoilState(userEmailState);

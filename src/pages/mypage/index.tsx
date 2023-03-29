@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import type { NextPage } from "next";
 import { useEffect, useState } from "react";
-import Header from "../../components/header";
+import Header from "../../components/ui/header";
 import { cls } from "../../utils/class";
 import { useRecoilValueLoadable } from "recoil";
 import {
@@ -11,8 +11,8 @@ import {
 } from "../../types/data-type";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import Navigation from "../../components/navigation";
-import LoadingSpinner from "../../components/loading-spinner";
+import Navigation from "../../components/ui/navigation";
+import LoadingSpinner from "../../components/ui/loading-spinner";
 import { currentUserInfoQuery } from "../../recoil/user";
 import MainProduct from "../../components/main/product-item";
 

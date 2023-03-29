@@ -4,9 +4,9 @@ import { ChangeEvent, useState } from "react";
 import { FieldErrors, useForm } from "react-hook-form";
 import { useRecoilValueLoadable } from "recoil";
 import { currentUserInfoQuery } from "../../recoil/user";
-import Button from "../../components/button";
+import Button from "../../components/ui/button";
 import UploadImages from "../../components/create/upload-images";
-import Header from "../../components/header";
+import Header from "../../components/ui/header";
 import useOptions from "../../hooks/useOptions";
 import useUpload from "../../hooks/useUpload";
 import { CreateState, CredentialProps } from "../../types/create-type";
@@ -17,7 +17,7 @@ import { createImageUrl } from "../../utils/image-url";
 import { useMutation } from "react-query";
 import { useRouter } from "next/router";
 import axios from "axios";
-import LoadingSpinner from "../../components/loading-spinner";
+import LoadingSpinner from "../../components/ui/loading-spinner";
 
 const CreatePost: NextPage<CredentialProps> = ({
   region,

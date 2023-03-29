@@ -4,9 +4,9 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { useMutation } from "react-query";
-import Button from "../../components/button";
-import ButtonItem from "../../components/button";
-import Header from "../../components/header";
+import Button from "../../components/ui/button";
+import ButtonItem from "../../components/ui/button";
+import Header from "../../components/ui/header";
 import SignForm from "../../components/sign/sign-form";
 
 const Sign: NextPage = () => {

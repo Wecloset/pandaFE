@@ -5,9 +5,8 @@ import { useRecoilValueLoadable } from "recoil";
 import { currentUserInfoQuery } from "../../recoil/user";
 import { ProductData } from "../../types/data-type";
 import { cls } from "../../utils/class";
-
 import MainProduct from "./product-item";
-import RecommendSkeleton from "./skeleton/recommend-skeleton";
+import RecommendSkeleton from "../ui/recommend-skeleton";
 
 interface RecommendProps {
   keywords?: { id: number; tag: string }[];

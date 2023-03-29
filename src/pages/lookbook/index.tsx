@@ -1,11 +1,11 @@
 import { NextPage } from "next";
-import Header from "../../components/header";
-import Navigation from "../../components/navigation";
+import Header from "../../components/ui/header";
+import Navigation from "../../components/ui/navigation";
 import LookItem from "../../components/lookbook/look-item";
-import FloatingButton from "../../components/floating-button";
+import FloatingButton from "../../components/ui/floating-button";
 import { axiosGet } from "../../utils/services";
 import { useQuery } from "react-query";
-import LoadingSpinner from "../../components/loading-spinner";
+import LoadingSpinner from "../../components/ui/loading-spinner";
 import { LookbookData } from "../../types/data-type";
 import { useRecoilValueLoadable } from "recoil";
 import { currentUserInfoQuery } from "../../recoil/user";
