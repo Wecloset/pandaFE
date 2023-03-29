@@ -160,13 +160,19 @@ const Product: NextPage = () => {
               </div>
             </div>
           </div>
-          <div className="fixed bottom-0 flex w-[390px] items-center justify-between border border-t-common-black bg-white pt-5 pl-5">
+          <div className="fixed bottom-0 flex w-[390px] items-center justify-between border border-t-common-black bg-white p-5">
             <p className="text-2xl font-bold">
               {priceAddComma(product.price)}
               <span className="text-lg">원</span>
             </p>
-            <div className="relative w-64">
-              <Button text="구매하기" color="bg-black" fontColor="text-white" />
+            <div className="relative">
+              <Button
+                type="button"
+                text="구매하기"
+                classes="bg-black"
+                width="w-[215px]"
+                fontColor="text-white"
+              />
             </div>
           </div>
         </>

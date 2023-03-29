@@ -36,7 +36,12 @@ const FilterTab: NextPage<FilterTabProps> = ({
         {name.toUpperCase()}
       </div>
       {isOpen === name && (
-        <ul className="h-0 select-none border-b border-common-black peer-[.is-active]:h-auto peer-[.is-active]:p-5 [&>li]:flex [&>li]:h-7 [&>li]:justify-between [&_svg]:-mt-[3px] [&_svg]:text-2xl">
+        <ul
+          className={cls(
+            "select-none overflow-hidden border-b border-common-black bg-white transition-all peer-[.is-active]:p-5 [&>li]:flex [&>li]:h-7 [&>li]:justify-between [&_svg]:-mt-[3px] [&_svg]:text-2xl",
+            name !== "PRICE" ? "animate-accordion1" : "animate-accordion2",
+          )}
+        >
           {data.map((item, i) => {
             const itemKey = `${item}-${i}`;
             return (
@@ -53,10 +58,12 @@ const FilterTab: NextPage<FilterTabProps> = ({
                   onChange={changeWordList}
                   checked={wordList.includes(item) ? true : false}
                 />
-                <Icon
-                  icon="material-symbols:check-small"
-                  className="hidden peer-checked:block"
-                />
+                <div className="relative hidden h-6 w-6 items-start justify-center rounded-full border border-common-black peer-checked:flex">
+                  <Icon
+                    icon="material-symbols:check-small"
+                    className="absolute top-[3px]"
+                  />
+                </div>
               </li>
             );
           })}

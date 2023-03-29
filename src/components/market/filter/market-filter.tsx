@@ -47,7 +47,7 @@ const FilterOverlay: NextPage<{
         <FilterTab
           onClick={openTab}
           name="STYLE"
-          data={tabData.style}
+          data={tabData.style.slice(0, 20)}
           isOpen={isOpen}
           setList={updateTemporaryList}
           wordList={filterWords}
@@ -61,8 +61,10 @@ const FilterOverlay: NextPage<{
           wordList={filterWords}
         />
         <Button
+          type="button"
           text="검색"
-          color="bg-black"
+          classes="bg-black"
+          btnWrapClasses="p-5"
           fontColor="text-white"
           position="absolute bottom-2"
           onClick={updateFilterList}

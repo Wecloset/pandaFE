@@ -1,8 +1,8 @@
 import { NextPage } from "next";
 import Link from "next/link";
-import { ProductData } from "../../types/data-type";
+import { ProductDataMin } from "../../types/data-type";
 
-interface MainListProps extends ProductData {
+interface MainListProps extends ProductDataMin {
   imgw?: string;
   imgh?: string;
 }
