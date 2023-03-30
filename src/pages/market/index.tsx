@@ -44,7 +44,7 @@ const Market: NextPage = () => {
         <Header />
         <CategoryNavigation />
         <div>
-          <div className="px-5 py-4">
+          <div className="mb-3 px-5 py-4">
             <div className="flex items-center justify-between">
               <RentButtons />
               <Icon

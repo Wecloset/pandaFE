@@ -222,7 +222,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
               />
               <button
                 type="submit"
-                className=" ml-3 h-9 w-2/5 bg-black text-white hover:bg-primary-green"
+                className=" ml-3 h-9 w-2/5 bg-black text-white"
               >
                 {nickButtonText}
               </button>
@@ -235,7 +235,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
                 </div>
                 <button
                   type="button"
-                  className=" ml-3 h-9 w-2/5 bg-black text-white hover:bg-primary-green"
+                  className=" ml-3 h-9 w-2/5 bg-black text-white"
                   onClick={() => setIsTab(true)}
                 >
                   {nickButtonText}

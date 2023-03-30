@@ -36,7 +36,7 @@ const MainProduct: NextPage<MainListProps> = ({
         <dd className="mt-1 flex items-center">
           <span
             aria-label="판매상품"
-            className="mr-[6px] -mt-1 bg-primary-green px-1 pt-0.5 text-xs text-white"
+            className="mr-[6px] -mt-1 border border-common-black bg-primary-green px-1 text-xs text-common-black"
           >
             {rental ? "대여" : "판매"}
           </span>

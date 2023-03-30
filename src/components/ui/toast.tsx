@@ -60,7 +60,7 @@ const Toast: NextPage<ToastProps> = ({ error, message, onClose }) => {
         className="absolute -top-2 right-3 cursor-pointer"
         onClick={onClose}
       >
-        x
+        <Icon icon="ic:baseline-clear" />
       </button>
     </div>
   );

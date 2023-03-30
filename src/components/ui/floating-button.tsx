@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const FloatingButton: NextPage<{ path: string }> = ({ path }) => {
   return (
-    <Link href={path} className="fixed bottom-24 translate-x-[310px]">
+    <Link href={path} className="fixed bottom-24 z-30 translate-x-[310px]">
       <button className="rounded-full border border-primary-violet bg-black p-3 shadow-lg">
         <Icon
           icon="ic:baseline-plus"
