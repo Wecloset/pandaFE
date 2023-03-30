@@ -1,17 +1,15 @@
 import { NextPage } from "next";
-import { useContext } from "react";
 import { cls } from "../../utils/class";
-import { FilterContext } from "../../store/filter-context";
+import { useRecoilState } from "recoil";
+import { categoryNameState } from "../../recoil/filter";
 
 const navigationList = ["전체", "상의", "하의", "아우터", "가방", "기타"];
 const CategoryNavigation: NextPage = () => {
-  const { categoryName, setCategory, filtering } = useContext(FilterContext);
+  const [category, setCategory] = useRecoilState(categoryNameState);
 
   const changeCategory = (e: React.MouseEvent<HTMLButtonElement>) => {
     const target = e.target as HTMLButtonElement;
-
     setCategory(target.name);
-    filtering(target.name);
   };
 
   return (
@@ -25,7 +23,7 @@ const CategoryNavigation: NextPage = () => {
           className={cls(
             "w-[65px]",
             `${
-              categoryName === item
+              category === item
                 ? "border-b-2 border-common-black font-bold text-common-black"
                 : ""
             }`,
