@@ -6,8 +6,8 @@ import { useMutation } from "react-query";
 import { errorMessage } from "../../lib/error";
 import { cls } from "../../utils/class";
 import { regExgPw, regExpEm } from "../../utils/regInput";
-import Button from "../button";
-import LoadingSpinner from "../loading-spinner";
+import Button from "../ui/button";
+import LoadingSpinner from "../ui/loading-spinner";
 
 interface SignProps {
   email: string;

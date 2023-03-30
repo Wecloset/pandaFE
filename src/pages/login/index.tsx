@@ -6,7 +6,7 @@ import graphic2 from "../../../public/asset/image/graphic2.svg";
 import graphic3 from "../../../public/asset/image/graphic3.svg";
 import graphic4 from "../../../public/asset/image/graphic4.svg";
 import LoginForm from "../../components/login/login-form";
-import Button from "../../components/button";
+import Button from "../../components/ui/button";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";

@@ -4,21 +4,20 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useForm, FieldErrors } from "react-hook-form";
 import { useMutation } from "react-query";
-import Button from "../../components/button";
-import Header from "../../components/header";
+import Button from "../../components/ui/button";
+import Header from "../../components/ui/header";
 import UploadImages from "../../components/create/upload-images";
 import OptionTab from "../../components/create/option-tab";
-import LoadingSpinner from "../../components/loading-spinner";
+import LoadingSpinner from "../../components/ui/loading-spinner";
 import { cls } from "../../utils/class";
 import { createImageUrl } from "../../utils/image-url";
 import axios from "axios";
-import { useRecoilValue } from "recoil";
-import { currentUserState } from "../../recoil/user";
-import { UserData } from "../../types/data-type";
+import { useRecoilValueLoadable } from "recoil";
 import useUpload from "../../hooks/useUpload";
 import useOptions from "../../hooks/useOptions";
 import { tabData } from "../../lib/fake-data";
 import { CreateState, CredentialProps } from "../../types/create-type";
+import { currentUserInfoQuery } from "../../recoil/user";
 
 const Create: NextPage<CredentialProps> = ({
   region,
@@ -29,7 +28,8 @@ const Create: NextPage<CredentialProps> = ({
 
   const credentials = { region, accessKey, secretKey };
 
-  const userData = useRecoilValue(currentUserState) as UserData;
+  const userData = useRecoilValueLoadable(currentUserInfoQuery);
+  const { state, contents } = userData;
   const { uploadImage, deleteImage, encodeFile, imgsrc } =
     useUpload(credentials);
 
@@ -61,13 +61,12 @@ const Create: NextPage<CredentialProps> = ({
     data: any;
     imageurlList: string[];
   }) => {
-    const { id: userId } = userData;
     const { data, imageurlList } = payload;
     const { data: response } = await axios.post("/api/products", {
       data,
       imageurlList,
       options,
-      userId,
+      userId: contents.id,
     });
     return response;
   };
@@ -137,7 +136,7 @@ const Create: NextPage<CredentialProps> = ({
         </div>
       )}
       {isTabOpen && (
-        <div className="fixed z-10 h-[calc(100%-300px)] w-[390px] bg-black pt-10 opacity-50" />
+        <div className="fixed z-10 h-[calc(100%)] w-[390px] bg-black pt-10 opacity-50" />
       )}
       <div className=" px-5 py-5">
         <form onSubmit={handleSubmit(valid, inValid)}>
@@ -205,16 +204,23 @@ const Create: NextPage<CredentialProps> = ({
             ))}
           </div>
           <div className="mt-40">
-            <Button text="완료" color="bg-black" fontColor="text-white" />
+            <Button
+              type="submit"
+              text="완료"
+              classes="bg-black"
+              fontColor="text-white"
+            />
           </div>
         </form>
-        <OptionTab
-          isTabOpen={isTabOpen}
-          options={options}
-          selectOptionItem={selectOptionItem}
-          submitBrand={submitBrand}
-          closeTab={closeTab}
-        />
+        {isTabOpen && (
+          <OptionTab
+            isTabOpen={isTabOpen}
+            options={options}
+            selectOptionItem={selectOptionItem}
+            submitBrand={submitBrand}
+            closeTab={closeTab}
+          />
+        )}
       </div>
     </>
   );

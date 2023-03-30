@@ -5,9 +5,8 @@ import { useRecoilValueLoadable } from "recoil";
 import { currentUserInfoQuery } from "../../recoil/user";
 import { ProductData } from "../../types/data-type";
 import { cls } from "../../utils/class";
-
 import MainProduct from "./product-item";
-import RecommendSkeleton from "./skeleton/recommend-skeleton";
+import RecommendSkeleton from "../ui/recommend-skeleton";
 
 interface RecommendProps {
   keywords?: { id: number; tag: string }[];
@@ -126,20 +125,22 @@ const RecommendList: NextPage<RecommendProps> = ({ productsData }) => {
         <p className="mt-1 text-textColor-gray-100">{recommendTitle}</p>
       </div>
       {keywords.length > 0 && (
-        <div className="flex w-full items-center gap-[6px] overflow-hidden overflow-x-scroll font-bold text-common-gray scrollbar-hide">
+        <div className="flex h-11 w-full items-center gap-2 overflow-hidden overflow-x-scroll font-bold text-common-gray scrollbar-hide">
           {keywords.map(({ tag, id }: { tag: string; id: number }) => (
-            <button
-              key={id}
-              className={cls(
-                "h-9 rounded-lg border-2 px-3",
-                keyword === tag
-                  ? "border-common-black bg-common-black text-white"
-                  : "border-common-gray",
-              )}
-              onClick={() => clickKeyword(tag)}
-            >
-              {tag}
-            </button>
+            <div key={id} className="relative h-9 min-w-[65px] rounded-lg px-3">
+              <button
+                className={cls(
+                  "absolute top-0 left-0 z-10 h-full w-full rounded-lg border border-common-black",
+                  keyword === tag
+                    ? "border-common-black bg-primary-green text-common-black"
+                    : "border-common-black bg-white",
+                )}
+                onClick={() => clickKeyword(tag)}
+              >
+                {tag}
+              </button>
+              <span className="absolute top-[2px] left-[2px] h-full w-full rounded-lg bg-common-black" />
+            </div>
           ))}
         </div>
       )}
@@ -157,13 +158,18 @@ const RecommendList: NextPage<RecommendProps> = ({ productsData }) => {
           ))}
         </div>
       )}
-      <button
-        className="flex h-10 w-full items-center justify-center border-2 border-textColor-gray-50"
-        onClick={refresh}
-      >
-        <Icon icon="ic:baseline-refresh" className="mr-1 -mt-1 text-lg" />
-        {buttonText}
-      </button>
+      <div className="relative h-10">
+        <button
+          className="absolute top-0 left-0 z-10 flex h-10 w-full items-center justify-center border border-black bg-white"
+          onClick={refresh}
+        >
+          <Icon icon="ic:baseline-refresh" className="mr-1 -mt-1 text-lg" />
+          {buttonText}
+        </button>
+        <span className="absolute top-1 left-1 h-full w-full bg-common-black" />
+        <span className="absolute top-[2px] -right-[4px] h-[3px] w-[6px] rotate-45 bg-common-black" />
+        <span className="absolute -bottom-[2px] left-0 h-[3px] w-[6px] rotate-45 bg-common-black" />
+      </div>
     </div>
   );
 };

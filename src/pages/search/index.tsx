@@ -4,7 +4,7 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import Header from "../../components/header";
+import Header from "../../components/ui/header";
 import MainProduct from "../../components/main/product-item";
 
 interface KeywordInterface {

@@ -16,14 +16,14 @@ const CategoryNavigation: NextPage = () => {
 
   return (
     <div
-      className="text-common-gray flex h-10 overflow-x-scroll border-b border-common-black 
+      className="flex h-10 overflow-x-scroll border-b border-common-black 
     bg-white text-base text-textColor-gray-100 scrollbar-hide [&>button]:flex-shrink-0"
     >
       {navigationList.map((item, i) => (
         <button
           key={i}
           className={cls(
-            "w-[84px] border-r border-r-common-black last:border-r-0",
+            "w-[65px]",
             `${
               categoryName === item
                 ? "border-b-2 border-common-black font-bold text-common-black"
