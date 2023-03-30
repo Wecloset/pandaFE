@@ -4,14 +4,14 @@ import { useSetRecoilState } from "recoil";
 import { userEmailState } from "../recoil/user";
 import { getSession } from "next-auth/react";
 import { useQuery } from "react-query";
-import Header from "../components/header";
-import Navigation from "../components/navigation";
-import Button from "../components/button";
-import FloatingButton from "../components/floating-button";
+import Button from "../components/ui/button";
 import RecentStyle from "../components/main/recent-style";
 import MainLookbook from "../components/main/lookbook";
 import { axiosGet } from "../utils/services";
 import RecommendList from "../components/main/recommend";
+import Header from "../components/ui/header";
+import Navigation from "../components/ui/navigation";
+import FloatingButton from "../components/ui/floating-button";
 
 const Home: NextPage = () => {
   const setEmail = useSetRecoilState(userEmailState);
@@ -50,7 +50,7 @@ const Home: NextPage = () => {
         <RecommendList productsData={products} />
         <RecentStyle productsData={products} />
         <MainLookbook />
-        <div className="h-56 w-full bg-borderColor-gray py-10 text-center text-white">
+        <div className="flex h-56 w-full flex-col items-center justify-center bg-primary-violet py-10 text-white">
           <p className="text-base">매일 수익이 발생하는 옷장공유</p>
           <p className="mt-1 mb-5 text-2xl">지금 시작해보세요!</p>
           <Button
@@ -58,7 +58,7 @@ const Home: NextPage = () => {
             text="바로가기"
             fontColor="text-white"
             classes="bg-black"
-            width="w-32"
+            divWidth="w-32"
           />
         </div>
       </div>

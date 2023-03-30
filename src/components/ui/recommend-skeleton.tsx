@@ -3,7 +3,7 @@ import React from "react";
 
 const RecommendSkeleton: NextPage = () => {
   return (
-    <div>
+    <div className="animate-pulse">
       <div className="mb-2 bg-slate-200">
         <div className="h-[190px] w-full" />
       </div>

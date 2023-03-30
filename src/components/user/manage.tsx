@@ -33,23 +33,24 @@ const UserManage: NextPage<{ userData: UserData }> = ({ userData }) => {
     alert("로그아웃이 완료되었습니다.");
     router.replace("/").then(() => signOut());
   };
+
   return (
-    <div className="  fixed bottom-0 w-[390px] py-14 px-6">
+    <div className="fixed bottom-0 w-[390px] py-14 px-6 text-textColor-gray-100">
       <div
-        className="flex cursor-pointer items-center justify-between py-3 hover:scale-105 hover:duration-150"
+        className="flex cursor-pointer items-center justify-between py-3"
         onClick={signout}
       >
-        <p className=" text-base font-bold">로그아웃</p>
+        <p className="text-base font-bold">로그아웃</p>
         <Icon
           icon="material-symbols:chevron-right-sharp"
           className=" text-xl font-bold"
         />
       </div>
       <div
-        className="flex cursor-pointer items-center justify-between py-3 hover:scale-105 hover:duration-150"
+        className="flex cursor-pointer items-center justify-between py-3"
         onClick={handleDelete}
       >
-        <p className=" text-base font-bold">회원탈퇴</p>
+        <p className="text-base font-bold">회원탈퇴</p>
         <Icon
           icon="material-symbols:chevron-right-sharp"
           className=" text-xl font-bold"

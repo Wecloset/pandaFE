@@ -6,8 +6,8 @@ import {
   useQuery,
   useQueryClient,
 } from "react-query";
-import Header from "../../components/header";
-import LoadingSpinner from "../../components/loading-spinner";
+import Header from "../../components/ui/header";
+import LoadingSpinner from "../../components/ui/loading-spinner";
 import PostItem from "../../components/lookbook/detail/post-item";
 import { LookbookData } from "../../types/data-type";
 import { axiosGet } from "../../utils/services";

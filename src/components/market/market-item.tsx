@@ -40,7 +40,7 @@ const MarketItem: NextPage<{ data: MainProductData }> = ({ data }) => {
           <div
             role="definition"
             aria-label="판매상품"
-            className="h-[18px] bg-primary-green px-1 text-xs leading-5 text-white"
+            className="h-[18px] border border-common-black bg-primary-green px-1 text-xs text-common-black"
           >
             {rental ? "대여" : "판매"}
           </div>

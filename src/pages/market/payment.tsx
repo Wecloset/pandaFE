@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
-import Button from "../../components/button";
-import Header from "../../components/header";
+import Button from "../../components/ui/button";
+import Header from "../../components/ui/header";
 import PaymentItem from "../../components/market/payment/payment-item";
 
 const Payment: NextPage = () => {

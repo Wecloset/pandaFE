@@ -6,8 +6,8 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
-import Header from "../../components/header";
-import Navigation from "../../components/navigation";
+import Header from "../../components/ui/header";
+import Navigation from "../../components/ui/navigation";
 import UserManage from "../../components/user/manage";
 import useUpload from "../../hooks/useUpload";
 import { taglist } from "../../lib/tag-data";
@@ -222,7 +222,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
               />
               <button
                 type="submit"
-                className=" ml-3 h-9 w-2/5 bg-black text-white hover:bg-primary-green"
+                className=" ml-3 h-9 w-2/5 bg-black text-white"
               >
                 {nickButtonText}
               </button>
@@ -235,7 +235,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
                 </div>
                 <button
                   type="button"
-                  className=" ml-3 h-9 w-2/5 bg-black text-white hover:bg-primary-green"
+                  className=" ml-3 h-9 w-2/5 bg-black text-white"
                   onClick={() => setIsTab(true)}
                 >
                   {nickButtonText}

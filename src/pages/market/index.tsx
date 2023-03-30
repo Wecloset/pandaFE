@@ -2,10 +2,10 @@ import { NextPage } from "next";
 import React, { useState } from "react";
 import { Icon } from "@iconify/react";
 import { FilterProvider } from "../../store/filter-context";
-import Header from "../../components/header";
+import Header from "../../components/ui/header";
 import FilterOverlay from "../../components/market/filter/market-filter";
-import Navigation from "../../components/navigation";
-import FloatingButton from "../../components/floating-button";
+import Navigation from "../../components/ui/navigation";
+import FloatingButton from "../../components/ui/floating-button";
 import FilterList from "../../components/market/filter-list";
 import MarketList from "../../components/market/market-list";
 import CategoryNavigation from "../../components/market/category-nav";
@@ -13,7 +13,7 @@ import { useQuery } from "react-query";
 import RentButtons from "../../components/market/rent-buttons";
 import { axiosGet } from "../../utils/services";
 import { cls } from "../../utils/class";
-import LoadingSpinner from "../../components/loading-spinner";
+import LoadingSpinner from "../../components/ui/loading-spinner";
 
 const Market: NextPage = () => {
   const [isFilterOpen, setFilterOpen] = useState<boolean>(false);
@@ -44,7 +44,7 @@ const Market: NextPage = () => {
         <Header />
         <CategoryNavigation />
         <div>
-          <div className="px-5 py-4">
+          <div className="mb-3 px-5 py-4">
             <div className="flex items-center justify-between">
               <RentButtons />
               <Icon

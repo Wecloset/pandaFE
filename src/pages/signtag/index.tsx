@@ -2,12 +2,12 @@ import { NextPage } from "next";
 import { FormEvent, useState } from "react";
 import { taglist } from "../../lib/tag-data";
 import { Icon } from "@iconify/react";
-import Header from "../../components/header";
+import Header from "../../components/ui/header";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { useMutation, useQuery } from "react-query";
-import LoadingSpinner from "../../components/loading-spinner";
-import Button from "../../components/button";
+import LoadingSpinner from "../../components/ui/loading-spinner";
+import Button from "../../components/ui/button";
 
 interface TagData {
   userId: number;
@@ -69,7 +69,6 @@ const SignTag: NextPage = () => {
   const onResetBtn = () => {
     setSelectedTag([]);
   };
-
 
   const handleTagSelection = (data: string) => {
     setSelectedTag(prevTags =>
