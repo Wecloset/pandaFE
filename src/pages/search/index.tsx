@@ -1,6 +1,7 @@
 import { Icon } from "@iconify/react";
 import axios from "axios";
 import type { NextPage } from "next";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
@@ -15,9 +16,8 @@ interface KeywordInterface {
 const Search: NextPage = () => {
   const [keywords, setKeywords] = useState<string[]>([]);
   const router = useRouter();
-  const [inputValue, setInputValue] = useState<string | undefined | string[]>(
-    "",
-  );
+  const session = useSession();
+  const [inputValue, setInputValue] = useState<string>("");
   const [searchData, setSearchData] = useState<string[]>([]);
 
   const [matchedKeywords, setMatchedKeywords] = useState<string[]>([]);
@@ -26,34 +26,51 @@ const Search: NextPage = () => {
 
   // ------------------------------------------------------------------------------------
   const CACHE_KEY = "recentSearches";
+  const EXPIRATION_TIME = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
   const [searches, setSearches] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    // Load saved searches from cache storage when the component mounts
-    caches.open("my-cache").then(cache => {
-      cache.match(CACHE_KEY).then(response => {
-        if (response) {
-          response.json().then(data => {
-            setSearches(data);
-          });
-        }
+    if (session.status !== "unauthenticated") {
+      caches.open(`my-cache-${session.data?.user?.name}`).then(cache => {
+        cache.match(CACHE_KEY).then(response => {
+          if (response) {
+            response.json().then(data => {
+              setSearches(data);
+            });
+          }
+        });
       });
-    });
+    }
   }, []);
 
   useEffect(() => {
-    // Save searches to cache storage whenever they change
-    caches.open("my-cache").then(cache => {
-      cache.put(new Request(CACHE_KEY), new Response(JSON.stringify(searches)));
-    });
+    if (session.status !== "unauthenticated") {
+      caches.open(`my-cache-${session.data?.user?.name}`).then(cache => {
+        const expirationDate = new Date().getTime() + EXPIRATION_TIME;
+        const cacheHeaders = new Headers({
+          "Content-Type": "application/json",
+          Expires: new Date(expirationDate).toUTCString(),
+        });
+        const cacheOptions = {
+          headers: cacheHeaders,
+        };
+        cache.put(
+          new Request(CACHE_KEY),
+          new Response(JSON.stringify(searches), cacheOptions),
+        );
+      });
+    }
   }, [searches]);
 
   // ------------------------------------------------------------------------------------
 
   useEffect(() => {
-    setInputValue(router.query.word);
+    const enteredWord = router.query.word as string;
+    setInputValue(enteredWord);
+    setSearches([enteredWord, ...searches]);
+
     refetch();
   }, [router.query.word]);
 
@@ -121,6 +138,7 @@ const Search: NextPage = () => {
             value={inputValue || ""}
             onChange={handleInputChange}
             onFocus={() => setFocus(true)}
+            onBlur={() => setFocus(false)}
             className="h-12 w-full border-b border-common-black py-2 pl-[10px] pr-10"
           />
           <Icon
@@ -140,7 +158,10 @@ const Search: NextPage = () => {
                     <li
                       key={keyword}
                       className="flex h-12 w-full items-center overflow-hidden bg-red-50 p-2 pt-2 text-xl"
-                      onClick={() => searchKeyword(keyword)}
+                      onMouseDown={() => {
+                        searchKeyword(keyword),
+                          setSearches([keyword, ...searches]);
+                      }}
                     >
                       {keyword}
                     </li>
@@ -164,12 +185,13 @@ const Search: NextPage = () => {
             <div className="mt-12">
               <h2 className="mb-3 text-base font-bold">최근 검색어</h2>
               <ul className="space-y-2 [&_svg]:-mt-0.5 [&_svg]:ml-2 [&_svg]:cursor-pointer [&_svg]:text-lg [&_svg]:text-textColor-gray-50">
-                {searches.map(query => (
-                  <li className="flex items-center" key={query}>
-                    {query}
-                    <Icon icon="ic:baseline-clear" aria-label="검색어 삭제" />
-                  </li>
-                ))}
+                {session.status !== "unauthenticated" &&
+                  searches.map(query => (
+                    <li className="flex items-center" key={query}>
+                      {query}
+                      <Icon icon="ic:baseline-clear" aria-label="검색어 삭제" />
+                    </li>
+                  ))}
               </ul>
             </div>
           </div>
