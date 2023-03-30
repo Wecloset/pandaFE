@@ -18,6 +18,7 @@ import { useMutation } from "react-query";
 import { useRouter } from "next/router";
 import axios from "axios";
 import LoadingSpinner from "../../components/ui/loading-spinner";
+import Overlay from "../../components/ui/overlay";
 
 const CreatePost: NextPage<CredentialProps> = ({
   region,
@@ -104,9 +105,7 @@ const CreatePost: NextPage<CredentialProps> = ({
           <LoadingSpinner />
         </div>
       )}
-      {isTabOpen && (
-        <div className="fixed z-10 h-[calc(100%-300px)] w-[390px] bg-black pt-10 opacity-50" />
-      )}
+      {isTabOpen && <Overlay />}
       <div className="px-5 py-5">
         <form onSubmit={handleSubmit(valid, inValid)}>
           <UploadImages

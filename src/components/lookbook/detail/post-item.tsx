@@ -1,10 +1,11 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
-import { useEffect, useState } from "react";
-import { FieldValues } from "react-hook-form";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import { useMutation } from "react-query";
 import useFav from "../../../hooks/useFav";
 import { LookbookData, UserData } from "../../../types/data-type";
+import { ModalProps } from "../../../types/modal-type";
 import ImageSlide from "../../market/detail/image-slide";
 import TagItem from "./tag-item";
 
@@ -13,9 +14,9 @@ interface PostItemProps extends LookbookData {
   setInput: (postId: number, val?: boolean) => void;
   updateComment: (commentId: number, text: string) => void;
   deleteComment: (commentId: number) => void;
-  submit: (data: FieldValues) => void;
-  reset: () => void;
-  modal: boolean;
+  isModal: boolean;
+  modal: React.ComponentType | JSX.Element;
+  setModal: ({ message, cancel, submit, btnText }: ModalProps) => void;
 }
 
 const PostItem: NextPage<PostItemProps> = ({
@@ -30,10 +31,10 @@ const PostItem: NextPage<PostItemProps> = ({
   comment,
   updateComment,
   deleteComment,
-  modal,
+  isModal,
   setInput,
-  submit,
-  reset,
+  modal,
+  setModal,
 }) => {
   const currentUserNickname = userData ? userData.nickname : "";
   const currentUserId = userData ? userData.id : 0;
@@ -47,6 +48,8 @@ const PostItem: NextPage<PostItemProps> = ({
     initialButtonStyle,
   } = useFav(currentUserId);
 
+  const router = useRouter();
+
   const [showComment, setShowComment] = useState<boolean>(false);
 
   const { mutate } = useMutation(updateFav, {
@@ -59,13 +62,29 @@ const PostItem: NextPage<PostItemProps> = ({
     },
   });
 
+  const goLoginPage = () => router.push("/login");
+
   const clickComment = () => {
-    if (!currentUserId) return alert("로그인 후 이용가능합니다.");
+    if (!currentUserId) {
+      setModal({
+        message: "로그인 후 이용할 수 있습니다.,로그인페이지로 이동할까요?",
+        btnText: "로그인 하기",
+        submit: goLoginPage,
+      });
+      return;
+    }
     setInput(id, true);
   };
 
   const toggleFavButton = async () => {
-    if (currentUserId === 0) return alert("로그인 후 이용가능합니다.");
+    if (currentUserId === 0) {
+      setModal({
+        message: "로그인 후 이용할 수 있습니다.,로그인페이지로 이동할까요?",
+        btnText: "로그인 하기",
+        submit: goLoginPage,
+      });
+      return;
+    }
     changeButtonSytle();
     mutate({ currentUserId, lookId: id });
   };
@@ -78,25 +97,7 @@ const PostItem: NextPage<PostItemProps> = ({
 
   return (
     <>
-      {modal && (
-        <div className="fixed top-1/2 left-1/2 z-50 w-52 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white text-center shadow-md">
-          <p className="py-4">댓글을 삭제할까요?</p>
-          <div className="flex w-full divide-x border-t">
-            <button
-              onClick={submit}
-              className="w-1/2 cursor-pointer py-2 hover:rounded-bl-lg hover:bg-slate-100"
-            >
-              삭제
-            </button>
-            <button
-              onClick={reset}
-              className="w-1/2 cursor-pointer py-2 hover:rounded-br-lg hover:bg-slate-100"
-            >
-              취소
-            </button>
-          </div>
-        </div>
-      )}
+      {isModal && modal}
       <div className="flex items-center justify-between px-5 py-3">
         <div className="flex items-center">
           <img

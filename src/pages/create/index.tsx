@@ -18,6 +18,7 @@ import useOptions from "../../hooks/useOptions";
 import { tabData } from "../../lib/fake-data";
 import { CreateState, CredentialProps } from "../../types/create-type";
 import { currentUserInfoQuery } from "../../recoil/user";
+import Overlay from "../../components/ui/overlay";
 
 const Create: NextPage<CredentialProps> = ({
   region,
@@ -135,9 +136,7 @@ const Create: NextPage<CredentialProps> = ({
           <LoadingSpinner />
         </div>
       )}
-      {isTabOpen && (
-        <div className="fixed z-10 h-[calc(100%)] w-[390px] bg-black pt-10 opacity-50" />
-      )}
+      {isTabOpen && <Overlay />}
       <div className=" px-5 py-5">
         <form onSubmit={handleSubmit(valid, inValid)}>
           <UploadImages
