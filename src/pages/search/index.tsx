@@ -18,7 +18,7 @@ const Search: NextPage = () => {
   const router = useRouter();
   const session = useSession();
   const [inputValue, setInputValue] = useState<string>("");
-  const [searchData, setSearchData] = useState<any[]>([]);
+  const [searchData, setSearchData] = useState<string[]>([]);
 
   const [matchedKeywords, setMatchedKeywords] = useState<string[]>([]);
 
