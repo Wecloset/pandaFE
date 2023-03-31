@@ -20,8 +20,10 @@ const LoginForm: NextPage = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<LoginProps>({});
+    formState: { isValid, errors },
+  } = useForm<LoginProps>({
+    mode: "onChange",
+  });
 
   const onSubmit = async (data: LoginProps) => {
     const result = await signIn("credentials", {
@@ -39,7 +41,7 @@ const LoginForm: NextPage = () => {
         {...register("email", { required: true, pattern: regExpEm })}
         placeholder="아이디(이메일)"
         className={cls(
-          "mb-2 h-14 border-b border-b-white bg-transparent text-base text-white placeholder:text-white",
+          "mb-2 h-14 border-b border-b-white bg-transparent text-base text-white placeholder:text-white focus:border-b-primary-green",
           errors.email ? "border-b-error" : "",
         )}
       />
@@ -51,7 +53,7 @@ const LoginForm: NextPage = () => {
         placeholder="비밀번호"
         autoComplete="false"
         className={cls(
-          "mb-2 h-14 border-b border-b-white bg-transparent text-base text-white placeholder:text-white",
+          "mb-2 h-14 border-b border-b-white bg-transparent text-base text-white placeholder:text-white focus:border-b-primary-green",
           errors.email ? "border-b-error" : "",
         )}
       />
@@ -67,7 +69,11 @@ const LoginForm: NextPage = () => {
       )}
       <button
         type="submit"
-        className="mt-3 h-12 w-full bg-common-gray text-base text-white"
+        className={cls(
+          "mt-3 h-12 w-full text-base text-black",
+          isValid ? "bg-primary-green" : "bg-common-gray",
+        )}
+        disabled={!isValid}
       >
         SIGN IN
       </button>
