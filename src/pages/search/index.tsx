@@ -18,7 +18,7 @@ const Search: NextPage = () => {
   const router = useRouter();
   const session = useSession();
   const [inputValue, setInputValue] = useState<string>("");
-  const [searchData, setSearchData] = useState<string[]>([]);
+  const [searchData, setSearchData] = useState<any[]>([]);
 
   const [matchedKeywords, setMatchedKeywords] = useState<string[]>([]);
 
@@ -149,68 +149,83 @@ const Search: NextPage = () => {
             }}
           />
         </form>
-        {focus ? (
-          <div>
-            {matchedKeywords.length > 0 &&
-              matchedKeywords.length !== keywords.length && (
+        <div>
+          {router.asPath === "/search" ? (
+            <>
+              <div className="mt-6">
+                <h2 className="mb-5 text-base font-bold">추천 검색어</h2>
+                <ul className="flex cursor-pointer flex-wrap gap-5 py-1 text-3xl">
+                  <li>#샤넬</li>
+                  <li>#구찌</li>
+                  <li>#COS</li>
+                  <li>#Y2K</li>
+                  <li>#NIKE</li>
+                  <li>#ACNE STUDIOS</li>
+                </ul>
+              </div>
+              <div className="mt-12">
+                <h2 className="mb-3 text-base font-bold">최근 검색어</h2>
+                {session.status !== "unauthenticated" && (
+                  <ul className="ml-2 cursor-pointer space-y-2 text-lg text-textColor-gray-50">
+                    {focus ? (
+                      ""
+                    ) : (
+                      <>
+                        {" "}
+                        {searches.map(query => (
+                          <li className="flex items-center" key={query}>
+                            {query}
+                            <Icon
+                              icon="ic:baseline-clear"
+                              aria-label="검색어 삭제"
+                            />
+                          </li>
+                        ))}
+                      </>
+                    )}
+                  </ul>
+                )}
+              </div>
+            </>
+          ) : (
+            <ul className="mt-5 grid grid-cols-2 gap-3">
+              {searchData.length === 0 && !isLoading ? (
+                <li>검색결과가 없습니다</li>
+              ) : !focus ? (
+                searchData.map(data => (
+                  <MainProduct
+                    key={data.id}
+                    {...data}
+                    imgw="w-full"
+                    imgh="h-190"
+                  />
+                ))
+              ) : (
+                ""
+              )}
+            </ul>
+          )}
+          {focus &&
+            matchedKeywords.length > 0 &&
+            matchedKeywords.length !== keywords.length && (
+              <div>
                 <ul className="pt-5">
                   {matchedKeywords.map(keyword => (
                     <li
                       key={keyword}
-                      className="flex h-12 w-full items-center overflow-hidden bg-red-50 p-2 pt-2 text-xl"
+                      className="flex h-12 w-full cursor-pointer items-center overflow-hidden bg-red-50 p-2 pt-2 text-xl"
                       onMouseDown={() => {
-                        searchKeyword(keyword),
-                          setSearches([keyword, ...searches]);
+                        searchKeyword(keyword);
+                        setSearches([keyword, ...searches]);
                       }}
                     >
                       {keyword}
                     </li>
                   ))}
                 </ul>
-              )}
-          </div>
-        ) : router.asPath === "/search" ? (
-          <div>
-            <div className="mt-6">
-              <h2 className="mb-5 text-base font-bold">추천 검색어</h2>
-              <ul className="flex flex-wrap gap-5 text-[34px] [&>li]:cursor-pointer [&>li]:py-1">
-                <li>#샤넬</li>
-                <li>#구찌</li>
-                <li>#COS</li>
-                <li>#Y2K</li>
-                <li>#NIKE</li>
-                <li>#ACNE STUDIOS</li>
-              </ul>
-            </div>
-            <div className="mt-12">
-              <h2 className="mb-3 text-base font-bold">최근 검색어</h2>
-              <ul className="space-y-2 [&_svg]:-mt-0.5 [&_svg]:ml-2 [&_svg]:cursor-pointer [&_svg]:text-lg [&_svg]:text-textColor-gray-50">
-                {session.status !== "unauthenticated" &&
-                  searches.map(query => (
-                    <li className="flex items-center" key={query}>
-                      {query}
-                      <Icon icon="ic:baseline-clear" aria-label="검색어 삭제" />
-                    </li>
-                  ))}
-              </ul>
-            </div>
-          </div>
-        ) : (
-          <ul className="mt-5 grid grid-cols-2 gap-3">
-            {searchData.length === 0 && !isLoading ? (
-              <li>검색결과가 없습니다</li>
-            ) : (
-              searchData.map((data: any) => (
-                <MainProduct
-                  key={data.id}
-                  {...data}
-                  imgw="w-full"
-                  imgh="h-[190px]"
-                />
-              ))
+              </div>
             )}
-          </ul>
-        )}
+        </div>
       </div>
     </>
   );
