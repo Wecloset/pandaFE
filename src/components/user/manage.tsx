@@ -31,7 +31,7 @@ const UserManage: NextPage<{ userData: UserData }> = ({ userData }) => {
   };
   const signout = () => {
     alert("로그아웃이 완료되었습니다.");
-    router.replace("/").then(() => signOut());
+    router.replace("/login").then(() => signOut());
   };
 
   return (

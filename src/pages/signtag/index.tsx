@@ -104,7 +104,7 @@ const SignTag: NextPage = () => {
                   type="checkbox"
                   id={`${ele}-${index}`}
                   className="peer hidden"
-                  onClick={() => handleTagSelection(ele)}
+                  onChange={() => handleTagSelection(ele)}
                   checked={selectedTag.includes(ele) ? true : false}
                 />
                 <label
