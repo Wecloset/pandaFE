@@ -43,6 +43,31 @@ const RecommendList: NextPage<RecommendProps> = ({ productsData }) => {
     return itemList;
   };
 
+  const clickKeyword = (tagName: string) => {
+    setKeyword(tagName);
+  };
+
+  const refresh = () => {
+    const key = keyword !== "" ? keyword : "추천아이템";
+    const newRandomItems = random(keywordItems[key]);
+    setRecommendList((prev: Recommends) => ({
+      ...prev,
+      [key]: newRandomItems,
+    }));
+  };
+
+  const setContents = (products: ProductData[]) => {
+    if (!userContents) {
+      const randomList = random(products);
+      setKeywordItems({ 추천아이템: products });
+      setRecommendList({ 추천아이템: randomList });
+    } else {
+      console.log(userContents);
+      setRecommends(products);
+    }
+    setIsLoading(false);
+  };
+
   const setRecommends = (products: ProductData[]) => {
     const recommends: Recommends = {};
     const randoms: Recommends = {};
@@ -67,41 +92,18 @@ const RecommendList: NextPage<RecommendProps> = ({ productsData }) => {
     setRecommendList(randoms);
   };
 
-  const clickKeyword = (tagName: string) => {
-    setKeyword(tagName);
-  };
-
-  const refresh = () => {
-    const key = keyword !== "" ? keyword : "추천아이템";
-    const newRandomItems = random(keywordItems[key]);
-    setRecommendList((prev: Recommends) => ({
-      ...prev,
-      [key]: newRandomItems,
-    }));
-  };
-
-  const setContents = (products: ProductData[]) => {
-    if (!userContents) {
-      const randomList = random(products);
-      setKeywordItems({ 추천아이템: products });
-      setRecommendList({ 추천아이템: randomList });
-    } else {
-      setRecommends(products);
-    }
-    setIsLoading(false);
-  };
-
   useEffect(() => {
+    console.log(state, userContents);
     if (!userContents || Object.entries(userContents).length === 0) return;
-
     const { keywords, nickname } = userContents;
-    setKeyword(keywords[0].tag);
+    setKeyword(keywords[0]?.tag);
     setKeywords(keywords);
     setNickname(nickname);
   }, [state]);
 
   useEffect(() => {
-    if (productsData?.length > 0 && state !== "loading")
+    console.log(productsData);
+    if (productsData?.length > 0 && state === "hasValue")
       setContents(productsData);
   }, [productsData, state]);
 
@@ -144,17 +146,16 @@ const RecommendList: NextPage<RecommendProps> = ({ productsData }) => {
           ))}
         </div>
       )}
-      {isLoading && (
-        <div className="grid min-h-[540px] grid-cols-2 gap-3 bg-white">
-          {initialArray.map((_, i) => (
-            <RecommendSkeleton key={i} />
-          ))}
-        </div>
-      )}
-      {!isLoading && content && (
+      {!isLoading && content ? (
         <div className="grid min-h-[540px] grid-cols-2 gap-3">
           {content?.map(data => (
             <MainProduct {...data} key={data.id} imgh="h-[190px]" />
+          ))}
+        </div>
+      ) : (
+        <div className="grid min-h-[540px] grid-cols-2 gap-3 bg-white">
+          {initialArray.map((_, i) => (
+            <RecommendSkeleton key={i} />
           ))}
         </div>
       )}

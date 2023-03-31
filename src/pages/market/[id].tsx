@@ -17,6 +17,8 @@ import { useRouter } from "next/router";
 import { currentUserInfoQuery } from "../../recoil/user";
 import Header from "../../components/ui/header";
 import LoadingSpinner from "../../components/ui/loading-spinner";
+import useModal from "../../hooks/useModal";
+import Overlay from "../../components/ui/overlay";
 
 const Product: NextPage = () => {
   const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
@@ -39,6 +41,8 @@ const Product: NextPage = () => {
     updateFavCount,
     initialButtonStyle,
   } = useFav(currentUserId);
+
+  const { Modal, show, setModalState } = useModal();
 
   const getProduct = async () => {
     try {
@@ -65,7 +69,18 @@ const Product: NextPage = () => {
     },
   });
 
+  const goLoginPage = () => router.push("/login");
+
   const toggleFavButton = async () => {
+    if (!currentUserId) {
+      setModalState({
+        message: "로그인 후 이용하실 수 있습니다.,로그인페이지로 이동할까요?",
+        btnText: "로그인 하기",
+        submit: goLoginPage,
+      });
+      return;
+    }
+
     changeButtonSytle();
     mutate({
       currentUserId,
@@ -90,6 +105,12 @@ const Product: NextPage = () => {
   return (
     <>
       <Header goBack />
+      {show && (
+        <>
+          <Modal />
+          <Overlay />
+        </>
+      )}
       {isLoading && (
         <div className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
           <LoadingSpinner />
@@ -105,7 +126,7 @@ const Product: NextPage = () => {
                 <h1 className="text-xl font-bold">{product.title}</h1>
               </div>
               {!isFavActive ? (
-                <div className="flex h-7 w-7 items-center justify-center rounded-full border-[1.5px] border-common-black">
+                <div className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-[1.5px] border-common-black transition hover:scale-105">
                   <Icon
                     icon="icon-park-outline:like"
                     className="text-lg"
@@ -113,7 +134,7 @@ const Product: NextPage = () => {
                   />
                 </div>
               ) : (
-                <div className="flex h-7 w-7 items-center justify-center rounded-full border-[1.5px] border-common-black bg-common-black ">
+                <div className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-[1.5px] border-common-black bg-common-black transition hover:scale-105 ">
                   <Icon
                     icon="icon-park-solid:like"
                     color="#ff5252"
@@ -149,7 +170,13 @@ const Product: NextPage = () => {
               <h3 className="mb-4 text-lg font-bold">Seller</h3>
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="h-[50px] w-[50px] rounded-full border border-common-black bg-slate-400" />
+                  <div className="h-[50px] w-[50px] overflow-hidden rounded-full border border-common-black">
+                    <img
+                      src={product.user.profileImg}
+                      alt="유저프로필이미지"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                   <span className="ml-4 text-base font-bold">
                     {product.user.nickname}
                   </span>

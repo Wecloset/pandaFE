@@ -4,3 +4,7 @@ export interface ModalProps {
   cancel?: ((param?: any) => void) | null;
   submit?: ((param?: any) => void) | null;
 }
+
+export interface setModalProps {
+  ({ message, cancel, submit, btnText }: ModalProps): void;
+}

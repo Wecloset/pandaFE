@@ -33,7 +33,9 @@ const SignProfile: NextPage<CredentialProps> = ({
   const { uploadImage, encodeFile, imgsrc } = useUpload(credentials);
 
   const [pass, setPass] = useState<boolean>(false); //닉네임 중복 통과 state
+
   const [toastValue, setToastValue] = useState<string>("");
+
   const [isError, setIsError] = useState<boolean>(false);
 
   //유저 정보를 query 로 전달받아서 signUser 의 user.id 을 이용해 다음단계이어감

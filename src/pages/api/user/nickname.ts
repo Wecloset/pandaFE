@@ -26,7 +26,7 @@ const nickNameHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
     if (hasNickname.length === 0) {
       res.status(201).json({
-        message: "닉네임을 사용할 수 있습니다.",
+        message: "닉네임이 변경되었습니다.",
         hasNickname,
         nickname,
       });

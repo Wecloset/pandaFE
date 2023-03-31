@@ -44,9 +44,11 @@ const productHandler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         },
       });
-      res.status(200).json({ message: "아이템 등록 완료!" });
+      res.status(200).json({
+        message: "아이템 등록이 완료되었습니다.,마이페이지로 이동합니다.",
+      });
     } catch (err) {
-      res.status(400).json({ message: "Error: 아이템 등록에 실패하였습니다." });
+      res.status(400).json({ message: "아이템 등록에 실패했습니다." });
     }
   }
 
