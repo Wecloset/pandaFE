@@ -29,7 +29,6 @@ const Search: NextPage = () => {
   const EXPIRATION_TIME = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
   const [searches, setSearches] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (session.status !== "unauthenticated") {
@@ -68,6 +67,7 @@ const Search: NextPage = () => {
 
   useEffect(() => {
     const enteredWord = router.query.word as string;
+    if (enteredWord === undefined) return;
     setInputValue(enteredWord);
     setSearches([enteredWord, ...searches]);
 
@@ -80,7 +80,6 @@ const Search: NextPage = () => {
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
     const value = e.target.value.toLowerCase();
     setInputValue(value);
     const matched = keywords.filter(keyword =>
@@ -122,14 +121,12 @@ const Search: NextPage = () => {
       pathname: router.pathname,
       query: { word: inputValue },
     });
-    setSearches([searchQuery, ...searches]);
-    setSearchQuery("");
     setFocus(false);
   };
 
   return (
     <>
-      <Header text="SEARCH" goBack />
+      <Header text="SEARCH" goBack goHome />
       <div className="px-5 py-5">
         <form className="relative flex items-center" onSubmit={handleSubmit}>
           <input
@@ -150,7 +147,7 @@ const Search: NextPage = () => {
           />
         </form>
         <div>
-          {router.asPath === "/search" ? (
+          {router.asPath === "/search" && !focus ? (
             <>
               <div className="mt-6">
                 <h2 className="mb-5 text-base font-bold">추천 검색어</h2>
@@ -167,22 +164,22 @@ const Search: NextPage = () => {
                 <h2 className="mb-3 text-base font-bold">최근 검색어</h2>
                 {session.status !== "unauthenticated" && (
                   <ul className="ml-2 cursor-pointer space-y-2 text-lg text-textColor-gray-50">
-                    {focus ? (
-                      ""
-                    ) : (
-                      <>
-                        {" "}
-                        {searches.map(query => (
-                          <li className="flex items-center" key={query}>
-                            {query}
-                            <Icon
-                              icon="ic:baseline-clear"
-                              aria-label="검색어 삭제"
-                            />
-                          </li>
-                        ))}
-                      </>
-                    )}
+                    <>
+                      {searches.map((query, index) => (
+                        <li className="flex items-center" key={query}>
+                          {query}
+                          <Icon
+                            icon="ic:baseline-clear"
+                            aria-label="검색어 삭제"
+                            onClick={() => {
+                              const newSearches = [...searches];
+                              newSearches.splice(index, 1);
+                              setSearches(newSearches);
+                            }}
+                          />
+                        </li>
+                      ))}
+                    </>
                   </ul>
                 )}
               </div>
@@ -216,7 +213,6 @@ const Search: NextPage = () => {
                       className="flex h-12 w-full cursor-pointer items-center overflow-hidden bg-red-50 p-2 pt-2 text-xl"
                       onMouseDown={() => {
                         searchKeyword(keyword);
-                        setSearches([keyword, ...searches]);
                       }}
                     >
                       {keyword}

@@ -10,11 +10,12 @@ interface HeaderProps {
   goBack?: boolean;
   text?: string;
   noGoBack?: boolean;
+  goHome?: boolean;
 }
 
 //임시로 sign out 설정
 
-const Header: NextPage<HeaderProps> = ({ goBack, text, noGoBack }) => {
+const Header: NextPage<HeaderProps> = ({ goBack, text, noGoBack, goHome }) => {
   const router = useRouter();
   return (
     <>
@@ -38,7 +39,7 @@ const Header: NextPage<HeaderProps> = ({ goBack, text, noGoBack }) => {
             <>
               <button
                 type="button"
-                onClick={() => router.back()}
+                onClick={() => (goHome ? router.replace("/") : router.back())}
                 className="text-2xl"
               >
                 <Icon
