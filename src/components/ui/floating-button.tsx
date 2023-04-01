@@ -5,7 +5,7 @@ import Link from "next/link";
 const FloatingButton: NextPage<{ path: string }> = ({ path }) => {
   return (
     <Link href={path} className="fixed bottom-24 z-30 translate-x-[310px]">
-      <button className="rounded-full border border-primary-violet bg-black p-3 shadow-lg">
+      <button className="rounded-full border border-primary-violet bg-black p-3 shadow-lg hover:animate-spin">
         <Icon
           icon="ic:baseline-plus"
           aria-label="게시글 작성하기"

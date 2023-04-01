@@ -1,10 +1,15 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
-import { useContext } from "react";
-import { FilterContext } from "../../store/filter-context";
+import { useRecoilState } from "recoil";
+import { wordListState } from "../../recoil/filter";
 
 const FilterList: NextPage = () => {
-  const { wordList, removeWord } = useContext(FilterContext);
+  const [wordList, setWordList] = useRecoilState(wordListState);
+
+  const removeWord = (word: string) => {
+    const newWordList = wordList.filter(item => item !== word);
+    setWordList(newWordList);
+  };
 
   const content =
     wordList.length > 0 ? (

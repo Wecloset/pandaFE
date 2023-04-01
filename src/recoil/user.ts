@@ -47,6 +47,9 @@ const userInfoQuery = selectorFamily({
     }
     return response;
   },
+  cachePolicy_UNSTABLE: {
+    eviction: "most-recent",
+  },
 });
 
 const currentUserInfoQuery = selector({
@@ -56,9 +59,6 @@ const currentUserInfoQuery = selector({
     if (currentUserEmail === "") return undefined;
     const userInfo = get(userInfoQuery(currentUserEmail));
     return userInfo;
-  },
-  cachePolicy_UNSTABLE: {
-    eviction: "most-recent",
   },
 });
 
