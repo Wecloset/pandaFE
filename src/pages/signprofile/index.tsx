@@ -53,6 +53,7 @@ const SignProfile: NextPage<CredentialProps> = ({
   const onDuplication = (event: FormEvent) => {
     event.preventDefault();
     const nickname = getValues("nickname");
+    if (nickname.trim() === "") return;
     nickMutate(nickname);
   };
 

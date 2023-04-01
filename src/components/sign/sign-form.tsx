@@ -25,8 +25,10 @@ const SignForm: NextPage = () => {
     register,
     getValues,
     handleSubmit,
-    formState: { errors },
-  } = useForm<SignProps>({});
+    formState: { errors, isValid },
+  } = useForm<SignProps>({
+    mode: "onChange",
+  });
 
   const createUser = async (userData: SignProps) => {
     const { data: response } = await axios.post("/api/auth/sign", userData);
