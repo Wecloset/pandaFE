@@ -1,7 +1,6 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
-// import { FieldError, FieldErrorsImpl, Merge } from "react-hook-form";
 
 interface ToastProps {
   error?: boolean;

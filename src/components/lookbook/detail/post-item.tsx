@@ -58,7 +58,7 @@ const PostItem: NextPage<PostItemProps> = ({
       changeCount();
     },
     onError: ({ response }) => {
-      alert(response.data.message);
+      console.log(response.data.message);
     },
   });
 

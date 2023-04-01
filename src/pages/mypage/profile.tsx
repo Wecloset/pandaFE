@@ -10,8 +10,8 @@ import Header from "../../components/ui/header";
 import LoadingSpinner from "../../components/ui/loading-spinner";
 import Navigation from "../../components/ui/navigation";
 import Overlay from "../../components/ui/overlay";
-import Toast from "../../components/ui/toast";
 import UserManage from "../../components/user/manage";
+import useToast from "../../hooks/useToast";
 import useUpload from "../../hooks/useUpload";
 import { taglist } from "../../lib/tag-data";
 import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
@@ -34,9 +34,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
 
   const { register } = useForm({});
 
-  const [toastValue, setToastValue] = useState<string>("");
-
-  const [isError, setIsError] = useState<boolean>(false);
+  const { setToast, Toast } = useToast();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -63,8 +61,6 @@ const ProfileEdit: NextPage<CredentialProps> = ({
     profileMutate();
   }, [imgsrc]);
 
-  const closeModal = () => setToastValue("");
-
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setNick(value);
@@ -73,8 +69,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
   const submitNickname = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!nick && isNick) {
-      setIsError(true);
-      setToastValue("변경할 닉네임을 입력해주세요.");
+      setToast("변경할 닉네임을 입력해주세요.", true);
       return;
     }
     setIsNick(true);
@@ -93,11 +88,10 @@ const ProfileEdit: NextPage<CredentialProps> = ({
     },
     {
       onSuccess: ({ message }) => {
-        setIsError(false);
-        setToastValue(message);
+        setToast(message, false);
+        setIsLoading(true);
         setIsNick(false);
         setNick("");
-        setIsLoading(true);
         // 중복확인 통과하면 닉네임변경
         axios
           .post(`/api/user/nickname?id=${userContents.id}`, {
@@ -107,8 +101,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
           .then(() => refreshUserInfo());
       },
       onError: ({ response }) => {
-        setIsError(true);
-        setToastValue(response.data.message);
+        setToast(response.data.message, true);
       },
     },
   );
@@ -144,15 +137,13 @@ const ProfileEdit: NextPage<CredentialProps> = ({
     },
     {
       onSuccess: ({ message }) => {
-        setIsError(false);
-        setToastValue(message);
+        setToast(message, false);
         setIsLoading(true);
         setIsTab(false);
         setTimeout(() => refreshUserInfo(), 1000);
       },
       onError: ({ response }) => {
-        setIsError(true);
-        setToastValue(response.data.message);
+        setToast(response.data.message, true);
       },
     },
   );
@@ -180,23 +171,19 @@ const ProfileEdit: NextPage<CredentialProps> = ({
   const { mutate: profileMutate } = useMutation(changeProfileImage, {
     onSuccess: ({ message }) => {
       imgsrc.length = 0;
-      setIsError(false);
-      setToastValue(message);
+      setToast(message, false);
       setIsLoading(true);
       setTimeout(() => refreshUserInfo(), 1000);
     },
     onError: ({ response }) => {
-      setIsError(true);
-      setToastValue(response.data.message);
+      setToast(response.data.message, true);
     },
   });
 
   return (
     <>
       <Header goBack text="PROFILE" />
-      {toastValue !== "" && (
-        <Toast message={toastValue} error={isError} onClose={closeModal} />
-      )}
+      {!isLoading && <Toast />}
       {isTab && <Overlay />}
       {isLoading && (
         <div className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
@@ -320,7 +307,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
           </div>
         </div>
       )}
-      <UserManage userData={userContents} />
+      <UserManage userData={userContents} setToast={setToast} />
       <Navigation />
     </>
   );

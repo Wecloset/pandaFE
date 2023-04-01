@@ -116,12 +116,10 @@ const Post: NextPage = () => {
     submitComment,
     {
       onSuccess: data => {
-        alert(data.message);
         queryClient.invalidateQueries("getPost");
         reset();
       },
       onError: ({ response }) => {
-        alert(response.data.message);
         reset();
       },
     },

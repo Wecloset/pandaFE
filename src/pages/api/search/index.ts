@@ -19,7 +19,7 @@ const searchKeywords = async (req: NextApiRequest, res: NextApiResponse) => {
       });
       res.status(200).send(allKeywords);
     } catch (err) {
-      res.status(400).send({ message: "Getting products failed." });
+      res.status(400).send({ message: "검색 실패!" });
     }
   }
 };

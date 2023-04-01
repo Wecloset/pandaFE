@@ -25,7 +25,7 @@ import { tabData } from "../../lib/fake-data";
 import { CreateState, CredentialProps } from "../../types/create-type";
 import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
 import Overlay from "../../components/ui/overlay";
-import Toast from "../../components/ui/toast";
+import useToast from "../../hooks/useToast";
 
 const Create: NextPage<CredentialProps> = ({
   region,
@@ -60,13 +60,13 @@ const Create: NextPage<CredentialProps> = ({
     rental: { name: "대여 가능", current: false, list: tabData.rental },
   });
 
+  const { setToast, Toast } = useToast();
+
   const { register, handleSubmit } = useForm<CreateState>({
     mode: "onSubmit",
   });
 
   const [isText, setIsText] = useState<boolean>(false);
-
-  const [toastValue, setToastValue] = useState<string>("");
 
   const [isValid, setIsValid] = useState<boolean | null>(null);
 
@@ -90,12 +90,12 @@ const Create: NextPage<CredentialProps> = ({
 
   const { mutate, isLoading } = useMutation(createProduct, {
     onSuccess: ({ message }) => {
-      setToastValue(message);
+      setToast(message, false);
       refreshUserInfo();
       setTimeout(() => router.replace("/mypage"), 1500);
     },
     onError: ({ response }) => {
-      setToastValue(response.data.message);
+      setToast(response.data.message, true);
     },
   });
 
@@ -111,11 +111,11 @@ const Create: NextPage<CredentialProps> = ({
     }
     const numberCheck = /[0-9]/g;
     if (!numberCheck.test(data.price as string)) {
-      return setToastValue("상품가격을 숫자로 기입해주세요.");
+      return setToast("상품가격을 숫자로 기입해주세요.", true);
     } else if (options.category.name === "카테고리") {
-      return setToastValue("카테고리를 선택해 주세요.");
+      return setToast("카테고리를 선택해 주세요.", true);
     } else if (!isNotTag) {
-      return setToastValue("태그는 공백을 포함할 수 없습니다.");
+      return setToast("태그는 공백을 포함할 수 없습니다.", true);
     }
     return true;
   };
@@ -141,21 +141,20 @@ const Create: NextPage<CredentialProps> = ({
 
     const message =
       error.desc?.message || error.title?.message || error.price?.message;
-    setToastValue(message as string);
+    setToast(message as string, true);
   };
-
-  const closeModal = () => setToastValue("");
 
   return (
     <>
       <Header goBack />
-      {toastValue !== "" && (
+      <Toast />
+      {/* {toastValue !== "" && (
         <Toast
           message={toastValue}
           error={!isValid as boolean}
           onClose={closeModal}
         />
-      )}
+      )} */}
       {isLoading && (
         <div className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
           <LoadingSpinner />

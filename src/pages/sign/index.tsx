@@ -5,9 +5,9 @@ import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { useMutation } from "react-query";
 import Button from "../../components/ui/button";
-import ButtonItem from "../../components/ui/button";
 import Header from "../../components/ui/header";
 import SignForm from "../../components/sign/sign-form";
+import useToast from "../../hooks/useToast";
 
 const Sign: NextPage = () => {
   const router = useRouter();
@@ -15,6 +15,8 @@ const Sign: NextPage = () => {
   const { data: session } = useSession();
 
   const alerted = useRef(false);
+
+  const { setToast, Toast } = useToast();
 
   const findUser = async (findUser: string) => {
     const { data: response } = await axios.get(`/api/user?email=${findUser}`);
@@ -37,10 +39,8 @@ const Sign: NextPage = () => {
   useEffect(() => {
     if (session && data && data.user.keywords) {
       // 키워드가 존재하면 존재하는 회원이기때문에 여기서 구문처리
-
       if (data.user.keywords.length === 0 && !alerted.current) {
         alerted.current = true;
-        alert("유저 정보가 존재하지 않습니다. 회원가입을 진행하겠습니다");
         router.replace(
           {
             pathname: "/signtag",
@@ -52,8 +52,8 @@ const Sign: NextPage = () => {
         );
         return;
       } else {
-        alert("유저 정보가 존재합니다. 로그인 되었습니다");
-        router.replace("/");
+        setToast("유저 정보가 이미 존재하여 로그인처리 됩니다.");
+        setTimeout(() => router.replace("/"), 2500);
         return;
       }
     }

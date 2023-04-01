@@ -13,7 +13,7 @@ import { createImageUrl } from "../../utils/image-url";
 import { signOut } from "next-auth/react";
 import Button from "../../components/ui/button";
 import { cls } from "../../utils/class";
-import Toast from "../../components/ui/toast";
+import useToast from "../../hooks/useToast";
 
 interface CredentialProps {
   region: string;
@@ -32,11 +32,9 @@ const SignProfile: NextPage<CredentialProps> = ({
 
   const { uploadImage, encodeFile, imgsrc } = useUpload(credentials);
 
+  const { setToast, Toast } = useToast();
+
   const [pass, setPass] = useState<boolean>(false); //닉네임 중복 통과 state
-
-  const [toastValue, setToastValue] = useState<string>("");
-
-  const [isError, setIsError] = useState<boolean>(false);
 
   //유저 정보를 query 로 전달받아서 signUser 의 user.id 을 이용해 다음단계이어감
   const { data: signUser } = useQuery("userData", async () => {
@@ -70,12 +68,11 @@ const SignProfile: NextPage<CredentialProps> = ({
     createNickName,
     {
       onSuccess: ({ message }) => {
-        setToastValue(message);
+        setToast(message, false);
         setPass(true);
       },
       onError: ({ response }) => {
-        setToastValue(response.data.message);
-        setIsError(true);
+        setToast(response.data.message, true);
         setPass(false);
       },
     },
@@ -108,14 +105,10 @@ const SignProfile: NextPage<CredentialProps> = ({
     },
   );
 
-  const closeModal = () => setToastValue("");
-
   return (
     <>
       <Header text="SIGNUP" goBack noGoBack />
-      {toastValue !== "" && (
-        <Toast message={toastValue} error={isError} onClose={closeModal} />
-      )}
+      <Toast />
       <div className="px-8">
         <p className="mb-1 mt-7 text-xl">마지막이에요!</p>
         <p className="text-textColor-gray-100">

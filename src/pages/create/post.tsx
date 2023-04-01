@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import LoadingSpinner from "../../components/ui/loading-spinner";
 import Overlay from "../../components/ui/overlay";
+import useToast from "../../hooks/useToast";
 
 const CreatePost: NextPage<CredentialProps> = ({
   region,
@@ -42,6 +43,8 @@ const CreatePost: NextPage<CredentialProps> = ({
     useUpload(credentials);
 
   const { isTabOpen, openTab, closeTab } = useOptions({});
+
+  const { setToast, Toast } = useToast();
 
   const textAreaValue = (event: ChangeEvent<HTMLTextAreaElement>) => {
     event.target.value !== "" ? setIsText(true) : setIsText(false);
@@ -72,11 +75,11 @@ const CreatePost: NextPage<CredentialProps> = ({
 
   const { mutate, isLoading } = useMutation(createPost, {
     onSuccess: ({ message }) => {
-      alert(message);
-      // router.replace("/mypage");
+      setToast(message, false);
+      setTimeout(() => router.replace("/mypage"), 2500);
     },
     onError: ({ response }) => {
-      alert(response.data.message);
+      setToast(response.data.message, true);
     },
   });
 
@@ -94,12 +97,13 @@ const CreatePost: NextPage<CredentialProps> = ({
   };
 
   const inValid = (error: FieldErrors) => {
-    alert(error.image?.message);
+    setToast(error.image?.message as string, true);
   };
 
   return (
     <>
       <Header goBack />
+      <Toast />
       {isLoading && (
         <div className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
           <LoadingSpinner />
