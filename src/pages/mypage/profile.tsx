@@ -7,8 +7,11 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
 import Header from "../../components/ui/header";
+import LoadingSpinner from "../../components/ui/loading-spinner";
 import Navigation from "../../components/ui/navigation";
+import Overlay from "../../components/ui/overlay";
 import UserManage from "../../components/user/manage";
+import useToast from "../../hooks/useToast";
 import useUpload from "../../hooks/useUpload";
 import { taglist } from "../../lib/tag-data";
 import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
@@ -31,6 +34,8 @@ const ProfileEdit: NextPage<CredentialProps> = ({
 
   const { register } = useForm({});
 
+  const { setToast, Toast } = useToast();
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [isTab, setIsTab] = useState<boolean>(false);
@@ -44,7 +49,6 @@ const ProfileEdit: NextPage<CredentialProps> = ({
 
   useEffect(() => {
     if (state === "hasValue") {
-      // setUserData(userContents);
       setSelectedTag(
         userContents.keywords.map(({ tag }: { tag: string }) => tag),
       );
@@ -65,7 +69,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
   const submitNickname = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!nick && isNick) {
-      alert("닉네임을 변경해주세요");
+      setToast("변경할 닉네임을 입력해주세요.", true);
       return;
     }
     setIsNick(true);
@@ -83,8 +87,9 @@ const ProfileEdit: NextPage<CredentialProps> = ({
       return data;
     },
     {
-      onSuccess: () => {
-        alert("닉네임변경이 완료되었습니다.");
+      onSuccess: ({ message }) => {
+        setToast(message, false);
+        setIsLoading(true);
         setIsNick(false);
         setNick("");
         // 중복확인 통과하면 닉네임변경
@@ -96,7 +101,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
           .then(() => refreshUserInfo());
       },
       onError: ({ response }) => {
-        alert(response.data.message);
+        setToast(response.data.message, true);
       },
     },
   );
@@ -131,13 +136,14 @@ const ProfileEdit: NextPage<CredentialProps> = ({
       return data;
     },
     {
-      onSuccess: () => {
-        alert("키워드 변경이 완료되었습니다.");
+      onSuccess: ({ message }) => {
+        setToast(message, false);
+        setIsLoading(true);
         setIsTab(false);
-        refreshUserInfo(); // refresh user
+        setTimeout(() => refreshUserInfo(), 1000);
       },
-      onError: () => {
-        alert("키워드 변경이 실패되었습니다.");
+      onError: ({ response }) => {
+        setToast(response.data.message, true);
       },
     },
   );
@@ -165,19 +171,24 @@ const ProfileEdit: NextPage<CredentialProps> = ({
   const { mutate: profileMutate } = useMutation(changeProfileImage, {
     onSuccess: ({ message }) => {
       imgsrc.length = 0;
-      alert(message);
-      refreshUserInfo();
+      setToast(message, false);
+      setIsLoading(true);
+      setTimeout(() => refreshUserInfo(), 1000);
     },
     onError: ({ response }) => {
-      alert(response.data.message);
+      setToast(response.data.message, true);
     },
   });
 
   return (
     <>
       <Header goBack text="PROFILE" />
-      {isTab && (
-        <div className="fixed z-10 h-[calc(100%-300px)] w-[390px] bg-black pt-10 opacity-80" />
+      {!isLoading && <Toast />}
+      {isTab && <Overlay />}
+      {isLoading && (
+        <div className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
+          <LoadingSpinner />
+        </div>
       )}
       {!isLoading && (
         <>
@@ -185,7 +196,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
             <div className="relative h-44 bg-gray-300">
               <div className="relative top-32 h-20 w-20 translate-x-[155px] transform overflow-hidden rounded-full bg-slate-700">
                 <Image
-                  src={`${userContents.profileImg}`}
+                  src={`${userContents?.profileImg}`}
                   alt="유저이미지"
                   width={50}
                   height={50}
@@ -230,8 +241,10 @@ const ProfileEdit: NextPage<CredentialProps> = ({
             <p className="mt-5 px-2 text-sm text-textColor-gray-100">키워드</p>
             <form>
               <div className="my-2 flex w-full justify-between px-3">
-                <div className=" -0 flex w-full items-center whitespace-nowrap border-b-[1px] border-solid border-black  text-textColor-gray-100">
-                  {userContents.keywords.map(({ tag }: { tag: string }) => tag)}
+                <div className="flex w-full items-center whitespace-nowrap border-b-[1px] border-solid border-black  text-textColor-gray-100">
+                  {userContents?.keywords?.map(
+                    ({ tag }: { tag: string }) => tag,
+                  )}
                 </div>
                 <button
                   type="button"
@@ -245,9 +258,8 @@ const ProfileEdit: NextPage<CredentialProps> = ({
           </div>
         </>
       )}
-
       {isTab && (
-        <div className="fixed bottom-0 z-30 w-[390px]">
+        <div className="fixed bottom-0 z-50 w-[390px]">
           <form
             onSubmit={handleTagSubmit}
             className="h-16 w-full justify-center border-b-[1px] border-solid border-black bg-white p-5 text-center shadow-2xl shadow-black "
@@ -295,7 +307,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
           </div>
         </div>
       )}
-      <UserManage userData={userContents} />
+      <UserManage userData={userContents} setToast={setToast} />
       <Navigation />
     </>
   );

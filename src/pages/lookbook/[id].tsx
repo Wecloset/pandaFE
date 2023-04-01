@@ -18,6 +18,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import { useRecoilValueLoadable } from "recoil";
 import { currentUserInfoQuery } from "../../recoil/user";
 import { useRouter } from "next/router";
+import useModal from "../../hooks/useModal";
 
 const Post: NextPage = () => {
   const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
@@ -36,12 +37,13 @@ const Post: NextPage = () => {
   const { ref, inView } = useInView();
   const { register, handleSubmit } = useForm();
 
+  const { Modal, setModalState, show } = useModal();
+
   const [showInput, setShowInput] = useState<boolean>(false);
   const [commentValue, setCommentValue] = useState<string>("");
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [postId, setPostId] = useState<number>(0);
   const [commentId, setCommentId] = useState<number>(0);
-  const [confirm, setConfirm] = useState<boolean>(false);
 
   const getOnePost = async () => {
     try {
@@ -97,7 +99,6 @@ const Post: NextPage = () => {
     setCommentValue("");
     setIsUpdating(false);
     setShowInput(false);
-    setConfirm(false);
   };
 
   const submitComment = async (comment?: string) => {
@@ -115,12 +116,10 @@ const Post: NextPage = () => {
     submitComment,
     {
       onSuccess: data => {
-        alert(data.message);
         queryClient.invalidateQueries("getPost");
         reset();
       },
       onError: ({ response }) => {
-        alert(response.data.message);
         reset();
       },
     },
@@ -133,12 +132,6 @@ const Post: NextPage = () => {
     setIsUpdating(true);
   };
 
-  const deleteComment = (commentId: number) => {
-    setConfirm(true);
-    setIsUpdating(true);
-    setCommentId(commentId);
-  };
-
   const setInput = (postId: number, val?: boolean) => {
     reset();
     setShowInput(val as boolean);
@@ -146,12 +139,23 @@ const Post: NextPage = () => {
   };
 
   const submit = async (data: FieldValues) => {
-    if (!data.comment) {
+    if (!data?.comment) {
       commentMutate(undefined);
       return;
     }
     if (data.comment.trim === "") return;
     commentMutate(data.comment);
+  };
+
+  const deleteComment = (commentId: number) => {
+    setModalState({
+      message: "댓글을 삭제할까요?",
+      btnText: "삭제",
+      cancel: reset,
+      submit: submit,
+    });
+    setIsUpdating(true);
+    setCommentId(commentId);
   };
 
   return (
@@ -163,11 +167,11 @@ const Post: NextPage = () => {
           <PostItem
             userData={userContents}
             setInput={setInput}
-            modal={confirm}
-            submit={submit}
+            isModal={show}
+            modal={<Modal />}
+            setModal={setModalState}
             updateComment={updateComment}
             deleteComment={deleteComment}
-            reset={reset}
             {...postData}
           />
         )}
@@ -179,11 +183,11 @@ const Post: NextPage = () => {
                   key={look.id}
                   userData={userContents}
                   setInput={setInput}
-                  modal={confirm}
-                  submit={submit}
+                  isModal={show}
+                  modal={<Modal />}
+                  setModal={setModalState}
                   updateComment={updateComment}
                   deleteComment={deleteComment}
-                  reset={reset}
                   {...look}
                 />
               ))}

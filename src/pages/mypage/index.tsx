@@ -4,11 +4,7 @@ import { useEffect, useState } from "react";
 import Header from "../../components/ui/header";
 import { cls } from "../../utils/class";
 import { useRecoilValueLoadable } from "recoil";
-import {
-  LookbookDataMin,
-  ProductDataMin,
-  UserData,
-} from "../../types/data-type";
+import { ProductDataMin, UserData } from "../../types/data-type";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import Navigation from "../../components/ui/navigation";
@@ -56,7 +52,7 @@ const MyPage: NextPage = () => {
               alt="유저이미지"
               width={50}
               height={50}
-              className="absolute left-[155px] top-32 h-20 w-20 rounded-full"
+              className="absolute left-[155px] top-32 h-20 w-20 rounded-full object-cover"
             />
           ) : (
             <div className="absolute left-[155px] top-32 h-20 w-20 rounded-full bg-textColor-gray-100" />
@@ -125,15 +121,13 @@ const MyPage: NextPage = () => {
           </button>
         </div>
       </div>
-
       {category === "items" && (
-        <div className="my-5 mx-4 grid grid-cols-2 gap-4">
+        <div className="mx-4 grid grid-cols-2 gap-4 pt-5 pb-20">
           {userData?.product.map((item: ProductDataMin) => (
             <MainProduct {...item} key={item.id} imgh="h-[190px]" />
           ))}
         </div>
       )}
-
       {isLoading && <LoadingSpinner />}
       <Navigation />
     </>

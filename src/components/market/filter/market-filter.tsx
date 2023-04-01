@@ -1,10 +1,11 @@
 import { NextPage } from "next";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Icon } from "@iconify/react";
 import Button from "../../ui/button";
 import FilterTab from "./filter-tab";
 import { priceList, tabData } from "../../../lib/fake-data";
-import { FilterContext } from "../../../store/filter-context";
+import { useSetRecoilState } from "recoil";
+import { wordListState } from "../../../recoil/filter";
 
 const FilterOverlay: NextPage<{
   closeOverlay: () => void;
@@ -12,7 +13,7 @@ const FilterOverlay: NextPage<{
   const [isOpen, setIsOpen] = useState<string | null>("STYLE");
   const [filterWords, setFilterWords] = useState<string[]>([]);
 
-  const { updateList } = useContext(FilterContext);
+  const setWordList = useSetRecoilState(wordListState);
 
   const openTab = (event: React.MouseEvent<HTMLDivElement>) => {
     const target = event.target as HTMLDivElement;
@@ -26,7 +27,7 @@ const FilterOverlay: NextPage<{
   };
 
   const updateFilterList = () => {
-    updateList(filterWords);
+    setWordList(filterWords);
     setTimeout(() => {
       closeOverlay();
     }, 100);

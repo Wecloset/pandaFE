@@ -2,7 +2,13 @@ import type { GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import { useForm, FieldErrors } from "react-hook-form";
+import {
+  useForm,
+  FieldErrors,
+  FieldError,
+  Merge,
+  FieldErrorsImpl,
+} from "react-hook-form";
 import { useMutation } from "react-query";
 import Button from "../../components/ui/button";
 import Header from "../../components/ui/header";
@@ -12,12 +18,14 @@ import LoadingSpinner from "../../components/ui/loading-spinner";
 import { cls } from "../../utils/class";
 import { createImageUrl } from "../../utils/image-url";
 import axios from "axios";
-import { useRecoilValueLoadable } from "recoil";
+import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
 import useUpload from "../../hooks/useUpload";
 import useOptions from "../../hooks/useOptions";
 import { tabData } from "../../lib/fake-data";
 import { CreateState, CredentialProps } from "../../types/create-type";
-import { currentUserInfoQuery } from "../../recoil/user";
+import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
+import Overlay from "../../components/ui/overlay";
+import useToast from "../../hooks/useToast";
 
 const Create: NextPage<CredentialProps> = ({
   region,
@@ -30,6 +38,11 @@ const Create: NextPage<CredentialProps> = ({
 
   const userData = useRecoilValueLoadable(currentUserInfoQuery);
   const { state, contents } = userData;
+
+  const refreshUserInfo = useRecoilRefresher_UNSTABLE(
+    userInfoQuery(contents?.email),
+  );
+
   const { uploadImage, deleteImage, encodeFile, imgsrc } =
     useUpload(credentials);
 
@@ -47,11 +60,15 @@ const Create: NextPage<CredentialProps> = ({
     rental: { name: "대여 가능", current: false, list: tabData.rental },
   });
 
+  const { setToast, Toast } = useToast();
+
   const { register, handleSubmit } = useForm<CreateState>({
     mode: "onSubmit",
   });
 
   const [isText, setIsText] = useState<boolean>(false);
+
+  const [isValid, setIsValid] = useState<boolean | null>(null);
 
   const textAreaValue = (event: ChangeEvent<HTMLTextAreaElement>) => {
     event.target.value !== "" ? setIsText(true) : setIsText(false);
@@ -73,11 +90,12 @@ const Create: NextPage<CredentialProps> = ({
 
   const { mutate, isLoading } = useMutation(createProduct, {
     onSuccess: ({ message }) => {
-      alert(message);
-      // router.replace("/mypage");
+      setToast(message, false);
+      refreshUserInfo();
+      setTimeout(() => router.replace("/mypage"), 1500);
     },
     onError: ({ response }) => {
-      alert(response.data.message);
+      setToast(response.data.message, true);
     },
   });
 
@@ -93,11 +111,11 @@ const Create: NextPage<CredentialProps> = ({
     }
     const numberCheck = /[0-9]/g;
     if (!numberCheck.test(data.price as string)) {
-      return alert("상품가격을 숫자로 기입해주세요.");
+      return setToast("상품가격을 숫자로 기입해주세요.", true);
     } else if (options.category.name === "카테고리") {
-      return alert("카테고리를 선택해 주세요.");
+      return setToast("카테고리를 선택해 주세요.", true);
     } else if (!isNotTag) {
-      return alert("태그는 공백을 포함할 수 없습니다.");
+      return setToast("태그는 공백을 포함할 수 없습니다.", true);
     }
     return true;
   };
@@ -105,7 +123,7 @@ const Create: NextPage<CredentialProps> = ({
   const valid = async (data: CreateState) => {
     if (!validation(data)) return;
 
-    console.log("valid!!");
+    setIsValid(true);
 
     const imageurlList: string[] = [];
     imgsrc.forEach(item => {
@@ -119,25 +137,30 @@ const Create: NextPage<CredentialProps> = ({
   };
 
   const inValid = (error: FieldErrors) => {
-    alert(
-      error.desc?.message ||
-        error.title?.message ||
-        error.price?.message ||
-        error.image?.message,
-    );
+    setIsValid(false);
+
+    const message =
+      error.desc?.message || error.title?.message || error.price?.message;
+    setToast(message as string, true);
   };
 
   return (
     <>
       <Header goBack />
+      <Toast />
+      {/* {toastValue !== "" && (
+        <Toast
+          message={toastValue}
+          error={!isValid as boolean}
+          onClose={closeModal}
+        />
+      )} */}
       {isLoading && (
         <div className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
           <LoadingSpinner />
         </div>
       )}
-      {isTabOpen && (
-        <div className="fixed z-10 h-[calc(100%)] w-[390px] bg-black pt-10 opacity-50" />
-      )}
+      {isTabOpen && <Overlay />}
       <div className=" px-5 py-5">
         <form onSubmit={handleSubmit(valid, inValid)}>
           <UploadImages

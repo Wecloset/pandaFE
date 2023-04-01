@@ -1,7 +1,6 @@
 import { NextPage } from "next";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import { FilterProvider } from "../../store/filter-context";
 import Header from "../../components/ui/header";
 import FilterOverlay from "../../components/market/filter/market-filter";
 import Navigation from "../../components/ui/navigation";
@@ -9,64 +8,76 @@ import FloatingButton from "../../components/ui/floating-button";
 import FilterList from "../../components/market/filter-list";
 import MarketList from "../../components/market/market-list";
 import CategoryNavigation from "../../components/market/category-nav";
-import { useQuery } from "react-query";
 import RentButtons from "../../components/market/rent-buttons";
-import { axiosGet } from "../../utils/services";
 import { cls } from "../../utils/class";
 import LoadingSpinner from "../../components/ui/loading-spinner";
+import { useRecoilValueLoadable } from "recoil";
+import { filteredMarketListState } from "../../recoil/filter";
+import { MainProductData } from "../../types/data-type";
+import useModal from "../../hooks/useModal";
 
 const Market: NextPage = () => {
+  const marketList = useRecoilValueLoadable(filteredMarketListState);
+  const { state, contents } = marketList;
+
+  const { show, setModalState, Modal } = useModal();
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isFilterOpen, setFilterOpen] = useState<boolean>(false);
+  const [filteredList, setFilteredList] = useState<MainProductData[]>([]);
 
-  const getAllProducts = async () => {
-    const { data } = await axiosGet("/api/products");
-    return data;
-  };
+  useEffect(() => {
+    if (state === "hasValue") setIsLoading(false);
+  }, [state]);
 
-  const { data, isLoading } = useQuery("products", getAllProducts);
+  useEffect(() => {
+    setFilteredList(contents);
+  }, [contents]);
 
   const openFilterOverlay = () => setFilterOpen(true);
   const closeFilterOverlay = () => setFilterOpen(false);
 
   return (
-    <FilterProvider>
+    <div>
+      {isFilterOpen && (
+        <div
+          className={cls(
+            "fixed z-50 h-screen w-[390px] translate-x-[390px] bg-white",
+            isFilterOpen ? "translate-x-0" : "",
+          )}
+        >
+          <FilterOverlay closeOverlay={closeFilterOverlay} />
+        </div>
+      )}
+      <Header />
+      {show && <Modal />}
+      <CategoryNavigation />
       <div>
-        {isFilterOpen && (
-          <div
-            className={cls(
-              "fixed z-50 h-screen w-[390px] translate-x-[390px] bg-white",
-              isFilterOpen ? "translate-x-0" : "",
-            )}
-          >
-            <FilterOverlay closeOverlay={closeFilterOverlay} />
-          </div>
-        )}
-        <Header />
-        <CategoryNavigation />
-        <div>
-          <div className="mb-3 px-5 py-4">
-            <div className="flex items-center justify-between">
-              <RentButtons />
+        <div className="mb-3 px-5 py-4">
+          <div className="flex items-center justify-between">
+            <RentButtons />
+            <div className="relative h-8 w-8 transition duration-150 hover:scale-105">
               <Icon
                 icon="akar-icons:settings-horizontal"
                 aria-label="옵션 필터링 목록"
-                className="cursor-pointer text-xl"
+                className="absolute z-10 h-7 w-7 cursor-pointer rounded-md border border-common-black bg-white p-1 text-xl transition duration-150 hover:bg-primary-green"
                 onClick={openFilterOverlay}
               />
+              <span className="absolute top-[2px] left-[2px] h-7 w-7 rounded-md bg-common-black" />
             </div>
-            <FilterList />
           </div>
+          <FilterList />
         </div>
-        {isLoading && (
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            <LoadingSpinner />
-          </div>
-        )}
-        <MarketList allData={data} isLoading={isLoading} />
-        <Navigation />
-        <FloatingButton path="/create" />
       </div>
-    </FilterProvider>
+      {isLoading && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <LoadingSpinner />
+        </div>
+      )}
+      <MarketList marketData={filteredList} isLoading={isLoading} />
+      <Navigation setModal={setModalState} />
+      <FloatingButton path="/create" setModal={setModalState} />
+    </div>
   );
 };
 

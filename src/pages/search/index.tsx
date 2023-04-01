@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import Header from "../../components/ui/header";
 import MainProduct from "../../components/main/product-item";
+import useToast from "../../hooks/useToast";
 
 interface KeywordInterface {
   id: number;
@@ -13,8 +14,12 @@ interface KeywordInterface {
 }
 
 const Search: NextPage = () => {
-  const [keywords, setKeywords] = useState<string[]>([]);
   const router = useRouter();
+
+  const { setToast, Toast } = useToast();
+
+  const [keywords, setKeywords] = useState<string[]>([]);
+
   const [inputValue, setInputValue] = useState<string | undefined | string[]>(
     "",
   );
@@ -85,8 +90,8 @@ const Search: NextPage = () => {
       onSuccess: data => {
         setSearchData(data);
       },
-      onError: err => {
-        alert(err);
+      onError: ({ message }) => {
+        setToast(message, true);
       },
     },
   );
@@ -113,6 +118,7 @@ const Search: NextPage = () => {
   return (
     <>
       <Header text="SEARCH" goBack />
+      <Toast />
       <div className="px-5 py-5">
         <form className="relative flex items-center" onSubmit={handleSubmit}>
           <input

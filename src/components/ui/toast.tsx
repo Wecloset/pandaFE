@@ -10,7 +10,9 @@ interface ToastProps {
 
 const Toast: NextPage<ToastProps> = ({ error, message, onClose }) => {
   const [isHide, setIsHide] = useState<boolean>(false);
-  const subText = message.split(",");
+  let subText: string[] = [];
+
+  if (message) subText = message.includes(",") ? message.split(",") : [message];
 
   const animationClass = isHide ? "animate-hide" : "animate-popup";
 
@@ -32,7 +34,7 @@ const Toast: NextPage<ToastProps> = ({ error, message, onClose }) => {
 
   return (
     <div
-      className={`${animationClass} fixed top-28 z-50 w-[330px] space-y-3 rounded-md bg-common-black py-5 text-center text-white opacity-95 shadow-lg transition`}
+      className={`${animationClass} fixed top-28 z-50 w-[330px] space-y-3 rounded-md bg-common-black py-5 text-center text-white shadow-lg transition`}
     >
       <div className="flex items-center justify-center gap-2">
         {!error && (
@@ -57,7 +59,7 @@ const Toast: NextPage<ToastProps> = ({ error, message, onClose }) => {
         </div>
       </div>
       <button
-        className="absolute -top-2 right-3 cursor-pointer"
+        className="absolute top-0 right-3 cursor-pointer"
         onClick={onClose}
       >
         <Icon icon="ic:baseline-clear" />
