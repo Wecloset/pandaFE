@@ -13,7 +13,7 @@ const OptionTab: NextPage<OptionTabProps> = ({
   const brandRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="fixed bottom-0 z-30 w-[390px] animate-bottomsheet transition">
+    <div className="fixed bottom-0 z-50 w-[390px] animate-bottomsheet transition">
       {isTabOpen &&
         Object.entries(options).map(([key, { current }], i) =>
           current === true ? (

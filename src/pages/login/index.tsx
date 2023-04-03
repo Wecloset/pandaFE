@@ -12,11 +12,14 @@ import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { useMutation } from "react-query";
 import axios from "axios";
+import useModal from "../../hooks/useModal";
 
 const Login: NextPage = () => {
   const { data: session } = useSession();
   const alerted = useRef(false);
   const router = useRouter();
+
+  const { show, setModalState, Modal } = useModal();
 
   const findUser = async (userEmail: string) => {
     const { data: response } = await axios.get(`/api/user?email=${userEmail}`);
@@ -32,6 +35,18 @@ const Login: NextPage = () => {
     await signIn("kakao");
   };
 
+  const goSignPage = (session: { user: { email: string } }) => {
+    router.push(
+      {
+        pathname: "/signtag",
+        query: {
+          email: session.user?.email,
+        },
+      },
+      "/signtag",
+    );
+  };
+
   useEffect(() => {
     session && mutate(session?.user?.email as string);
   }, [session]);
@@ -40,19 +55,13 @@ const Login: NextPage = () => {
     if (session && data) {
       if (data.user.keywords.length === 0 && !alerted.current) {
         alerted.current = true;
-        alert("유저 정보가 존재하지 않습니다. 회원가입으로 이동합니다");
-        router.push(
-          {
-            pathname: "/signtag",
-            query: {
-              email: session.user?.email,
-            },
-          },
-          "/signtag",
-        );
+        setModalState({
+          message: "유저 정보가 존재하지 않습니다.,회원가입을 진행할까요?",
+          btnText: "회원가입 하기",
+          submit: goSignPage,
+        });
         return;
       } else {
-        alert("로그인이 완료되었습니다");
         router.push("/");
         return;
       }

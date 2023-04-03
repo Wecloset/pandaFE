@@ -8,6 +8,7 @@ import axios from "axios";
 import { useMutation, useQuery } from "react-query";
 import LoadingSpinner from "../../components/ui/loading-spinner";
 import Button from "../../components/ui/button";
+import useToast from "../../hooks/useToast";
 
 interface TagData {
   userId: number;
@@ -17,6 +18,8 @@ interface TagData {
 
 const SignTag: NextPage = () => {
   const router = useRouter();
+
+  const { setToast, Toast } = useToast();
 
   const [selectedTag, setSelectedTag] = useState<string[]>([]);
 
@@ -41,7 +44,6 @@ const SignTag: NextPage = () => {
 
   const { mutate, isLoading } = useMutation(postTagData, {
     onSuccess: ({ message }) => {
-      alert(message);
       router.replace(
         {
           pathname: "/signprofile",
@@ -53,7 +55,7 @@ const SignTag: NextPage = () => {
       );
     },
     onError: ({ response }) => {
-      alert(response.data.message);
+      setToast(response.data.message, true);
     },
   });
 
@@ -81,6 +83,7 @@ const SignTag: NextPage = () => {
   return (
     <>
       <Header text="SIGNUP" goBack noGoBack />
+      <Toast />
       <div className="signup-minheight px-8 pt-4">
         <div className="flex items-end justify-between">
           <div>

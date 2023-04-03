@@ -6,8 +6,15 @@ import { useRouter } from "next/router";
 import { useMutation } from "react-query";
 import { UserData } from "../../types/data-type";
 
-const UserManage: NextPage<{ userData: UserData }> = ({ userData }) => {
+const UserManage: NextPage<{
+  userData: UserData;
+  setToast: (message: string, error: boolean) => void;
+}> = ({ userData, setToast }) => {
   const router = useRouter();
+
+  const signout = () => {
+    router.replace("/").then(() => signOut());
+  };
 
   const { mutate: userMutate } = useMutation(
     async (id: number) => {
@@ -16,11 +23,11 @@ const UserManage: NextPage<{ userData: UserData }> = ({ userData }) => {
     },
     {
       onSuccess: () => {
-        alert("회원탈퇴가 완료되었습니다");
-        router.replace("/").then(() => signOut());
+        setToast("회원탈퇴가 완료되었습니다", false);
+        setTimeout(() => signout(), 2500);
       },
       onError: () => {
-        alert("다시 시도해주세요");
+        setToast("다시 시도해주세요", true);
       },
     },
   );
@@ -28,10 +35,6 @@ const UserManage: NextPage<{ userData: UserData }> = ({ userData }) => {
   const handleDelete = () => {
     if (!userData) return;
     userMutate(userData.id);
-  };
-  const signout = () => {
-    alert("로그아웃이 완료되었습니다.");
-    router.replace("/login").then(() => signOut());
   };
 
   return (

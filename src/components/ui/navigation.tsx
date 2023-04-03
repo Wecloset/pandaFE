@@ -2,11 +2,25 @@ import { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { setModalProps } from "../../types/modal-type";
 
-const Navigation: NextPage = () => {
+const Navigation: NextPage<{ setModal?: setModalProps }> = ({ setModal }) => {
   const { pathname } = useRouter();
-  const router = useRouter();
   const { data: session } = useSession();
+  const router = useRouter();
+
+  const goLoginPage = () => router.push("/login");
+
+  const modalHandler = () => {
+    if (!session && setModal) {
+      setModal({
+        message: "로그인 후 이용 가능합니다.,로그인페이지로 이동할까요?",
+        btnText: "로그인 하기",
+        submit: goLoginPage,
+      });
+    }
+  };
+
   return (
     <div className="fixed bottom-0 z-20 flex h-12 w-[390px] items-center justify-between bg-black p-5 text-lg shadow dark:border-gray-600 dark:bg-gray-800">
       <div>
@@ -51,9 +65,7 @@ const Navigation: NextPage = () => {
                 ? "text-primary-violet"
                 : "text-white"
             }`}
-            onClick={() => {
-              alert("로그인 후 이용가능합니다"), router.push("/login");
-            }}
+            onClick={modalHandler}
           >
             MYPAGE
           </button>

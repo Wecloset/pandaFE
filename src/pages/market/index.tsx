@@ -14,10 +14,13 @@ import LoadingSpinner from "../../components/ui/loading-spinner";
 import { useRecoilValueLoadable } from "recoil";
 import { filteredMarketListState } from "../../recoil/filter";
 import { MainProductData } from "../../types/data-type";
+import useModal from "../../hooks/useModal";
 
 const Market: NextPage = () => {
   const marketList = useRecoilValueLoadable(filteredMarketListState);
   const { state, contents } = marketList;
+
+  const { show, setModalState, Modal } = useModal();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isFilterOpen, setFilterOpen] = useState<boolean>(false);
@@ -47,6 +50,7 @@ const Market: NextPage = () => {
         </div>
       )}
       <Header />
+      {show && <Modal />}
       <CategoryNavigation />
       <div>
         <div className="mb-3 px-5 py-4">
@@ -71,8 +75,8 @@ const Market: NextPage = () => {
         </div>
       )}
       <MarketList marketData={filteredList} isLoading={isLoading} />
-      <Navigation />
-      <FloatingButton path="/create" />
+      <Navigation setModal={setModalState} />
+      <FloatingButton path="/create" setModal={setModalState} />
     </div>
   );
 };

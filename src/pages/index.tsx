@@ -12,9 +12,12 @@ import RecommendList from "../components/main/recommend";
 import Header from "../components/ui/header";
 import Navigation from "../components/ui/navigation";
 import FloatingButton from "../components/ui/floating-button";
+import useModal from "../hooks/useModal";
 
 const Home: NextPage = () => {
   const setEmail = useSetRecoilState(userEmailState);
+
+  const { show, setModalState, Modal } = useModal();
 
   const getItems = async () => {
     try {
@@ -45,6 +48,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Header />
+      {show && <Modal />}
       <div className="h-72 w-full bg-borderColor-gray" />
       <div className="space-y-10 py-10">
         <RecommendList productsData={products} />
@@ -62,8 +66,8 @@ const Home: NextPage = () => {
           />
         </div>
       </div>
-      <Navigation />
-      <FloatingButton path="/create" />
+      <Navigation setModal={setModalState} />
+      <FloatingButton path="/create" setModal={setModalState} />
     </>
   );
 };

@@ -3,7 +3,7 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { errorLine, errorMessage } from "../../lib/error";
+import { errorMessage } from "../../lib/error";
 import { cls } from "../../utils/class";
 import createHashedPassword from "../../utils/hash";
 import { regExgPw, regExpEm } from "../../utils/regInput";
@@ -33,7 +33,7 @@ const LoginForm: NextPage = () => {
       nickname: data.nickname,
     });
 
-    !result?.error ? router.replace("/") : alert(result.error);
+    !result?.error ? router.replace("/") : console.log(result.error);
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="px-3">

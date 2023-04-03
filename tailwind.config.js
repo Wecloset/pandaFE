@@ -45,8 +45,8 @@ module.exports = {
         },
       },
       animation: {
-        popup: "popup 1s ease-out forwards",
-        hide: "hide 1s ease-in forwards",
+        popup: "popup 0.8s ease-out forwards",
+        hide: "hide 0.8s ease forwards",
         bottomsheet: "bottomsheet 0.4s ease forwards",
         accordion1: "accordion1 0.5s ease forwards",
         accordion2: "accordion2 0.5s ease forwards",
