@@ -13,6 +13,8 @@ import Header from "../components/ui/header";
 import Navigation from "../components/ui/navigation";
 import FloatingButton from "../components/ui/floating-button";
 import useModal from "../hooks/useModal";
+import ImageSlide from "../components/market/detail/image-slide";
+import { bannerImages } from "../lib/banner-images";
 
 const Home: NextPage = () => {
   const setEmail = useSetRecoilState(userEmailState);
@@ -49,7 +51,7 @@ const Home: NextPage = () => {
     <>
       <Header />
       {show && <Modal />}
-      <div className="h-72 w-full bg-borderColor-gray" />
+      <ImageSlide images={bannerImages} imgH="h-72" propH={288} />
       <div className="space-y-10 py-10">
         <RecommendList productsData={products} />
         <RecentStyle productsData={products} />

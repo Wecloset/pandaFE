@@ -8,6 +8,7 @@ import { useQuery } from "react-query";
 import Header from "../../components/ui/header";
 import MainProduct from "../../components/main/product-item";
 import useToast from "../../hooks/useToast";
+import { ProductDataMin } from "../../types/data-type";
 
 interface KeywordInterface {
   id: number;
@@ -15,6 +16,7 @@ interface KeywordInterface {
 }
 
 const Search: NextPage = () => {
+  const session = useSession();
   const router = useRouter();
 
   const { setToast, Toast } = useToast();
@@ -25,7 +27,7 @@ const Search: NextPage = () => {
     "",
   );
 
-  const [searchData, setSearchData] = useState<string[]>([]);
+  const [searchData, setSearchData] = useState<ProductDataMin[]>([]);
 
   const [matchedKeywords, setMatchedKeywords] = useState<string[]>([]);
 
@@ -202,7 +204,7 @@ const Search: NextPage = () => {
                     key={data.id}
                     {...data}
                     imgw="w-full"
-                    imgh="h-190"
+                    imgh="h-[190px]"
                   />
                 ))
               ) : (
