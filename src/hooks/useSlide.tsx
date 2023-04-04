@@ -39,7 +39,6 @@ const useSlide = ({
   };
 
   useEffect(() => {
-    console.log(slideCount);
     const translate = classes[slideCount];
     setTranslateX(translate);
   }, [slideCount]);

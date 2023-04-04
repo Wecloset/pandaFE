@@ -10,7 +10,6 @@ import {
 } from "../../utils/markets";
 import { useRecoilValueLoadable } from "recoil";
 import { axiosGet } from "../../utils/services";
-import { updateViews } from "../../utils/market-view";
 import { useMutation, useQuery } from "react-query";
 import useFav from "../../hooks/useFav";
 import { useRouter } from "next/router";
@@ -19,18 +18,16 @@ import Header from "../../components/ui/header";
 import LoadingSpinner from "../../components/ui/loading-spinner";
 import useModal from "../../hooks/useModal";
 import Overlay from "../../components/ui/overlay";
+import { updateViews } from "../../utils/market-view";
 
 const Product: NextPage = () => {
-  const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
-  const { state, contents: userContents } = userInfo;
-  const [currentUserId, setCurrentUserId] = useState<number>(0);
-
-  useEffect(() => {
-    if (userContents) setCurrentUserId(userContents.id);
-  }, [state]);
-
   const router = useRouter();
   const { id: productId } = router.query;
+
+  const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
+  const { state, contents: userContents } = userInfo;
+
+  const [currentUserId, setCurrentUserId] = useState<number>(0);
 
   const {
     isFavActive,
@@ -44,9 +41,12 @@ const Product: NextPage = () => {
 
   const { Modal, show, setModalState } = useModal();
 
+  useEffect(() => {
+    if (userContents) setCurrentUserId(userContents.id);
+  }, [state]);
+
   const getProduct = async () => {
     try {
-      console.log("get data");
       const { data } = await axiosGet(`/api/products/${productId}`);
       return data.product;
     } catch (err) {
@@ -98,8 +98,7 @@ const Product: NextPage = () => {
     setInitialFav();
 
     if (!userContents) return;
-    const { email: userEmail } = userContents;
-    updateViews(userEmail, +(productId as string), product.view);
+    updateViews(userContents.email, Number(productId), product.view);
   }, [userInfo, product]);
 
   return (
