@@ -37,14 +37,14 @@ const SignForm: NextPage = () => {
 
   const { mutate, isLoading } = useMutation(createUser, {
     onSuccess: data => {
-      router.replace(
+      router.push(
         {
-          pathname: "/signtag",
+          pathname: "/sign/signtag",
           query: {
             email: data.email,
           },
         },
-        "/signtag",
+        "/sign/signtag",
       );
     },
     onError: ({ response }) => {
@@ -132,17 +132,14 @@ const SignForm: NextPage = () => {
             {errors?.passwordConfirm?.message}
           </p>
         </div>
-        {isLoading ? (
-          <LoadingSpinner />
-        ) : (
-          <Button
-            type="submit"
-            classes="bg-black text-white"
-            btnWrapClasses="p-0"
-            text="다음"
-            textWidth="w-full"
-          />
-        )}
+        <Button
+          type="submit"
+          classes="bg-black text-white"
+          btnWrapClasses="p-0"
+          text="다음"
+          textWidth="w-full"
+          isLoading={isLoading}
+        />
       </form>
     </>
   );

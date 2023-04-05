@@ -8,7 +8,6 @@ import axios from "axios";
 import { FormEvent, useState } from "react";
 import useUpload from "../../hooks/useUpload";
 import { useMutation, useQuery } from "react-query";
-import LoadingSpinner from "../../components/ui/loading-spinner";
 import { createImageUrl } from "../../utils/image-url";
 import { signOut } from "next-auth/react";
 import Button from "../../components/ui/button";
@@ -81,9 +80,11 @@ const SignProfile: NextPage<CredentialProps> = ({
 
   //프로필 이미지 등록
   const createProfile = async (userProfile: any) => {
-    uploadImage(imgsrc[0].file, "profile");
-    const imageurl = createImageUrl(imgsrc[0].file, "profile");
+    const enteredImage = imgsrc[imgsrc.length - 1];
+    uploadImage(enteredImage.file, "profile");
+    const imageurl = createImageUrl(enteredImage.file, "profile");
     userProfile.image = imageurl;
+
     const { data: response } = await axios.post("/api/auth/profile", {
       userProfile,
       userData: signUser.user.id,
@@ -96,8 +97,7 @@ const SignProfile: NextPage<CredentialProps> = ({
     createProfile,
     {
       onSuccess: ({ message }) => {
-        alert(message);
-        router.replace("/login");
+        router.replace("/sign/welcome");
         signOut({ redirect: false }); //회원가입을 할 경우에 로그인 되어있어서 강제 로그아웃시킴
       },
       onError: ({ response }) => {
@@ -123,11 +123,11 @@ const SignProfile: NextPage<CredentialProps> = ({
           <label className="relative h-[178px] w-[178px] cursor-pointer rounded-full bg-textColor-gray-100">
             {imgsrc.length !== 0 ? (
               <Image
-                src={imgsrc[0]?.dataUrl}
+                src={imgsrc[imgsrc.length - 1]?.dataUrl}
                 alt="업로드이미지"
                 width={178}
                 height={178}
-                className="rounded-full"
+                className="h-[178px] w-[178px] rounded-full object-cover"
               />
             ) : (
               <Image
@@ -157,32 +157,26 @@ const SignProfile: NextPage<CredentialProps> = ({
                 errors.nickname ? "border-error" : "",
               )}
             />
-            {nickLoading ? (
-              <LoadingSpinner />
-            ) : (
-              <Button
-                type="button"
-                text="중복확인"
-                onClick={onDuplication}
-                classes="bg-black"
-                divWidth="w-[115px]"
-                width="w-[115px]"
-                height="h-[42px]"
-              />
-            )}
+            <Button
+              type="button"
+              text="중복확인"
+              onClick={onDuplication}
+              classes="bg-black"
+              divWidth="w-[115px]"
+              width="w-[115px]"
+              height="h-[42px]"
+              isLoading={nickLoading}
+            />
           </div>
         </div>
-        {profileLoading ? (
-          <LoadingSpinner />
-        ) : (
-          <Button
-            disabled={!pass}
-            type="submit"
-            text="완료"
-            classes="bg-black"
-            btnWrapClasses="px-8"
-          />
-        )}
+        <Button
+          disabled={!pass}
+          type="submit"
+          text="완료"
+          classes="bg-black"
+          btnWrapClasses="px-8"
+          isLoading={profileLoading}
+        />
       </form>
     </>
   );
