@@ -1,5 +1,4 @@
 import { Icon } from "@iconify/react";
-import axios from "axios";
 import type { GetServerSideProps, NextPage } from "next";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -19,7 +18,6 @@ import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
 import { CredentialProps } from "../../types/create-type";
 import { createImageUrl } from "../../utils/image-url";
 import { apiPost } from "../../utils/request";
-import { axiosPost } from "../../utils/services";
 
 const ProfileEdit: NextPage<CredentialProps> = ({
   region,

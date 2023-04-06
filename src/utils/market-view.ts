@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiPost } from "./request";
 
 interface Views {
   user: string;
@@ -33,7 +33,7 @@ export const updateViews = async (
       },
     ];
     SET_VIEWLIST(localData);
-    await axios.post(`/api/products/${productId}`, { currentView });
+    await apiPost.UPDATE_VIEWS(productId, { currentView });
     return;
   }
 
@@ -47,6 +47,6 @@ export const updateViews = async (
     );
 
     SET_VIEWLIST(localData);
-    await axios.post(`/api/products/${productId}`, { currentView });
+    await apiPost.UPDATE_VIEWS(productId, { currentView });
   }
 };

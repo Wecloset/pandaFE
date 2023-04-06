@@ -22,6 +22,15 @@ const axiosGet = async (url: string) => {
   }
 };
 
+const axiosDelete = async (id: string) => {
+  try {
+    const data = await client.delete(`/api/user/${id}`);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const apiGet = {
   GET_ITEMS: () => axiosGet("/api/products"),
 
@@ -64,6 +73,9 @@ const apiPost = {
   UPDATE_COMMENT: (id: number, data: any) =>
     axiosPost(`/api/look/comment?commentId=${id}`, data),
 
+  UPDATE_VIEWS: (id: number, view: any) =>
+    axiosPost(`/api/products/${id}`, view),
+
   UPDATE_TAG: (id: number, tags: string[]) =>
     axiosPost(`/api/user/tag?update=${id}`, tags),
 
@@ -73,4 +85,4 @@ const apiPost = {
     axiosPost(`/api/look/post?cursor=${pageParam}`, { lookbookId: id }),
 };
 
-export { apiGet, apiPost };
+export { apiGet, apiPost, axiosDelete };

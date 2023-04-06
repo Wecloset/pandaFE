@@ -10,7 +10,6 @@ import UploadImages from "../../components/create/upload-images";
 import OptionTab from "../../components/create/option-tab";
 import { cls } from "../../utils/class";
 import { createImageUrl } from "../../utils/image-url";
-import axios from "axios";
 import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
 import useUpload from "../../hooks/useUpload";
 import useOptions from "../../hooks/useOptions";
@@ -19,7 +18,7 @@ import { CreateState, CredentialProps } from "../../types/create-type";
 import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
 import Overlay from "../../components/ui/overlay";
 import useToast from "../../hooks/useToast";
-import { axiosPost } from "../../utils/request";
+import { apiPost } from "../../utils/request";
 
 const Create: NextPage<CredentialProps> = ({
   region,
@@ -73,7 +72,7 @@ const Create: NextPage<CredentialProps> = ({
     imageurlList: string[];
   }) => {
     const { data, imageurlList } = payload;
-    const response = await axiosPost("CREATE_ITEM", {
+    const response = await apiPost.CREATE_ITEM({
       data,
       imageurlList,
       options,

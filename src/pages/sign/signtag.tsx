@@ -4,11 +4,10 @@ import { taglist } from "../../lib/tag-data";
 import { Icon } from "@iconify/react";
 import Header from "../../components/ui/header";
 import { useRouter } from "next/router";
-import axios from "axios";
 import { useMutation, useQuery } from "react-query";
 import Button from "../../components/ui/button";
 import useToast from "../../hooks/useToast";
-import { apiPost, axiosGet } from "../../utils/request";
+import { apiGet, apiPost } from "../../utils/request";
 
 interface TagData {
   userId: number;
@@ -26,7 +25,7 @@ const SignTag: NextPage = () => {
 
   const allSelectedTag = taglist.value;
 
-  const getUser = () => axiosGet("GET_USER", userEmail as string);
+  const getUser = () => apiGet.GET_USER(userEmail as string);
 
   //유저 정보를 query 로 전달받아서 signUser 의 user.id 을 이용해 다음단계이어감
   const { data: signUser } = useQuery("userData", getUser);

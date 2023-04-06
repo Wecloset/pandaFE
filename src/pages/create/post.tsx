@@ -18,7 +18,7 @@ import { useMutation } from "react-query";
 import { useRouter } from "next/router";
 import Overlay from "../../components/ui/overlay";
 import useToast from "../../hooks/useToast";
-import { axiosPost } from "../../utils/request";
+import { apiPost } from "../../utils/request";
 
 const CreatePost: NextPage<CredentialProps> = ({
   region,
@@ -67,7 +67,7 @@ const CreatePost: NextPage<CredentialProps> = ({
     tagIdList: number[];
   }) => {
     const { data, imageurlList, tagIdList } = payload;
-    const response = await axiosPost("CREATE_POST", {
+    const response = await apiPost.CREATE_POST({
       data,
       imageurlList,
       tagIdList,
