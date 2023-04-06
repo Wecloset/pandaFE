@@ -173,11 +173,14 @@ const Search: NextPage = () => {
               <div className="mt-12">
                 <h2 className="mb-3 text-base font-bold">최근 검색어</h2>
                 {session.status !== "unauthenticated" && (
-                  <ul className="ml-2 cursor-pointer space-y-2 text-lg text-textColor-gray-50">
+                  <ul className="cursor-pointer space-y-2 text-lg text-textColor-gray-50">
                     <>
                       {searches.map((query, index) => (
-                        <li className="flex items-center" key={query}>
-                          {query}
+                        <li
+                          className="flex items-center justify-between"
+                          key={query}
+                        >
+                          <span className="text-common-black">{query}</span>
                           <Icon
                             icon="ic:baseline-clear"
                             aria-label="검색어 삭제"
@@ -220,11 +223,16 @@ const Search: NextPage = () => {
                   {matchedKeywords.map(keyword => (
                     <li
                       key={keyword}
-                      className="flex h-12 w-full cursor-pointer items-center overflow-hidden bg-red-50 p-2 pt-2 text-xl"
+                      className="flex h-12 w-full cursor-pointer items-center gap-2 overflow-hidden p-2 pt-2 text-lg"
                       onMouseDown={() => {
                         searchKeyword(keyword);
                       }}
                     >
+                      <Icon
+                        icon="ion:search-sharp"
+                        className="text-common-gray"
+                        aria-label="검색하기"
+                      />
                       {keyword}
                     </li>
                   ))}
