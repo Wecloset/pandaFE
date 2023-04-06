@@ -14,7 +14,7 @@ import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
 import useUpload from "../../hooks/useUpload";
 import useOptions from "../../hooks/useOptions";
 import { tabData } from "../../lib/fake-data";
-import { CreateState, CredentialProps } from "../../types/create-type";
+import { CreateState, CredentialProps, Options } from "../../types/create-type";
 import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
 import Overlay from "../../components/ui/overlay";
 import useToast from "../../hooks/useToast";
@@ -72,7 +72,12 @@ const Create: NextPage<CredentialProps> = ({
     imageurlList: string[];
   }) => {
     const { data, imageurlList } = payload;
-    const response = await apiPost.CREATE_ITEM({
+    const response = await apiPost.CREATE_ITEM<{
+      data: FormData;
+      imageurlList: string[];
+      options: Options;
+      userId: number;
+    }>({
       data,
       imageurlList,
       options,

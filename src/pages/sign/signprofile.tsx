@@ -1,6 +1,6 @@
 import { GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { useForm } from "react-hook-form";
+import { FieldValues, useForm } from "react-hook-form";
 import Header from "../../components/ui/header";
 import profile from "../../../public/asset/image/addprofile.png";
 import Image from "next/image";
@@ -41,6 +41,8 @@ const SignProfile: NextPage<CredentialProps> = ({
   //유저 정보를 query 로 전달받아서 signUser 의 user.id 을 이용해 다음단계이어감
   const { data: signUser } = useQuery("userData", getUser);
 
+  console.log(signUser);
+
   const {
     register,
     handleSubmit,
@@ -79,13 +81,16 @@ const SignProfile: NextPage<CredentialProps> = ({
   );
 
   //프로필 이미지 등록
-  const createProfile = async (userProfile: any) => {
+  const createProfile = async (userProfile: FieldValues) => {
     const enteredImage = imgsrc[imgsrc.length - 1];
     uploadImage(enteredImage.file, "profile");
     const imageurl = createImageUrl(enteredImage.file, "profile");
     userProfile.image = imageurl;
 
-    const response = await apiPost.CREATE_PROFILE({
+    const response = await apiPost.CREATE_PROFILE<{
+      userProfile: FieldValues;
+      userData: number;
+    }>({
       userProfile,
       userData: signUser.user.id,
     });

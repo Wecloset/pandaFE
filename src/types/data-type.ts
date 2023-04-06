@@ -1,9 +1,9 @@
 export interface MainProductData {
   id: number;
-  imgurl: string[{
+  imgurl: {
     id: number;
     img: string;
-  }];
+  }[];
   category: string;
   createdDate: string;
   description: string;

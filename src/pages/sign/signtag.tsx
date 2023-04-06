@@ -58,7 +58,7 @@ const SignTag: NextPage = () => {
   const handleFormSubmit = (event: FormEvent) => {
     event.preventDefault();
     const tagData: TagData = {
-      userId: signUser?.user?.id,
+      userId: signUser.user.id,
       tags: selectedTag,
     };
     mutate(tagData);

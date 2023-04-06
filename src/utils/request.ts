@@ -1,10 +1,11 @@
 import axios from "axios";
+import { SignProps } from "../components/sign/sign-form";
 
 const client = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-const axiosPost = async (url: string, payload: any) => {
+const axiosPost = async <T>(url: string, payload: T) => {
   try {
     const { data } = await client.post(url, payload);
     return data;
@@ -48,38 +49,43 @@ const apiGet = {
 };
 
 const apiPost = {
-  CREATE_USER: (data: any) => axiosPost("/api/auth/sign", data),
+  CREATE_USER: (data: SignProps) => axiosPost("/api/auth/sign", data),
 
-  CREATE_ITEM: (data: any) => axiosPost("/api/products", data),
+  CREATE_ITEM: <T extends object>(data: T) => axiosPost("/api/products", data),
 
-  CREATE_POST: (data: any) => axiosPost("/api/look", data),
+  CREATE_POST: <T extends object>(data: T) => axiosPost("/api/look", data),
 
-  CREATE_TAG: (data: any, queryKey: number) =>
+  CREATE_TAG: (data: string[], queryKey: number) =>
     axiosPost(`/api/user/tag?post=${queryKey}`, data),
 
-  CREATE_NICKNAME: (data: any) => axiosPost("/api/user/nickname", data),
+  CREATE_NICKNAME: (data: { nickname: string }) =>
+    axiosPost("/api/user/nickname", data),
 
-  CREATE_PROFILE: (data: any) => axiosPost("/api/auth/profile", data),
+  CREATE_PROFILE: <T extends object>(data: T) =>
+    axiosPost("/api/auth/profile", data),
 
-  CREATE_COMMENT: (id: number, data: any) =>
+  CREATE_COMMENT: (id: number, data: { comment: any; userId: number }) =>
     axiosPost(`/api/look/comment?postId=${id}`, data),
 
-  UPDATE_USER: (queryKey: number, data: any) =>
-    axiosPost(`/api/user/${queryKey}`, data),
+  UPDATE_USER: (
+    queryKey: number,
+    data: { productId: number } | { lookId: number | undefined },
+  ) => axiosPost(`/api/user/${queryKey}`, data),
 
-  UPDATE_NICKNAME: (id: string, data: any) =>
+  UPDATE_NICKNAME: (id: string, data: { nickname: string }) =>
     axiosPost(`/api/user/nickname?id=${id}`, data),
 
-  UPDATE_COMMENT: (id: number, data: any) =>
+  UPDATE_COMMENT: (id: number, data: { comment: any; userId: number }) =>
     axiosPost(`/api/look/comment?commentId=${id}`, data),
 
-  UPDATE_VIEWS: (id: number, view: any) =>
+  UPDATE_VIEWS: (id: number, view: { currentView: number }) =>
     axiosPost(`/api/products/${id}`, view),
 
   UPDATE_TAG: (id: number, tags: string[]) =>
     axiosPost(`/api/user/tag?update=${id}`, tags),
 
-  UPDATE_PROFILE: (data: any) => axiosPost("/api/user/image", data),
+  UPDATE_PROFILE: (data: { imageurl: string; userData: number }) =>
+    axiosPost("/api/user/image", data),
 
   GET_ALL_POST: (id: string, pageParam: string) =>
     axiosPost(`/api/look/post?cursor=${pageParam}`, { lookbookId: id }),

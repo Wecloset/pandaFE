@@ -1,3 +1,5 @@
+import { FormEvent, MouseEvent } from "react";
+import { UseFormRegister, UseFormSetValue } from "react-hook-form";
 import { ProductData } from "./data-type";
 
 export interface CreateState {

@@ -9,7 +9,7 @@ import { regExgPw, regExpEm } from "../../utils/regInput";
 import { apiPost } from "../../utils/request";
 import Button from "../ui/button";
 
-interface SignProps {
+export interface SignProps {
   email: string;
   password: string;
   passwordConfirm: string;

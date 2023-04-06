@@ -67,7 +67,12 @@ const CreatePost: NextPage<CredentialProps> = ({
     tagIdList: number[];
   }) => {
     const { data, imageurlList, tagIdList } = payload;
-    const response = await apiPost.CREATE_POST({
+    const response = await apiPost.CREATE_POST<{
+      data: CreateState;
+      imageurlList: string[];
+      tagIdList: number[];
+      userId: number;
+    }>({
       data,
       imageurlList,
       tagIdList,
