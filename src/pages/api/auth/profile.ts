@@ -23,7 +23,7 @@ const userSignTag = async (req: NextApiRequest, res: NextApiResponse) => {
         message: "회원가입이 완료되었습니다.",
       })
     : res.status(500).json({
-        message: "프로필 내용을 옳바르게 입력해주세요",
+        message: "프로필 내용을 올바르게 입력해주세요",
       });
 };
 export default userSignTag;

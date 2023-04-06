@@ -1,25 +1,26 @@
-import { axiosPost } from "./services";
+import axios from "axios";
 
 interface Views {
   user: string;
   product: number[];
 }
 
-const GET_VIEWLIST =
-  typeof window === "undefined"
-    ? undefined
-    : localStorage.getItem("panda-market");
-const SET_VIEWLIST = (localData: Views[]) =>
-  typeof window === "undefined"
-    ? undefined
-    : localStorage.setItem("panda-market", JSON.stringify(localData));
-
-export const updateViews = (
+export const updateViews = async (
   userEmail: string,
   productId: number,
   currentView: number,
 ) => {
+  const GET_VIEWLIST =
+    typeof window === "undefined"
+      ? undefined
+      : localStorage.getItem("panda-market");
+  const SET_VIEWLIST = (localData: Views[]) =>
+    typeof window === "undefined"
+      ? undefined
+      : localStorage.setItem("panda-market", JSON.stringify(localData));
+
   const productLog = JSON.parse(GET_VIEWLIST as string);
+
   const viewProducts = productLog?.map((item: Views) => {
     if (item.user === userEmail) return item.product;
   });
@@ -32,7 +33,7 @@ export const updateViews = (
       },
     ];
     SET_VIEWLIST(localData);
-    axiosPost(`/api/products/${productId}`, { currentView });
+    await axios.post(`/api/products/${productId}`, { currentView });
     return;
   }
 
@@ -41,10 +42,11 @@ export const updateViews = (
   if (!isExisted) {
     const localData = productLog.map((item: Views) =>
       item.user === userEmail
-        ? { ...item, product: [...item.product, productId] }
+        ? { ...item, product: [...viewProducts[0], productId] }
         : item,
     );
+
     SET_VIEWLIST(localData);
-    axiosPost(`/api/products/${productId}`, { currentView });
+    await axios.post(`/api/products/${productId}`, { currentView });
   }
 };

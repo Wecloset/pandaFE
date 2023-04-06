@@ -16,7 +16,7 @@ class MyDocument extends Document {
     return (
       <Html lang="ko">
         <Head></Head>
-        <body className="font-worksans text-sm text-common-black">
+        <body className=" font-myfont text-sm text-common-black">
           <Main />
           <NextScript />
         </body>

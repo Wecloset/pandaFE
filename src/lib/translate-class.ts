@@ -11,6 +11,7 @@ export const translateClasses: { [key: string]: string[] } = {
     "transform -translate-x-[1216px]",
     "transform -translate-x-[1368px]",
     "transform -translate-x-[1520px]",
+    "transform -translate-x-[1672px]",
   ],
   detailSlide: [
     "transform -translate-x-[0px]",

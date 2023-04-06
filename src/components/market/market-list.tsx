@@ -9,7 +9,10 @@ const MarketList: NextPage<{
   let list;
 
   if (marketData.length > 0) {
-    list = marketData.map((product: MainProductData, i) => {
+    const newArray = marketData.slice();
+    const marketList = newArray.reverse();
+
+    list = marketList?.map((product: MainProductData, i) => {
       const key = `${product.id}-${i}`;
       return <MarketItem key={key} data={product} />;
     });

@@ -6,7 +6,6 @@ import Header from "../../components/ui/header";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { useMutation, useQuery } from "react-query";
-import LoadingSpinner from "../../components/ui/loading-spinner";
 import Button from "../../components/ui/button";
 import useToast from "../../hooks/useToast";
 
@@ -46,12 +45,12 @@ const SignTag: NextPage = () => {
     onSuccess: ({ message }) => {
       router.replace(
         {
-          pathname: "/signprofile",
+          pathname: "/sign/signprofile",
           query: {
             email: router.query.email,
           },
         },
-        "/signprofile",
+        "/sign/signprofile",
       );
     },
     onError: ({ response }) => {
@@ -130,17 +129,14 @@ const SignTag: NextPage = () => {
         onSubmit={handleFormSubmit}
         className="mx-6 flex items-center justify-center"
       >
-        {isLoading ? (
-          <LoadingSpinner />
-        ) : (
-          <Button
-            type="submit"
-            classes="bg-black px-2"
-            text="다음"
-            textWidth="w-full"
-            btnWrapClasses="px-2 mt-10"
-          />
-        )}
+        <Button
+          type="submit"
+          classes="bg-black px-2"
+          text="다음"
+          textWidth="w-full"
+          btnWrapClasses="px-2 mt-10"
+          isLoading={isLoading}
+        />
       </form>
     </>
   );

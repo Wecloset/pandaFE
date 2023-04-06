@@ -43,12 +43,12 @@ const Sign: NextPage = () => {
         alerted.current = true;
         router.replace(
           {
-            pathname: "/signtag",
+            pathname: "/sign/signtag",
             query: {
               email: session.user?.email,
             },
           },
-          "/signtag",
+          "/sign/signtag",
         );
         return;
       } else {

@@ -27,12 +27,11 @@ const Market: NextPage = () => {
   const [filteredList, setFilteredList] = useState<MainProductData[]>([]);
 
   useEffect(() => {
-    if (state === "hasValue") setIsLoading(false);
+    if (state === "hasValue") {
+      setIsLoading(false);
+      setFilteredList(contents);
+    }
   }, [state]);
-
-  useEffect(() => {
-    setFilteredList(contents);
-  }, [contents]);
 
   const openFilterOverlay = () => setFilterOpen(true);
   const closeFilterOverlay = () => setFilterOpen(false);

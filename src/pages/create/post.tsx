@@ -2,8 +2,8 @@ import { Icon } from "@iconify/react";
 import { GetStaticProps, NextPage } from "next";
 import { ChangeEvent, useState } from "react";
 import { FieldErrors, useForm } from "react-hook-form";
-import { useRecoilValueLoadable } from "recoil";
-import { currentUserInfoQuery } from "../../recoil/user";
+import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
+import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
 import Button from "../../components/ui/button";
 import UploadImages from "../../components/create/upload-images";
 import Header from "../../components/ui/header";
@@ -17,7 +17,6 @@ import { createImageUrl } from "../../utils/image-url";
 import { useMutation } from "react-query";
 import { useRouter } from "next/router";
 import axios from "axios";
-import LoadingSpinner from "../../components/ui/loading-spinner";
 import Overlay from "../../components/ui/overlay";
 import useToast from "../../hooks/useToast";
 
@@ -29,6 +28,10 @@ const CreatePost: NextPage<CredentialProps> = ({
   const credentials = { region, accessKey, secretKey };
   const userData = useRecoilValueLoadable(currentUserInfoQuery);
   const { state, contents } = userData;
+
+  const refreshUserInfo = useRecoilRefresher_UNSTABLE(
+    userInfoQuery(contents?.email),
+  );
 
   const router = useRouter();
 
@@ -76,6 +79,7 @@ const CreatePost: NextPage<CredentialProps> = ({
   const { mutate, isLoading } = useMutation(createPost, {
     onSuccess: ({ message }) => {
       setToast(message, false);
+      refreshUserInfo();
       setTimeout(() => router.replace("/mypage"), 2500);
     },
     onError: ({ response }) => {
@@ -104,11 +108,6 @@ const CreatePost: NextPage<CredentialProps> = ({
     <>
       <Header goBack />
       <Toast />
-      {isLoading && (
-        <div className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
-          <LoadingSpinner />
-        </div>
-      )}
       {isTabOpen && <Overlay />}
       <div className="px-5 py-5">
         <form onSubmit={handleSubmit(valid, inValid)}>
@@ -153,11 +152,12 @@ const CreatePost: NextPage<CredentialProps> = ({
           </div>
           <div className="fixed bottom-0 mt-40 w-[350px]">
             <Button
-              type="button"
+              type="submit"
               text="완료"
               btnWrapClasses="py-5"
               classes="bg-black"
               fontColor="text-white"
+              isLoading={isLoading}
             />
           </div>
         </form>

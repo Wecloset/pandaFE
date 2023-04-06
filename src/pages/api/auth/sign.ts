@@ -7,13 +7,13 @@ const userSign = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "POST") {
     try {
-      await client.user.create({
+      const user = await client.user.create({
         data: {
           email,
           password: createHashedPassword(password),
         },
       });
-      res.status(201).json({ message: "회원정보 저장 완료되었습니다" });
+      res.status(201).json(user);
     } catch {
       res.status(500).json({ message: "회원가입을 실패했습니다" });
     }

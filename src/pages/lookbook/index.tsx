@@ -45,14 +45,17 @@ const Lookbook: NextPage = () => {
       )}
       <div>
         <ul className="grid grid-cols-2 pb-10">
-          {allData?.map((data: LookbookData) => (
-            <LookItem
-              key={data.id}
-              {...data}
-              userId={userId}
-              setModal={setModalState}
-            />
-          ))}
+          {allData
+            ?.slice()
+            .reverse()
+            .map((data: LookbookData) => (
+              <LookItem
+                key={data.id}
+                {...data}
+                userId={userId}
+                setModal={setModalState}
+              />
+            ))}
         </ul>
       </div>
       <FloatingButton path="/create/post" setModal={setModalState} />

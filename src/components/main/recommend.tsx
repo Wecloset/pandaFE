@@ -134,7 +134,7 @@ const RecommendList: NextPage<RecommendProps> = ({ productsData }) => {
                 className={cls(
                   "absolute top-0 left-0 z-10 h-full w-full rounded-lg border border-common-black",
                   keyword === tag
-                    ? "border-common-black bg-primary-green text-common-black"
+                    ? "border-common-black bg-common-black text-white"
                     : "border-common-black bg-white",
                 )}
                 onClick={() => clickKeyword(tag)}

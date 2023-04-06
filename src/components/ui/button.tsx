@@ -1,6 +1,7 @@
 import { NextPage } from "next";
 import { Icon } from "@iconify/react";
 import { FormEvent } from "react";
+import LoadingSpinner from "./loading-spinner";
 
 interface ButtonProps {
   type: "button" | "submit" | "reset";
@@ -16,6 +17,7 @@ interface ButtonProps {
   text: string;
   btnWrapClasses?: string;
   classes?: string;
+  isLoading?: boolean;
 }
 
 const Button: NextPage<ButtonProps> = ({
@@ -32,6 +34,7 @@ const Button: NextPage<ButtonProps> = ({
   fontColor,
   btnWrapClasses,
   classes,
+  isLoading,
 }) => {
   return (
     <div
@@ -55,7 +58,10 @@ const Button: NextPage<ButtonProps> = ({
         onClick={onClick}
       >
         {icon && <Icon icon={icon} width="24" className="mr-2 w-1/5" />}
-        <span className={`${textWidth ? textWidth : "w-full"}`}>{text}</span>
+        <span className={`${textWidth ? textWidth : "w-full"}`}>
+          {isLoading && <LoadingSpinner width="40" />}
+          {!isLoading && text}
+        </span>
       </button>
     </div>
   );

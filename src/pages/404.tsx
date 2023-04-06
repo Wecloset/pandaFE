@@ -7,7 +7,7 @@ import Button from "../components/ui/button";
 const Error404: NextPage = () => {
   return (
     <div className=" flex h-screen flex-col items-center justify-center">
-      <Image src={notfind} alt="404" className=" mb-10 h-24 w-44" priority />
+      <Image src={notfind} alt="4s04" className=" mb-10 h-24 w-44" priority />
       <div className=" text-center">
         <h1 className="mb-3 text-xl">찾을 수 없는 페이지 입니다.</h1>
         <h2 className="mb-10 text-sm">
@@ -15,10 +15,10 @@ const Error404: NextPage = () => {
         </h2>
         <Link href="/">
           <Button
+            type="button"
             text="홈으로 이동"
-            color="bg-black"
+            classes="bg-black"
             fontColor="text-white"
-            hover="hover:bg-primary-green"
           />
         </Link>
       </div>

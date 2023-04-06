@@ -15,8 +15,11 @@ module.exports = {
         "borderColor-gray": "#D9D9D9",
         error: "#FF5252",
       },
+      backgroundImage: {
+        gradient: "url('../../public/asset/image/gradient.jpg')",
+      },
       fontFamily: {
-        myfont: ["worksans", "sans-serif"],
+        myfont: "worksans",
       },
       keyframes: {
         popup: {
