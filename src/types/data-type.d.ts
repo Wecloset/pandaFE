@@ -110,4 +110,8 @@ export interface LookbookData {
 export interface LookbookDataMin {
   id: number;
   imgurl: { id: number; img: string }[];
+  user: {
+    nickname: string;
+    profileImg: string;
+  };
 }

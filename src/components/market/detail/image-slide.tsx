@@ -19,12 +19,13 @@ const ImageSlide: NextPage<{
   isLoading?: boolean;
   imgH?: string;
   propH?: number;
-}> = ({ images, isLoading, imgH, propH }) => {
+  slideTime?: number;
+}> = ({ images, isLoading, imgH, propH, slideTime }) => {
   const { next, prev, transitionEnd, translateX, isMoving, slideNum } =
     useSlide({
       list: images,
       classes: translateClasses.detailSlide,
-      slideTime: 5500,
+      slideTime: slideTime,
     });
 
   const lastImageClone = images.at(-1)?.img as string;
@@ -94,14 +95,15 @@ const ImageSlide: NextPage<{
         </div>
       )}
       <div className="absolute bottom-2 flex h-[3px] w-[390px] justify-center space-x-0.5">
-        {images.map((item, i) => (
-          <span
-            key={item.id}
-            className={`block h-[2px] w-6 ${
-              slideNum - 1 === i ? "bg-black" : "bg-white opacity-50"
-            }`}
-          />
-        ))}
+        {images.length > 1 &&
+          images.map((item, i) => (
+            <span
+              key={item.id}
+              className={`block h-[2px] w-6 ${
+                slideNum - 1 === i ? "bg-black" : "bg-white opacity-50"
+              }`}
+            />
+          ))}
       </div>
     </div>
   );

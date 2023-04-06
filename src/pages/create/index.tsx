@@ -1,20 +1,13 @@
 import type { GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { Icon } from "@iconify/react";
-import {
-  useForm,
-  FieldErrors,
-  FieldError,
-  Merge,
-  FieldErrorsImpl,
-} from "react-hook-form";
+import { useForm, FieldErrors } from "react-hook-form";
 import { useMutation } from "react-query";
 import Button from "../../components/ui/button";
 import Header from "../../components/ui/header";
 import UploadImages from "../../components/create/upload-images";
 import OptionTab from "../../components/create/option-tab";
-import LoadingSpinner from "../../components/ui/loading-spinner";
 import { cls } from "../../utils/class";
 import { createImageUrl } from "../../utils/image-url";
 import axios from "axios";
@@ -101,10 +94,11 @@ const Create: NextPage<CredentialProps> = ({
 
   const validation = (data: CreateState) => {
     let isNotTag;
-    if (typeof data.tag === "string") {
-      if (data.tag.trim() === "") isNotTag = true;
+    if (typeof data.tag === "string" && data.tag.length > 0) {
+      if (data.tag.includes(" ")) isNotTag = true;
       else
-        isNotTag = data.tag
+        isNotTag = !data.tag
+          ?.toString()
           .trim()
           .split(" ")
           .every((tag: string) => tag.includes("#"));
@@ -114,7 +108,7 @@ const Create: NextPage<CredentialProps> = ({
       return setToast("상품가격을 숫자로 기입해주세요.", true);
     } else if (options.category.name === "카테고리") {
       return setToast("카테고리를 선택해 주세요.", true);
-    } else if (!isNotTag) {
+    } else if (isNotTag) {
       return setToast("태그는 공백을 포함할 수 없습니다.", true);
     }
     return true;
@@ -138,9 +132,12 @@ const Create: NextPage<CredentialProps> = ({
 
   const inValid = (error: FieldErrors) => {
     setIsValid(false);
-
+    console.log(error);
     const message =
-      error.desc?.message || error.title?.message || error.price?.message;
+      error.desc?.message ||
+      error.title?.message ||
+      error.price?.message ||
+      error.image?.message;
     setToast(message as string, true);
   };
 
@@ -148,18 +145,6 @@ const Create: NextPage<CredentialProps> = ({
     <>
       <Header goBack />
       <Toast />
-      {/* {toastValue !== "" && (
-        <Toast
-          message={toastValue}
-          error={!isValid as boolean}
-          onClose={closeModal}
-        />
-      )} */}
-      {isLoading && (
-        <div className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
-          <LoadingSpinner />
-        </div>
-      )}
       {isTabOpen && <Overlay />}
       <div className=" px-5 py-5">
         <form onSubmit={handleSubmit(valid, inValid)}>
@@ -232,6 +217,7 @@ const Create: NextPage<CredentialProps> = ({
               text="완료"
               classes="bg-black"
               fontColor="text-white"
+              isLoading={isLoading}
             />
           </div>
         </form>

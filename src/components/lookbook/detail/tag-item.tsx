@@ -12,7 +12,7 @@ const TagItem: NextPage<ProductDataMin[]> = product => {
           key={id}
           className="flex min-w-[200px] items-center justify-between"
         >
-          <Link href={`market/${id}`} className="flex">
+          <Link href={`/market/${id}`} className="flex">
             <img
               src={imgurl[0]?.img}
               alt={title}

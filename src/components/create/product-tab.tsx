@@ -57,7 +57,7 @@ const ProductTagTab: NextPage<ProductTagTabProps> = ({
       : "태그할 수 있는 상품이 없습니다.";
 
   return (
-    <div className="fixed bottom-0 z-30 w-[390px] animate-bottomsheet transition">
+    <div className="fixed bottom-0 z-50 w-[390px] animate-bottomsheet transition">
       <div className="flex h-16 w-full items-center justify-center bg-white p-5 text-center">
         <span className="text-lg font-bold">상품 태그</span>
         <Icon

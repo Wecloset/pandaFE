@@ -1,6 +1,25 @@
+import { NextPage } from "next";
+import { useEffect, useState } from "react";
+import { LookbookData, LookbookDataMin } from "../../types/data-type";
 import MainLookBookItem from "./lookbook-item";
 
-const MainLookbook = () => {
+const MainLookbook: NextPage<{ lookbookData: LookbookData[] }> = ({
+  lookbookData,
+}) => {
+  const [sortingLookbook, setSortingLookBook] = useState<LookbookData[]>([]);
+
+  const sorting = () => {
+    const newArray = lookbookData.sort((a, b) => b.fav.length - a.fav.length);
+    return newArray;
+  };
+
+  useEffect(() => {
+    if (lookbookData) {
+      const newArray = sorting();
+      setSortingLookBook(newArray);
+    }
+  }, [lookbookData]);
+
   return (
     <div>
       <div className="mb-5">
@@ -8,12 +27,10 @@ const MainLookbook = () => {
         <p className="px-5 text-textColor-gray-100">회원 스타일 피드</p>
       </div>
       <div className="border border-t-common-black border-b-common-black">
-        <ul className="flex">
-          {Array(3)
-            .fill(0)
-            .map((_, idx) => (
-              <MainLookBookItem key={idx} username="username" />
-            ))}
+        <ul className="flex overflow-x-scroll">
+          {sortingLookbook.map((look: LookbookDataMin) => (
+            <MainLookBookItem key={look.id} {...look} />
+          ))}
         </ul>
       </div>
     </div>

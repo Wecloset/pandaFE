@@ -30,7 +30,17 @@ const Home: NextPage = () => {
     }
   };
 
+  const getLooks = async () => {
+    try {
+      const { data } = await axiosGet(`/api/look`);
+      return data;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const { data: products } = useQuery("products", getItems);
+  const { data: lookbooks } = useQuery("lookbooks", getLooks);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -51,12 +61,17 @@ const Home: NextPage = () => {
     <>
       <Header />
       {show && <Modal />}
-      <ImageSlide images={bannerImages} imgH="h-72" propH={288} />
+      <ImageSlide
+        images={bannerImages}
+        imgH="h-72"
+        propH={288}
+        slideTime={5500}
+      />
       <div className="space-y-10 py-10">
         <RecommendList productsData={products} />
         <RecentStyle productsData={products} />
-        <MainLookbook />
-        <div className="flex h-56 w-full flex-col items-center justify-center bg-primary-violet py-10 text-white">
+        <MainLookbook lookbookData={lookbooks} />
+        <div className="flex h-52 w-full flex-col items-center justify-center bg-gradient py-10 text-white">
           <p className="text-base">매일 수익이 발생하는 옷장공유</p>
           <p className="mt-1 mb-5 text-2xl">지금 시작해보세요!</p>
           <Button

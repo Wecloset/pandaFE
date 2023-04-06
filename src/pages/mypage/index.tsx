@@ -4,13 +4,18 @@ import { useEffect, useState } from "react";
 import Header from "../../components/ui/header";
 import { cls } from "../../utils/class";
 import { useRecoilValueLoadable } from "recoil";
-import { ProductDataMin, UserData } from "../../types/data-type";
+import {
+  LookbookDataMin,
+  ProductDataMin,
+  UserData,
+} from "../../types/data-type";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import Navigation from "../../components/ui/navigation";
 import LoadingSpinner from "../../components/ui/loading-spinner";
 import { currentUserInfoQuery } from "../../recoil/user";
 import MainProduct from "../../components/main/product-item";
+import Link from "next/link";
 
 const MyPage: NextPage = () => {
   const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
@@ -125,6 +130,24 @@ const MyPage: NextPage = () => {
         <div className="mx-4 grid grid-cols-2 gap-4 pt-5 pb-20">
           {userData?.product.map((item: ProductDataMin) => (
             <MainProduct {...item} key={item.id} imgh="h-[190px]" />
+          ))}
+        </div>
+      )}
+      {category === "looks" && (
+        <div className="mx-4 grid grid-cols-2 gap-4 pt-5 pb-20">
+          {userData?.look.map((item: LookbookDataMin) => (
+            <Link href={`lookbook/${item.id}`} key={item.id}>
+              <div className="h-[200px] w-[172px] border border-common-black bg-slate-200">
+                <Image
+                  src={item.imgurl[0]?.img}
+                  width={160}
+                  height={190}
+                  alt={`룩북 썸네일 이미지${item.id}`}
+                  className="h-full w-full object-cover"
+                  priority
+                />
+              </div>
+            </Link>
           ))}
         </div>
       )}
