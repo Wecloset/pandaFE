@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useCallback, useState } from "react";
+import { apiPost } from "../utils/request";
 
 interface Fav {
   id: number;
@@ -20,7 +20,7 @@ const useFav = (currentUserId: number) => {
       const { currentUserId, productId, lookId } = favConfig;
       const payload = productId ? { productId } : { lookId };
 
-      const data = axios.post(`/api/user/${currentUserId}`, payload);
+      const data = apiPost.UPDATE_USER(currentUserId, payload);
       return data;
     },
     [],

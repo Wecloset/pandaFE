@@ -7,7 +7,6 @@ import { useQuery } from "react-query";
 import Button from "../components/ui/button";
 import RecentStyle from "../components/main/recent-style";
 import MainLookbook from "../components/main/lookbook";
-import { axiosGet } from "../utils/services";
 import RecommendList from "../components/main/recommend";
 import Header from "../components/ui/header";
 import Navigation from "../components/ui/navigation";
@@ -15,32 +14,15 @@ import FloatingButton from "../components/ui/floating-button";
 import useModal from "../hooks/useModal";
 import ImageSlide from "../components/market/detail/image-slide";
 import { bannerImages } from "../lib/banner-images";
+import { apiGet } from "../utils/request";
 
 const Home: NextPage = () => {
   const setEmail = useSetRecoilState(userEmailState);
 
   const { show, setModalState, Modal } = useModal();
 
-  const getItems = async () => {
-    try {
-      const { data } = await axiosGet(`/api/products`);
-      return data;
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const getLooks = async () => {
-    try {
-      const { data } = await axiosGet(`/api/look`);
-      return data;
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const { data: products } = useQuery("products", getItems);
-  const { data: lookbooks } = useQuery("lookbooks", getLooks);
+  const { data: products } = useQuery("products", apiGet.GET_ITEMS);
+  const { data: lookbooks } = useQuery("lookbooks", apiGet.GET_LOOKS);
 
   useEffect(() => {
     const fetchSession = async () => {

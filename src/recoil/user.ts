@@ -3,7 +3,6 @@ import { v1 } from "uuid";
 import { axiosGet } from "../utils/services";
 
 const getUser = async (email: string) => {
-  console.log("get user");
   const { data } = await axiosGet(`/api/user?email=${email}`);
   return data.user;
 };

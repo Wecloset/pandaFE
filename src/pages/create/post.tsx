@@ -16,9 +16,9 @@ import ProductTagTab from "../../components/create/product-tab";
 import { createImageUrl } from "../../utils/image-url";
 import { useMutation } from "react-query";
 import { useRouter } from "next/router";
-import axios from "axios";
 import Overlay from "../../components/ui/overlay";
 import useToast from "../../hooks/useToast";
+import { axiosPost } from "../../utils/request";
 
 const CreatePost: NextPage<CredentialProps> = ({
   region,
@@ -67,7 +67,7 @@ const CreatePost: NextPage<CredentialProps> = ({
     tagIdList: number[];
   }) => {
     const { data, imageurlList, tagIdList } = payload;
-    const { data: response } = await axios.post("/api/look", {
+    const response = await axiosPost("CREATE_POST", {
       data,
       imageurlList,
       tagIdList,

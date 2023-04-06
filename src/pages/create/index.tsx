@@ -19,6 +19,7 @@ import { CreateState, CredentialProps } from "../../types/create-type";
 import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
 import Overlay from "../../components/ui/overlay";
 import useToast from "../../hooks/useToast";
+import { axiosPost } from "../../utils/request";
 
 const Create: NextPage<CredentialProps> = ({
   region,
@@ -72,7 +73,7 @@ const Create: NextPage<CredentialProps> = ({
     imageurlList: string[];
   }) => {
     const { data, imageurlList } = payload;
-    const { data: response } = await axios.post("/api/products", {
+    const response = await axiosPost("CREATE_ITEM", {
       data,
       imageurlList,
       options,
@@ -83,6 +84,7 @@ const Create: NextPage<CredentialProps> = ({
 
   const { mutate, isLoading } = useMutation(createProduct, {
     onSuccess: ({ message }) => {
+      console.log(message);
       setToast(message, false);
       refreshUserInfo();
       setTimeout(() => router.replace("/mypage"), 1500);

@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import Header from "../../components/ui/header";
 import profile from "../../../public/asset/image/addprofile.png";
 import Image from "next/image";
-import axios from "axios";
 import { FormEvent, useState } from "react";
 import useUpload from "../../hooks/useUpload";
 import { useMutation, useQuery } from "react-query";
@@ -13,6 +12,7 @@ import { signOut } from "next-auth/react";
 import Button from "../../components/ui/button";
 import { cls } from "../../utils/class";
 import useToast from "../../hooks/useToast";
+import { apiPost, axiosGet } from "../../utils/request";
 
 interface CredentialProps {
   region: string;
@@ -26,6 +26,7 @@ const SignProfile: NextPage<CredentialProps> = ({
   secretKey,
 }) => {
   const router = useRouter();
+  const userEmail = router.query.email;
 
   const credentials = { region, accessKey, secretKey };
 
@@ -35,11 +36,10 @@ const SignProfile: NextPage<CredentialProps> = ({
 
   const [pass, setPass] = useState<boolean>(false); //닉네임 중복 통과 state
 
+  const getUser = () => axiosGet("GET_USER", userEmail as string);
+
   //유저 정보를 query 로 전달받아서 signUser 의 user.id 을 이용해 다음단계이어감
-  const { data: signUser } = useQuery("userData", async () => {
-    const { data } = await axios.get(`/api/user?email=${router.query.email}`);
-    return data;
-  });
+  const { data: signUser } = useQuery("userData", getUser);
 
   const {
     register,
@@ -58,10 +58,10 @@ const SignProfile: NextPage<CredentialProps> = ({
 
   //닉네임 등록
   const createNickName = async (createNick: string) => {
-    const { data } = await axios.post("/api/user/nickname", {
+    const response = await apiPost.CREATE_NICKNAME({
       nickname: createNick,
     });
-    return data;
+    return response;
   };
 
   const { mutate: nickMutate, isLoading: nickLoading } = useMutation(
@@ -85,7 +85,7 @@ const SignProfile: NextPage<CredentialProps> = ({
     const imageurl = createImageUrl(enteredImage.file, "profile");
     userProfile.image = imageurl;
 
-    const { data: response } = await axios.post("/api/auth/profile", {
+    const response = await apiPost.CREATE_PROFILE({
       userProfile,
       userData: signUser.user.id,
     });
@@ -96,7 +96,7 @@ const SignProfile: NextPage<CredentialProps> = ({
   const { mutate: profileMutate, isLoading: profileLoading } = useMutation(
     createProfile,
     {
-      onSuccess: ({ message }) => {
+      onSuccess: () => {
         router.replace("/sign/welcome");
         signOut({ redirect: false }); //회원가입을 할 경우에 로그인 되어있어서 강제 로그아웃시킴
       },

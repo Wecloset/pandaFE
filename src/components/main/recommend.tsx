@@ -93,7 +93,6 @@ const RecommendList: NextPage<RecommendProps> = ({ productsData }) => {
   };
 
   useEffect(() => {
-    console.log(state, userContents);
     if (!userContents || Object.entries(userContents).length === 0) return;
     const { keywords, nickname } = userContents;
     setKeyword(keywords[0]?.tag);
@@ -102,7 +101,6 @@ const RecommendList: NextPage<RecommendProps> = ({ productsData }) => {
   }, [state]);
 
   useEffect(() => {
-    console.log(productsData);
     if (productsData?.length > 0 && state === "hasValue")
       setContents(productsData);
   }, [productsData, state]);

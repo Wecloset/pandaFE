@@ -1,5 +1,4 @@
 import { Icon } from "@iconify/react";
-import axios from "axios";
 import type { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -9,6 +8,7 @@ import Header from "../../components/ui/header";
 import MainProduct from "../../components/main/product-item";
 import useToast from "../../hooks/useToast";
 import { ProductDataMin } from "../../types/data-type";
+import { apiGet } from "../../utils/request";
 
 interface KeywordInterface {
   id: number;
@@ -84,8 +84,8 @@ const Search: NextPage = () => {
   }, [router.query.word]);
 
   useQuery("taglist", async () => {
-    const { data } = await axios.get("/api/search/hashtag");
-    setKeywords(data.allHashTags.map((x: KeywordInterface) => x.tag));
+    const response = await apiGet.SEARCH_HASHTAG();
+    setKeywords(response.allHashTags.map((x: KeywordInterface) => x.tag));
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,10 +101,8 @@ const Search: NextPage = () => {
   const { refetch, isLoading } = useQuery(
     ["getProduct", router.query.word],
     async () => {
-      const { data } = await axios.get(
-        `/api/search?keyword=${router.query.word}`,
-      );
-      return data;
+      const response = await apiGet.SEARCH(router.query.word as string);
+      return response;
     },
     {
       onSuccess: data => {

@@ -9,7 +9,6 @@ import {
   priceAddComma,
 } from "../../utils/markets";
 import { useRecoilValueLoadable } from "recoil";
-import { axiosGet } from "../../utils/services";
 import { useMutation, useQuery } from "react-query";
 import useFav from "../../hooks/useFav";
 import { useRouter } from "next/router";
@@ -19,6 +18,7 @@ import LoadingSpinner from "../../components/ui/loading-spinner";
 import useModal from "../../hooks/useModal";
 import Overlay from "../../components/ui/overlay";
 import { updateViews } from "../../utils/market-view";
+import { apiGet } from "../../utils/request";
 
 const Product: NextPage = () => {
   const router = useRouter();
@@ -46,12 +46,8 @@ const Product: NextPage = () => {
   }, [state]);
 
   const getProduct = async () => {
-    try {
-      const { data } = await axiosGet(`/api/products/${productId}`);
-      return data.product;
-    } catch (err) {
-      console.log(err);
-    }
+    const data = await apiGet.GET_ITEM(productId as string);
+    return data.product;
   };
 
   const { data: product, isLoading } = useQuery("getData", getProduct, {
@@ -60,8 +56,8 @@ const Product: NextPage = () => {
   });
 
   const { mutate } = useMutation(updateFav, {
-    onSuccess: ({ data }) => {
-      console.log(data.message);
+    onSuccess: ({ message }) => {
+      console.log(message);
       changeCount();
     },
     onError: ({ response }) => {
