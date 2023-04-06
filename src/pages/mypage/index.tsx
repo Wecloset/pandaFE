@@ -11,6 +11,7 @@ import Navigation from "../../components/ui/navigation";
 import LoadingSpinner from "../../components/ui/loading-spinner";
 import { currentUserInfoQuery } from "../../recoil/user";
 import MainProduct from "../../components/main/product-item";
+import withAuth from "../auth";
 
 const MyPage: NextPage = () => {
   const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
@@ -134,4 +135,4 @@ const MyPage: NextPage = () => {
   );
 };
 
-export default MyPage;
+export default withAuth(MyPage);

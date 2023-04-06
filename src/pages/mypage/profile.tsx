@@ -17,8 +17,9 @@ import { taglist } from "../../lib/tag-data";
 import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
 import { CredentialProps } from "../../types/create-type";
 import { createImageUrl } from "../../utils/image-url";
+import withAuth from "../auth";
 
-const ProfileEdit: NextPage<CredentialProps> = ({
+const ProfileEdit: NextPage<CredentialProps | any> = ({
   region,
   accessKey,
   secretKey,
@@ -329,4 +330,4 @@ export const getServerSideProps: GetServerSideProps = async () => {
   };
 };
 
-export default ProfileEdit;
+export default withAuth(ProfileEdit);

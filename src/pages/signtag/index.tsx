@@ -9,6 +9,7 @@ import { useMutation, useQuery } from "react-query";
 import LoadingSpinner from "../../components/ui/loading-spinner";
 import Button from "../../components/ui/button";
 import useToast from "../../hooks/useToast";
+import withAuth from "../auth";
 
 interface TagData {
   userId: number;
@@ -146,4 +147,4 @@ const SignTag: NextPage = () => {
   );
 };
 
-export default SignTag;
+export default withAuth(SignTag);

@@ -14,6 +14,7 @@ import { signOut } from "next-auth/react";
 import Button from "../../components/ui/button";
 import { cls } from "../../utils/class";
 import useToast from "../../hooks/useToast";
+import withAuth from "../auth";
 
 interface CredentialProps {
   region: string;
@@ -21,7 +22,7 @@ interface CredentialProps {
   secretKey: string;
 }
 
-const SignProfile: NextPage<CredentialProps> = ({
+const SignProfile: NextPage<CredentialProps | any> = ({
   region,
   accessKey,
   secretKey,
@@ -187,7 +188,6 @@ const SignProfile: NextPage<CredentialProps> = ({
     </>
   );
 };
-
 export const getStaticProps: GetStaticProps = async () => {
   const REGION = process.env.AWS_REGION ? process.env.AWS_REGION : null;
   const ACCESS_KEY = process.env.AWS_KEY ? process.env.AWS_KEY : null;
@@ -204,4 +204,4 @@ export const getStaticProps: GetStaticProps = async () => {
   };
 };
 
-export default SignProfile;
+export default withAuth(SignProfile);

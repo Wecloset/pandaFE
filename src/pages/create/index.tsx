@@ -2,13 +2,7 @@ import type { GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import {
-  useForm,
-  FieldErrors,
-  FieldError,
-  Merge,
-  FieldErrorsImpl,
-} from "react-hook-form";
+import { useForm, FieldErrors } from "react-hook-form";
 import { useMutation } from "react-query";
 import Button from "../../components/ui/button";
 import Header from "../../components/ui/header";
@@ -26,8 +20,9 @@ import { CreateState, CredentialProps } from "../../types/create-type";
 import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
 import Overlay from "../../components/ui/overlay";
 import useToast from "../../hooks/useToast";
+import withAuth from "../auth";
 
-const Create: NextPage<CredentialProps> = ({
+const Create: NextPage<CredentialProps | any> = ({
   region,
   accessKey,
   secretKey,
@@ -265,4 +260,4 @@ export const getStaticProps: GetStaticProps = async () => {
   };
 };
 
-export default Create;
+export default withAuth(Create);

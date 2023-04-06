@@ -16,9 +16,9 @@ const Error404: NextPage = () => {
         <Link href="/">
           <Button
             text="홈으로 이동"
-            color="bg-black"
+            classes="bg-black hover:bg-primary-green"
             fontColor="text-white"
-            hover="hover:bg-primary-green"
+            type={"button"}
           />
         </Link>
       </div>
