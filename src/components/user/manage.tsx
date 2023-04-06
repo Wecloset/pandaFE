@@ -13,7 +13,7 @@ const UserManage: NextPage<{
   const router = useRouter();
 
   const signout = () => {
-    router.replace("/").then(() => signOut());
+    router.replace("/login").then(() => signOut());
   };
 
   const { mutate: userMutate } = useMutation(
