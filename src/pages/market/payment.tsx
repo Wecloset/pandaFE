@@ -55,8 +55,9 @@ const Payment: NextPage = () => {
         </div>
       </div>
       <Button
+        type="button"
         text="결제하기"
-        color="bg-black"
+        classes="bg-black"
         fontColor="text-white"
         position="absolute bottom-0"
       />

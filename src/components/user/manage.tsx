@@ -4,7 +4,7 @@ import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useMutation } from "react-query";
 import { UserData } from "../../types/data-type";
-import { axiosDelete } from "../../utils/services";
+import { axiosDelete } from "../../utils/request";
 
 const UserManage: NextPage<{
   userData: UserData;

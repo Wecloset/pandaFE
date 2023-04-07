@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import logo from "../../../public/asset/image/logo.png";
 import { useRouter } from "next/router";
-import { signOut } from "next-auth/react";
 
 interface HeaderProps {
   goBack?: boolean;
