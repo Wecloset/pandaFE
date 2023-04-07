@@ -1,5 +1,4 @@
 import { Icon } from "@iconify/react";
-import axios from "axios";
 import type { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -9,6 +8,7 @@ import Header from "../../components/ui/header";
 import MainProduct from "../../components/main/product-item";
 import useToast from "../../hooks/useToast";
 import { ProductDataMin } from "../../types/data-type";
+import { apiGet } from "../../utils/request";
 
 interface KeywordInterface {
   id: number;
@@ -84,8 +84,8 @@ const Search: NextPage = () => {
   }, [router.query.word]);
 
   useQuery("taglist", async () => {
-    const { data } = await axios.get("/api/search/hashtag");
-    setKeywords(data.allHashTags.map((x: KeywordInterface) => x.tag));
+    const response = await apiGet.SEARCH_HASHTAG();
+    setKeywords(response.allHashTags.map((x: KeywordInterface) => x.tag));
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,10 +101,8 @@ const Search: NextPage = () => {
   const { refetch, isLoading } = useQuery(
     ["getProduct", router.query.word],
     async () => {
-      const { data } = await axios.get(
-        `/api/search?keyword=${router.query.word}`,
-      );
-      return data;
+      const response = await apiGet.SEARCH(router.query.word as string);
+      return response;
     },
     {
       onSuccess: data => {
@@ -173,11 +171,14 @@ const Search: NextPage = () => {
               <div className="mt-12">
                 <h2 className="mb-3 text-base font-bold">최근 검색어</h2>
                 {session.status !== "unauthenticated" && (
-                  <ul className="ml-2 cursor-pointer space-y-2 text-lg text-textColor-gray-50">
+                  <ul className="cursor-pointer space-y-2 text-lg text-textColor-gray-50">
                     <>
                       {searches.map((query, index) => (
-                        <li className="flex items-center" key={query}>
-                          {query}
+                        <li
+                          className="flex items-center justify-between"
+                          key={query}
+                        >
+                          <span className="text-common-black">{query}</span>
                           <Icon
                             icon="ic:baseline-clear"
                             aria-label="검색어 삭제"
@@ -220,11 +221,16 @@ const Search: NextPage = () => {
                   {matchedKeywords.map(keyword => (
                     <li
                       key={keyword}
-                      className="flex h-12 w-full cursor-pointer items-center overflow-hidden bg-red-50 p-2 pt-2 text-xl"
+                      className="flex h-12 w-full cursor-pointer items-center gap-2 overflow-hidden p-2 pt-2 text-lg"
                       onMouseDown={() => {
                         searchKeyword(keyword);
                       }}
                     >
+                      <Icon
+                        icon="ion:search-sharp"
+                        className="text-common-gray"
+                        aria-label="검색하기"
+                      />
                       {keyword}
                     </li>
                   ))}

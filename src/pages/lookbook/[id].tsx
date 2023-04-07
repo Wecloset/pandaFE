@@ -10,15 +10,14 @@ import Header from "../../components/ui/header";
 import LoadingSpinner from "../../components/ui/loading-spinner";
 import PostItem from "../../components/lookbook/detail/post-item";
 import { LookbookData } from "../../types/data-type";
-import { axiosGet } from "../../utils/services";
 import { useInView } from "react-intersection-observer";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { FieldValues, useForm } from "react-hook-form";
 import { useRecoilValueLoadable } from "recoil";
 import { currentUserInfoQuery } from "../../recoil/user";
 import { useRouter } from "next/router";
 import useModal from "../../hooks/useModal";
+import { apiGet, apiPost } from "../../utils/request";
 
 const Post: NextPage = () => {
   const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
@@ -45,33 +44,18 @@ const Post: NextPage = () => {
   const [postId, setPostId] = useState<number>(0);
   const [commentId, setCommentId] = useState<number>(0);
 
-  const getOnePost = async () => {
-    try {
-      const { data } = await axiosGet(`/api/look/${lookbookId}`);
-      return data;
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const { data: postData, isLoading } = useQuery<LookbookData>(
     "getPost",
-    getOnePost,
+    () => apiGet.GET_POST(lookbookId as string),
     {
       enabled: !!lookbookId,
       notifyOnChangeProps: "tracked",
     },
   );
 
-  const getAllPost = async ({ pageParam = "" }: { pageParam: string }) => {
-    try {
-      const { data } = await axios.post(`/api/look/post?cursor=${pageParam}`, {
-        lookbookId,
-      });
-      return data;
-    } catch (err) {
-      console.log(err);
-    }
+  const getAllPost = ({ pageParam = "" }: { pageParam: string }) => {
+    const response = apiPost.GET_ALL_POST(lookbookId as string, pageParam);
+    return response;
   };
 
   const {
@@ -103,23 +87,21 @@ const Post: NextPage = () => {
 
   const submitComment = async (comment?: string) => {
     const payload = { comment, userId };
-    const url = isUpdating
-      ? `/api/look/comment?commentId=${commentId}`
-      : `/api/look/comment?postId=${postId}`;
-
-    const { data } = await axios.post(url, payload);
-    return data;
+    const response = !isUpdating
+      ? await apiPost.CREATE_COMMENT(postId, payload)
+      : await apiPost.UPDATE_COMMENT(commentId, payload);
+    return response;
   };
 
   const { mutate: commentMutate, isLoading: loadingComment } = useMutation(
     "comment",
     submitComment,
     {
-      onSuccess: data => {
+      onSuccess: ({ message }) => {
         queryClient.invalidateQueries("getPost");
         reset();
       },
-      onError: ({ response }) => {
+      onError: () => {
         reset();
       },
     },

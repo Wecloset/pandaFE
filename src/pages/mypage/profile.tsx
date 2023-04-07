@@ -1,11 +1,11 @@
 import { Icon } from "@iconify/react";
-import axios from "axios";
 import type { GetServerSideProps, NextPage } from "next";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
+import Button from "../../components/ui/button";
 import Header from "../../components/ui/header";
 import LoadingSpinner from "../../components/ui/loading-spinner";
 import Navigation from "../../components/ui/navigation";
@@ -17,6 +17,7 @@ import { taglist } from "../../lib/tag-data";
 import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
 import { CredentialProps } from "../../types/create-type";
 import { createImageUrl } from "../../utils/image-url";
+import { apiPost } from "../../utils/request";
 
 const ProfileEdit: NextPage<CredentialProps> = ({
   region,
@@ -76,15 +77,12 @@ const ProfileEdit: NextPage<CredentialProps> = ({
     nickButtonText === "완료" && isNick && nick !== "" && nickMutate(nick);
   };
 
-  const { mutate: nickMutate } = useMutation(
+  const { mutate: nickMutate, isLoading: nickNameLoading } = useMutation(
     async (nick: string) => {
       if (!userContents) return;
       // 중복확인
-      const { data } = await axios.post("/api/user/nickname", {
-        headers: { "Content-Type": "application/json" },
-        nickname: nick,
-      });
-      return data;
+      const response = await apiPost.CREATE_NICKNAME({ nickname: nick });
+      return response;
     },
     {
       onSuccess: ({ message }) => {
@@ -93,11 +91,8 @@ const ProfileEdit: NextPage<CredentialProps> = ({
         setIsNick(false);
         setNick("");
         // 중복확인 통과하면 닉네임변경
-        axios
-          .post(`/api/user/nickname?id=${userContents.id}`, {
-            headers: { "Content-Type": "application/json" },
-            nickname: nick,
-          })
+        apiPost
+          .UPDATE_NICKNAME(userContents.id, { nickname: nick })
           .then(() => refreshUserInfo());
       },
       onError: ({ response }) => {
@@ -126,14 +121,11 @@ const ProfileEdit: NextPage<CredentialProps> = ({
   };
 
   //태그 변경
-  const { mutate: tagMutate } = useMutation(
+  const { mutate: tagMutate, isLoading: tagLoading } = useMutation(
     async (tags: string[]) => {
       if (!userContents) return;
-      const { data } = await axios.post(
-        `/api/user/tag?update=${userContents.id}`,
-        tags,
-      );
-      return data;
+      const response = await apiPost.UPDATE_TAG(userContents.id, tags);
+      return response;
     },
     {
       onSuccess: ({ message }) => {
@@ -160,11 +152,10 @@ const ProfileEdit: NextPage<CredentialProps> = ({
     uploadImage(imgsrc[0].file, "profile");
     const imageurl = createImageUrl(imgsrc[0].file, "profile");
 
-    const { data: response } = await axios.post("/api/user/image", {
+    const response = await apiPost.UPDATE_PROFILE({
       imageurl,
       userData: userContents.id,
     });
-
     return response;
   };
 
@@ -231,12 +222,14 @@ const ProfileEdit: NextPage<CredentialProps> = ({
                 disabled={!isNick}
                 onChange={onChange}
               />
-              <button
+              <Button
                 type="submit"
-                className=" ml-3 h-9 w-2/5 bg-black text-white"
-              >
-                {nickButtonText}
-              </button>
+                btnWrapClasses="ml-3 bg-black"
+                divWidth="w-2/5"
+                height="h-9"
+                text={nickButtonText}
+                isLoading={nickNameLoading}
+              />
             </form>
             <p className="mt-5 px-2 text-sm text-textColor-gray-100">키워드</p>
             <form>
@@ -246,13 +239,15 @@ const ProfileEdit: NextPage<CredentialProps> = ({
                     ({ tag }: { tag: string }) => tag,
                   )}
                 </div>
-                <button
+                <Button
                   type="button"
-                  className=" ml-3 h-9 w-2/5 bg-black text-white"
+                  btnWrapClasses="ml-3 bg-black"
+                  divWidth="w-2/5"
+                  height="h-9"
+                  text={nickButtonText}
+                  isLoading={tagLoading}
                   onClick={() => setIsTab(true)}
-                >
-                  {nickButtonText}
-                </button>
+                />
               </div>
             </form>
           </div>

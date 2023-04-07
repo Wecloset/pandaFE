@@ -1,10 +1,10 @@
 import { Icon } from "@iconify/react";
-import axios from "axios";
 import { NextPage } from "next";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useMutation } from "react-query";
 import { UserData } from "../../types/data-type";
+import { axiosDelete } from "../../utils/services";
 
 const UserManage: NextPage<{
   userData: UserData;
@@ -17,10 +17,7 @@ const UserManage: NextPage<{
   };
 
   const { mutate: userMutate } = useMutation(
-    async (id: number) => {
-      const response = await axios.delete(`/api/user/${id}`);
-      return response;
-    },
+    (id: number) => axiosDelete(id as unknown as string),
     {
       onSuccess: () => {
         setToast("회원탈퇴가 완료되었습니다", false);
@@ -34,7 +31,7 @@ const UserManage: NextPage<{
 
   const handleDelete = () => {
     if (!userData) return;
-    userMutate(userData.id);
+    if (typeof userData.id === "number") userMutate(userData.id);
   };
 
   return (

@@ -10,15 +10,15 @@ import UploadImages from "../../components/create/upload-images";
 import OptionTab from "../../components/create/option-tab";
 import { cls } from "../../utils/class";
 import { createImageUrl } from "../../utils/image-url";
-import axios from "axios";
 import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
 import useUpload from "../../hooks/useUpload";
 import useOptions from "../../hooks/useOptions";
 import { tabData } from "../../lib/fake-data";
-import { CreateState, CredentialProps } from "../../types/create-type";
+import { CreateState, CredentialProps, Options } from "../../types/create-type";
 import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
 import Overlay from "../../components/ui/overlay";
 import useToast from "../../hooks/useToast";
+import { apiPost } from "../../utils/request";
 
 const Create: NextPage<CredentialProps> = ({
   region,
@@ -72,7 +72,12 @@ const Create: NextPage<CredentialProps> = ({
     imageurlList: string[];
   }) => {
     const { data, imageurlList } = payload;
-    const { data: response } = await axios.post("/api/products", {
+    const response = await apiPost.CREATE_ITEM<{
+      data: FormData;
+      imageurlList: string[];
+      options: Options;
+      userId: number;
+    }>({
       data,
       imageurlList,
       options,
@@ -83,6 +88,7 @@ const Create: NextPage<CredentialProps> = ({
 
   const { mutate, isLoading } = useMutation(createProduct, {
     onSuccess: ({ message }) => {
+      console.log(message);
       setToast(message, false);
       refreshUserInfo();
       setTimeout(() => router.replace("/mypage"), 1500);

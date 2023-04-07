@@ -3,7 +3,6 @@ import Header from "../../components/ui/header";
 import Navigation from "../../components/ui/navigation";
 import LookItem from "../../components/lookbook/look-item";
 import FloatingButton from "../../components/ui/floating-button";
-import { axiosGet } from "../../utils/services";
 import { useQuery } from "react-query";
 import LoadingSpinner from "../../components/ui/loading-spinner";
 import { LookbookData } from "../../types/data-type";
@@ -11,6 +10,7 @@ import { useRecoilValueLoadable } from "recoil";
 import { currentUserInfoQuery } from "../../recoil/user";
 import { useEffect, useState } from "react";
 import useModal from "../../hooks/useModal";
+import { apiGet } from "../../utils/request";
 
 const Lookbook: NextPage = () => {
   const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
@@ -23,16 +23,7 @@ const Lookbook: NextPage = () => {
     if (userContents) setUserId(userContents.id);
   }, [state]);
 
-  const getAllLooks = async () => {
-    try {
-      const { data } = await axiosGet("/api/look");
-      return data;
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const { data: allData, isLoading } = useQuery("lookbooks", getAllLooks);
+  const { data: allData, isLoading } = useQuery("lookbooks", apiGet.GET_LOOKS);
 
   return (
     <>

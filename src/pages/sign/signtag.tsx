@@ -4,10 +4,10 @@ import { taglist } from "../../lib/tag-data";
 import { Icon } from "@iconify/react";
 import Header from "../../components/ui/header";
 import { useRouter } from "next/router";
-import axios from "axios";
 import { useMutation, useQuery } from "react-query";
 import Button from "../../components/ui/button";
 import useToast from "../../hooks/useToast";
+import { apiGet, apiPost } from "../../utils/request";
 
 interface TagData {
   userId: number;
@@ -17,6 +17,7 @@ interface TagData {
 
 const SignTag: NextPage = () => {
   const router = useRouter();
+  const userEmail = router.query.email;
 
   const { setToast, Toast } = useToast();
 
@@ -24,20 +25,16 @@ const SignTag: NextPage = () => {
 
   const allSelectedTag = taglist.value;
 
+  const getUser = () => apiGet.GET_USER(userEmail as string);
+
   //유저 정보를 query 로 전달받아서 signUser 의 user.id 을 이용해 다음단계이어감
-  const { data: signUser } = useQuery("userData", async () => {
-    const { data } = await axios.get(`/api/user?email=${router.query.email}`);
-    return data;
-  });
+  const { data: signUser } = useQuery("userData", getUser);
 
   //태그 등록
 
   const postTagData = async (tagData: TagData) => {
     const { userId, tags } = tagData;
-    const { data: response } = await axios.post(
-      `/api/user/tag?post=${userId}`,
-      tags,
-    );
+    const response = await apiPost.CREATE_TAG(tags, userId);
     return response;
   };
 
@@ -61,7 +58,7 @@ const SignTag: NextPage = () => {
   const handleFormSubmit = (event: FormEvent) => {
     event.preventDefault();
     const tagData: TagData = {
-      userId: signUser?.user?.id,
+      userId: signUser.user.id,
       tags: selectedTag,
     };
     mutate(tagData);

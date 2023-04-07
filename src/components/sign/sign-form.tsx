@@ -1,4 +1,3 @@
-import axios from "axios";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
@@ -7,10 +6,10 @@ import useToast from "../../hooks/useToast";
 import { errorMessage } from "../../lib/error";
 import { cls } from "../../utils/class";
 import { regExgPw, regExpEm } from "../../utils/regInput";
+import { apiPost } from "../../utils/request";
 import Button from "../ui/button";
-import LoadingSpinner from "../ui/loading-spinner";
 
-interface SignProps {
+export interface SignProps {
   email: string;
   password: string;
   passwordConfirm: string;
@@ -30,8 +29,8 @@ const SignForm: NextPage = () => {
     mode: "onChange",
   });
 
-  const createUser = async (userData: SignProps) => {
-    const { data: response } = await axios.post("/api/auth/sign", userData);
+  const createUser = (userData: SignProps) => {
+    const response = apiPost.CREATE_USER(userData);
     return response;
   };
 

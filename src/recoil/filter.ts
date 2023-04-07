@@ -2,12 +2,7 @@ import { atom, selector, selectorFamily } from "recoil";
 import { v1 } from "uuid";
 import { MainProductData } from "../types/data-type";
 import { priceMapping, priceWord } from "../utils/price-mapping";
-import { axiosGet } from "../utils/services";
-
-const getAllProducts = async () => {
-  const { data } = await axiosGet("/api/products");
-  return data;
-};
+import { apiGet } from "../utils/request";
 
 const categoryNameState = atom<string>({
   key: `categoryName/${v1()}`,
@@ -27,7 +22,7 @@ const wordListState = atom<string[]>({
 const marketDataQuery = selector({
   key: `marketQuery/${v1()}`,
   get: async () => {
-    const response = await getAllProducts();
+    const response = await apiGet.GET_ITEMS();
     if (response.err) throw response.error;
     return response;
   },
