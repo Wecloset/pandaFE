@@ -17,8 +17,6 @@ const localStorageEffect: <T>(key: string) => AtomEffect<T> =
     }
     // onSet -> Subscribe to changes in the atom value.
     onSet((newValue, oldValue, isReset) => {
-      console.log(newValue);
-      console.log(isReset);
       isReset
         ? localStorage.removeItem(key)
         : localStorage.setItem(key, JSON.stringify(newValue));
