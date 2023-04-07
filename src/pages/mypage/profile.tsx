@@ -311,9 +311,7 @@ const ProfileEdit: NextPage<CredentialProps> = ({
 export const getServerSideProps: GetServerSideProps = async () => {
   const REGION = process.env.AWS_REGION ? process.env.AWS_REGION : null;
   const ACCESS_KEY = process.env.AWS_KEY ? process.env.AWS_KEY : null;
-  const SECRECT_KEY = process.env.AWS_SECRET_KEY
-    ? process.env.AWS_SECRET_KEY
-    : null;
+  const SECRECT_KEY = process.env.AWS_SECRET ? process.env.AWS_SECRET : null;
 
   return {
     props: {
