@@ -1,3 +1,5 @@
+import { FormEvent, MouseEvent } from "react";
+import { UseFormRegister, UseFormSetValue } from "react-hook-form";
 import { ProductData } from "./data-type";
 
 export interface CreateState {
@@ -23,7 +25,7 @@ export interface OptionTabProps {
   isTabOpen?: boolean;
   selectOptionItem?: (event: MouseEvent<HTMLLIElement>, name: string) => void;
   submitBrand?: (event: FormEvent<HTMLFormElement>, brandName: string) => void;
-  closeTab: () => void;
+  closeTab?: () => void;
   register?: UseFormRegister<CreateState>;
   setValue?: UseFormSetValue<CreateState>;
   onSetItems?: (list: ProductData[]) => void;

@@ -1,21 +1,26 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
-import { useContext } from "react";
-import { FilterContext } from "../../store/filter-context";
+import { useRecoilState } from "recoil";
+import { wordListState } from "../../recoil/filter";
 
 const FilterList: NextPage = () => {
-  const { wordList, removeWord } = useContext(FilterContext);
+  const [wordList, setWordList] = useRecoilState(wordListState);
+
+  const removeWord = (word: string) => {
+    const newWordList = wordList.filter(item => item !== word);
+    setWordList(newWordList);
+  };
 
   const content =
     wordList.length > 0 ? (
-      <ul
-        className="flex gap-2 overflow-x-scroll pt-[18px] scrollbar-hide 
-      [&_svg]:ml-1 [&_svg]:-mt-0.5 [&_svg]:cursor-pointer [&_svg]:text-textColor-gray-50"
-      >
+      <ul className="flex flex-wrap gap-2 pt-[18px]">
         {wordList.map((item, i) => {
           const key = `${item}-${i}`;
           return (
-            <li key={key} className="flex items-center">
+            <li
+              key={key}
+              className="flex cursor-pointer items-center rounded-full bg-gray-200 px-3 py-2"
+            >
               {item}
               <Icon
                 icon="ic:baseline-clear"

@@ -28,7 +28,7 @@ const productDetailHandler = async (
   }
 
   if (req.method === "POST") {
-    const { currentView } = req.body.data;
+    const { currentView } = req.body;
 
     try {
       await client.product.update({

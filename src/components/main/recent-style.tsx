@@ -48,7 +48,7 @@ const RecentStyle: NextPage<{ productsData: ProductData[] }> = ({
           onTransitionEnd={transitionEnd}
           className={cls(
             `flex gap-3 [&>li]:w-[140px] [&>li]:flex-shrink-0 ${translateX}`,
-            isMoving ? "transition duration-300 ease-out" : "",
+            isMoving ? "transition duration-700 ease-in-out" : "",
           )}
         >
           <li>
@@ -66,6 +66,20 @@ const RecentStyle: NextPage<{ productsData: ProductData[] }> = ({
           <li>
             <MainProduct
               {...(recentItems.at(0) as ProductData)}
+              imgw="w-[140px]"
+              imgh="h-[160px]"
+            />
+          </li>
+          <li>
+            <MainProduct
+              {...(recentItems.at(1) as ProductData)}
+              imgw="w-[140px]"
+              imgh="h-[160px]"
+            />
+          </li>
+          <li>
+            <MainProduct
+              {...(recentItems.at(2) as ProductData)}
               imgw="w-[140px]"
               imgh="h-[160px]"
             />

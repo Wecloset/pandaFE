@@ -1,10 +1,11 @@
 import { NextPage } from "next";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Icon } from "@iconify/react";
-import Button from "../../button";
+import Button from "../../ui/button";
 import FilterTab from "./filter-tab";
 import { priceList, tabData } from "../../../lib/fake-data";
-import { FilterContext } from "../../../store/filter-context";
+import { useSetRecoilState } from "recoil";
+import { wordListState } from "../../../recoil/filter";
 
 const FilterOverlay: NextPage<{
   closeOverlay: () => void;
@@ -12,7 +13,7 @@ const FilterOverlay: NextPage<{
   const [isOpen, setIsOpen] = useState<string | null>("STYLE");
   const [filterWords, setFilterWords] = useState<string[]>([]);
 
-  const { updateList } = useContext(FilterContext);
+  const setWordList = useSetRecoilState(wordListState);
 
   const openTab = (event: React.MouseEvent<HTMLDivElement>) => {
     const target = event.target as HTMLDivElement;
@@ -26,7 +27,7 @@ const FilterOverlay: NextPage<{
   };
 
   const updateFilterList = () => {
-    updateList(filterWords);
+    setWordList(filterWords);
     setTimeout(() => {
       closeOverlay();
     }, 100);
@@ -47,7 +48,7 @@ const FilterOverlay: NextPage<{
         <FilterTab
           onClick={openTab}
           name="STYLE"
-          data={tabData.style}
+          data={tabData.style.slice(0, 20)}
           isOpen={isOpen}
           setList={updateTemporaryList}
           wordList={filterWords}
@@ -61,8 +62,10 @@ const FilterOverlay: NextPage<{
           wordList={filterWords}
         />
         <Button
+          type="button"
           text="검색"
-          color="bg-black"
+          classes="bg-black"
+          btnWrapClasses="p-5"
           fontColor="text-white"
           position="absolute bottom-2"
           onClick={updateFilterList}

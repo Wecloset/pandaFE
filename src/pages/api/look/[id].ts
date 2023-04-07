@@ -17,6 +17,7 @@ const lookbookDetail = async (req: NextApiRequest, res: NextApiResponse) => {
           hashTag: true,
           product: {
             select: {
+              id: true,
               title: true,
               price: true,
               brand: true,

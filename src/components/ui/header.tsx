@@ -2,24 +2,24 @@ import { NextPage } from "next";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import Image from "next/image";
-import logo from "../../public/asset/image/logo.png";
+import logo from "../../../public/asset/image/logo.png";
 import { useRouter } from "next/router";
-import { signOut } from "next-auth/react";
 
 interface HeaderProps {
   goBack?: boolean;
   text?: string;
   noGoBack?: boolean;
+  goHome?: boolean;
 }
 
 //임시로 sign out 설정
 
-const Header: NextPage<HeaderProps> = ({ goBack, text, noGoBack }) => {
+const Header: NextPage<HeaderProps> = ({ goBack, text, noGoBack, goHome }) => {
   const router = useRouter();
   return (
     <>
       {!goBack ? (
-        <div className="sticky top-0 z-10 flex h-[60px] items-center justify-between border-b border-b-common-black bg-white px-5">
+        <div className="sticky top-0 z-50 flex h-[60px] items-center justify-between border-b border-b-common-black bg-white px-5">
           <Link href="/">
             <Image src={logo} alt="로고이미지" className="h-10 w-7" />
           </Link>
@@ -33,12 +33,12 @@ const Header: NextPage<HeaderProps> = ({ goBack, text, noGoBack }) => {
           </div>
         </div>
       ) : (
-        <div className="sticky top-0 z-10 flex h-[60px] items-center border-b border-b-common-black bg-white px-3">
+        <div className="sticky top-0 z-50 flex h-[60px] items-center border-b border-b-common-black bg-white px-3">
           {!noGoBack ? (
             <>
               <button
                 type="button"
-                onClick={() => router.back()}
+                onClick={() => (goHome ? router.replace("/") : router.back())}
                 className="text-2xl"
               >
                 <Icon

@@ -1,5 +1,5 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 interface credentialProps {
   region: string;

@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
-import Button from "../../components/button";
-import Header from "../../components/header";
+import Button from "../../components/ui/button";
+import Header from "../../components/ui/header";
 import PaymentItem from "../../components/market/payment/payment-item";
 
 const Payment: NextPage = () => {
@@ -55,8 +55,9 @@ const Payment: NextPage = () => {
         </div>
       </div>
       <Button
+        type="button"
         text="결제하기"
-        color="bg-black"
+        classes="bg-black"
         fontColor="text-white"
         position="absolute bottom-0"
       />

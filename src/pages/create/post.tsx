@@ -2,22 +2,23 @@ import { Icon } from "@iconify/react";
 import { GetStaticProps, NextPage } from "next";
 import { ChangeEvent, useState } from "react";
 import { FieldErrors, useForm } from "react-hook-form";
-import { useRecoilValue } from "recoil";
-import { currentUserState } from "../../recoil/user";
-import Button from "../../components/button";
+import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
+import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
+import Button from "../../components/ui/button";
 import UploadImages from "../../components/create/upload-images";
-import Header from "../../components/header";
+import Header from "../../components/ui/header";
 import useOptions from "../../hooks/useOptions";
 import useUpload from "../../hooks/useUpload";
 import { CreateState, CredentialProps } from "../../types/create-type";
-import { ProductDataMin, UserData } from "../../types/data-type";
+import { ProductDataMin } from "../../types/data-type";
 import { cls } from "../../utils/class";
 import ProductTagTab from "../../components/create/product-tab";
 import { createImageUrl } from "../../utils/image-url";
 import { useMutation } from "react-query";
 import { useRouter } from "next/router";
-import axios from "axios";
-import LoadingSpinner from "../../components/loading-spinner";
+import Overlay from "../../components/ui/overlay";
+import useToast from "../../hooks/useToast";
+import { apiPost } from "../../utils/request";
 
 const CreatePost: NextPage<CredentialProps> = ({
   region,
@@ -25,8 +26,12 @@ const CreatePost: NextPage<CredentialProps> = ({
   secretKey,
 }) => {
   const credentials = { region, accessKey, secretKey };
-  const userData = useRecoilValue(currentUserState) as UserData;
-  const { product } = userData;
+  const userData = useRecoilValueLoadable(currentUserInfoQuery);
+  const { state, contents } = userData;
+
+  const refreshUserInfo = useRecoilRefresher_UNSTABLE(
+    userInfoQuery(contents?.email),
+  );
 
   const router = useRouter();
 
@@ -41,6 +46,8 @@ const CreatePost: NextPage<CredentialProps> = ({
     useUpload(credentials);
 
   const { isTabOpen, openTab, closeTab } = useOptions({});
+
+  const { setToast, Toast } = useToast();
 
   const textAreaValue = (event: ChangeEvent<HTMLTextAreaElement>) => {
     event.target.value !== "" ? setIsText(true) : setIsText(false);
@@ -59,24 +66,29 @@ const CreatePost: NextPage<CredentialProps> = ({
     imageurlList: string[];
     tagIdList: number[];
   }) => {
-    const { id: userId } = userData;
     const { data, imageurlList, tagIdList } = payload;
-    const { data: response } = await axios.post("/api/look", {
+    const response = await apiPost.CREATE_POST<{
+      data: CreateState;
+      imageurlList: string[];
+      tagIdList: number[];
+      userId: number;
+    }>({
       data,
       imageurlList,
       tagIdList,
-      userId,
+      userId: contents.id,
     });
     return response;
   };
 
   const { mutate, isLoading } = useMutation(createPost, {
     onSuccess: ({ message }) => {
-      alert(message);
-      // router.replace("/mypage");
+      setToast(message, false);
+      refreshUserInfo();
+      setTimeout(() => router.replace("/mypage"), 2500);
     },
     onError: ({ response }) => {
-      alert(response.data.message);
+      setToast(response.data.message, true);
     },
   });
 
@@ -94,20 +106,14 @@ const CreatePost: NextPage<CredentialProps> = ({
   };
 
   const inValid = (error: FieldErrors) => {
-    alert(error.image?.message);
+    setToast(error.image?.message as string, true);
   };
 
   return (
     <>
       <Header goBack />
-      {isLoading && (
-        <div className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
-          <LoadingSpinner />
-        </div>
-      )}
-      {isTabOpen && (
-        <div className="fixed z-10 h-[calc(100%-300px)] w-[390px] bg-black pt-10 opacity-50" />
-      )}
+      <Toast />
+      {isTabOpen && <Overlay />}
       <div className="px-5 py-5">
         <form onSubmit={handleSubmit(valid, inValid)}>
           <UploadImages
@@ -151,16 +157,18 @@ const CreatePost: NextPage<CredentialProps> = ({
           </div>
           <div className="fixed bottom-0 mt-40 w-[350px]">
             <Button
+              type="submit"
               text="완료"
-              padding="p-0"
-              color="bg-black"
+              btnWrapClasses="py-5"
+              classes="bg-black"
               fontColor="text-white"
+              isLoading={isLoading}
             />
           </div>
         </form>
         {isTabOpen && (
           <ProductTagTab
-            product={product}
+            product={contents.product}
             tagItems={tagItems}
             closeTab={closeTab}
             onSetItems={setTagItemList}

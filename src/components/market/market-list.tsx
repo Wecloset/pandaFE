@@ -1,29 +1,25 @@
 import { NextPage } from "next";
-import { useContext, useEffect } from "react";
-import { FilterContext } from "../../store/filter-context";
 import { MainProductData } from "../../types/data-type";
 import MarketItem from "./market-item";
 
 const MarketList: NextPage<{
-  allData: MainProductData[];
+  marketData: MainProductData[];
   isLoading: boolean;
-}> = ({ allData, isLoading }) => {
-  const { filterList, setProducts } = useContext(FilterContext);
-
-  useEffect(() => {
-    setProducts(allData);
-  }, [allData]);
-
+}> = ({ marketData, isLoading }) => {
   let list;
 
-  if (filterList.length > 0) {
-    list = filterList.map((product: MainProductData, i) => {
+  if (marketData.length > 0) {
+    const newArray = marketData.slice();
+    const marketList = newArray.reverse();
+
+    list = marketList?.map((product: MainProductData, i) => {
       const key = `${product.id}-${i}`;
       return <MarketItem key={key} data={product} />;
     });
-  } else if (filterList.length === 0 && !isLoading) {
+  } else if (marketData.length === 0 && !isLoading) {
     list = <p>상품이 존재하지 않습니다 :p</p>;
   }
+
   return <ul className="flex flex-col gap-3 px-5 pb-16">{list}</ul>;
 };
 

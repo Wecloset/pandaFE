@@ -1,8 +1,7 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
-import Button from "../../components/button";
-import Header from "../../components/header";
+import Button from "../../components/ui/button";
 import ImageSlide from "../../components/market/detail/image-slide";
 import {
   categoryToEng,
@@ -10,25 +9,25 @@ import {
   priceAddComma,
 } from "../../utils/markets";
 import { useRecoilValueLoadable } from "recoil";
-import { axiosGet } from "../../utils/services";
-import { updateViews } from "../../utils/market-view";
 import { useMutation, useQuery } from "react-query";
-import LoadingSpinner from "../../components/loading-spinner";
 import useFav from "../../hooks/useFav";
 import { useRouter } from "next/router";
 import { currentUserInfoQuery } from "../../recoil/user";
+import Header from "../../components/ui/header";
+import LoadingSpinner from "../../components/ui/loading-spinner";
+import useModal from "../../hooks/useModal";
+import Overlay from "../../components/ui/overlay";
+import { updateViews } from "../../utils/market-view";
+import { apiGet } from "../../utils/request";
 
 const Product: NextPage = () => {
-  const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
-  const { state, contents: userContents } = userInfo;
-  const [currentUserId, setCurrentUserId] = useState<number>(0);
-
-  useEffect(() => {
-    if (userContents) setCurrentUserId(userContents.id);
-  }, [state]);
-
   const router = useRouter();
   const { id: productId } = router.query;
+
+  const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
+  const { state, contents: userContents } = userInfo;
+
+  const [currentUserId, setCurrentUserId] = useState<number>(0);
 
   const {
     isFavActive,
@@ -40,14 +39,15 @@ const Product: NextPage = () => {
     initialButtonStyle,
   } = useFav(currentUserId);
 
+  const { Modal, show, setModalState } = useModal();
+
+  useEffect(() => {
+    if (userContents) setCurrentUserId(userContents.id);
+  }, [state]);
+
   const getProduct = async () => {
-    try {
-      console.log("get data");
-      const { data } = await axiosGet(`/api/products/${productId}`);
-      return data.product;
-    } catch (err) {
-      console.log(err);
-    }
+    const data = await apiGet.GET_ITEM(productId as string);
+    return data.product;
   };
 
   const { data: product, isLoading } = useQuery("getData", getProduct, {
@@ -56,16 +56,27 @@ const Product: NextPage = () => {
   });
 
   const { mutate } = useMutation(updateFav, {
-    onSuccess: ({ data }) => {
-      console.log(data.message);
+    onSuccess: ({ message }) => {
+      console.log(message);
       changeCount();
     },
     onError: ({ response }) => {
-      alert(response.data.message);
+      console.log(response.data.message);
     },
   });
 
+  const goLoginPage = () => router.push("/login");
+
   const toggleFavButton = async () => {
+    if (!currentUserId) {
+      setModalState({
+        message: "로그인 후 이용하실 수 있습니다.,로그인페이지로 이동할까요?",
+        btnText: "로그인 하기",
+        submit: goLoginPage,
+      });
+      return;
+    }
+
     changeButtonSytle();
     mutate({
       currentUserId,
@@ -83,13 +94,18 @@ const Product: NextPage = () => {
     setInitialFav();
 
     if (!userContents) return;
-    const { email: userEmail } = userContents;
-    updateViews(userEmail, +(productId as string), product.view);
-  }, [userInfo, product]);
+    updateViews(userContents.id, Number(productId), product.view);
+  }, [product]);
 
   return (
     <>
       <Header goBack />
+      {show && (
+        <>
+          <Modal />
+          <Overlay />
+        </>
+      )}
       {isLoading && (
         <div className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
           <LoadingSpinner />
@@ -105,7 +121,7 @@ const Product: NextPage = () => {
                 <h1 className="text-xl font-bold">{product.title}</h1>
               </div>
               {!isFavActive ? (
-                <div className="flex h-7 w-7 items-center justify-center rounded-full border-[1.5px] border-common-black">
+                <div className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-[1.5px] border-common-black transition hover:scale-105">
                   <Icon
                     icon="icon-park-outline:like"
                     className="text-lg"
@@ -113,7 +129,7 @@ const Product: NextPage = () => {
                   />
                 </div>
               ) : (
-                <div className="flex h-7 w-7 items-center justify-center rounded-full border-[1.5px] border-common-black bg-common-black ">
+                <div className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-[1.5px] border-common-black bg-common-black transition hover:scale-105 ">
                   <Icon
                     icon="icon-park-solid:like"
                     color="#ff5252"
@@ -149,7 +165,13 @@ const Product: NextPage = () => {
               <h3 className="mb-4 text-lg font-bold">Seller</h3>
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="h-[50px] w-[50px] rounded-full border border-common-black bg-slate-400" />
+                  <div className="h-[50px] w-[50px] overflow-hidden rounded-full border border-common-black">
+                    <img
+                      src={product.user.profileImg}
+                      alt="유저프로필이미지"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                   <span className="ml-4 text-base font-bold">
                     {product.user.nickname}
                   </span>
@@ -160,13 +182,19 @@ const Product: NextPage = () => {
               </div>
             </div>
           </div>
-          <div className="fixed bottom-0 flex w-[390px] items-center justify-between border border-t-common-black bg-white pt-5 pl-5">
+          <div className="fixed bottom-0 flex w-[390px] items-center justify-between border border-t-common-black bg-white p-5">
             <p className="text-2xl font-bold">
               {priceAddComma(product.price)}
               <span className="text-lg">원</span>
             </p>
-            <div className="relative w-64">
-              <Button text="구매하기" color="bg-black" fontColor="text-white" />
+            <div className="relative">
+              <Button
+                type="button"
+                text="구매하기"
+                classes="bg-black"
+                width="w-[215px]"
+                fontColor="text-white"
+              />
             </div>
           </div>
         </>

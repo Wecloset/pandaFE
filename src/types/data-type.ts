@@ -1,9 +1,9 @@
 export interface MainProductData {
   id: number;
-  imgurl: string[{
+  imgurl: {
     id: number;
     img: string;
-  }];
+  }[];
   category: string;
   createdDate: string;
   description: string;
@@ -110,4 +110,8 @@ export interface LookbookData {
 export interface LookbookDataMin {
   id: number;
   imgurl: { id: number; img: string }[];
+  user: {
+    nickname: string;
+    profileImg: string;
+  };
 }

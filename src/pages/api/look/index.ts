@@ -10,6 +10,7 @@ const updateLookbook = async (req: NextApiRequest, res: NextApiResponse) => {
           user: true,
           product: {
             select: {
+              id: true,
               title: true,
               price: true,
               brand: true,

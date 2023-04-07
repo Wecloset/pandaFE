@@ -6,20 +6,23 @@ import graphic2 from "../../../public/asset/image/graphic2.svg";
 import graphic3 from "../../../public/asset/image/graphic3.svg";
 import graphic4 from "../../../public/asset/image/graphic4.svg";
 import LoginForm from "../../components/login/login-form";
-import Button from "../../components/button";
+import Button from "../../components/ui/button";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { useMutation } from "react-query";
 import axios from "axios";
+import useModal from "../../hooks/useModal";
 
 const Login: NextPage = () => {
   const { data: session } = useSession();
   const alerted = useRef(false);
   const router = useRouter();
 
+  const { show, setModalState, Modal } = useModal();
+
   const findUser = async (userEmail: string) => {
-    const { data: response } = await axios.post(`/api/user?email=${userEmail}`);
+    const { data: response } = await axios.get(`/api/user?email=${userEmail}`);
     return response;
   };
 
@@ -32,19 +35,33 @@ const Login: NextPage = () => {
     await signIn("kakao");
   };
 
+  const goSignPage = (session: { user: { email: string } }) => {
+    router.push(
+      {
+        pathname: "/signtag",
+        query: {
+          email: session.user?.email,
+        },
+      },
+      "/signtag",
+    );
+  };
+
   useEffect(() => {
     session && mutate(session?.user?.email as string);
   }, [session]);
 
   useEffect(() => {
-    if (session && data && data[0].keywords) {
-      if (data[0].keywords.length === 0 && !alerted.current) {
+    if (session && data) {
+      if (data.user.keywords.length === 0 && !alerted.current) {
         alerted.current = true;
-        alert("유저 정보가 존재하지 않습니다. 회원가입으로 이동합니다");
-        router.push("/signtag");
+        setModalState({
+          message: "유저 정보가 존재하지 않습니다.,회원가입을 진행할까요?",
+          btnText: "회원가입 하기",
+          submit: goSignPage,
+        });
         return;
       } else {
-        alert("로그인이 완료되었습니다");
         router.push("/");
         return;
       }
@@ -68,24 +85,26 @@ const Login: NextPage = () => {
         </div>
         <LoginForm />
         <Button
-          onClick={GoogleLogin}
+          type="button"
           text="Continue With Google"
-          color="bg-white"
+          onClick={GoogleLogin}
+          classes="bg-white"
+          btnWrapClasses="px-8"
           icon="ph:google-logo"
-          logo="flex items-center"
-          textWidth="w-4/5"
-          padding="px-8"
           position="absolute left-0 bottom-[60px]"
+          textWidth="w-3/5"
+          fontColor="text-black"
         />
         <Button
+          type="button"
           onClick={KakaoLogin}
           text="Continue With Kakao"
-          color="bg-primary-yellow"
           icon="ri:kakao-talk-fill"
-          logo="flex items-center"
-          textWidth="w-4/5"
-          padding="px-8"
+          classes="bg-primary-yellow"
+          btnWrapClasses="px-8"
+          textWidth="w-3/5"
           position="absolute left-0 bottom-0"
+          fontColor="text-black"
         />
       </div>
     </div>

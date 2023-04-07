@@ -2,7 +2,9 @@ import { NextPage } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import logo from "../../public/asset/image/full-logo-white.png";
+// import logo from "../../public/asset/image/full-logo-white.png";
+import logo from "../../public/asset/image/full-logo.png";
+import graphic5 from "../../public/asset/image/graphic5.svg";
 
 const MainLayout: NextPage<{ children: React.ReactNode }> = ({ children }) => {
   const [search, setSearch] = useState<string>("");
@@ -18,24 +20,44 @@ const MainLayout: NextPage<{ children: React.ReactNode }> = ({ children }) => {
       })
       .then(res => res && setSearch(""));
   };
+
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       onSearch();
     }
   };
 
+  const goHome = () => {
+    router.push("/");
+  };
+
   return (
-    <div className="h-screen w-full bg-gray-800">
-      <div className="mx-auto flex h-screen w-[900px] justify-between bg-gray-800 max-xl:w-auto">
-        <div className="flex flex-col justify-between py-7 max-xl:hidden">
+    <div className="relative h-screen w-full overflow-hidden bg-common-black">
+      <Image
+        src={graphic5}
+        alt=""
+        className="absolute top-[80%] -left-52 w-1/2 -translate-y-1/2 opacity-30"
+      />
+      <div className="absolute top-0 left-1/2 z-10 mx-auto flex h-screen w-[900px] -translate-x-1/2 justify-between max-xl:w-auto">
+        <div className="flex flex-col justify-between py-10 max-xl:hidden">
           <div>
-            <Image src={logo} alt="logo" className="w-28" />
+            <Image
+              src={logo}
+              alt="logo"
+              className="w-24 cursor-pointer"
+              onClick={goHome}
+            />
           </div>
           <div>
             <div className="-mt-20 space-y-4 text-white">
-              <p className="text-4xl">세컨핸드 렌탈 플랫폼</p>
-              <p className="text-5xl font-semibold">
-                <span className="text-primary-violet">판다</span> panda
+              <p className="text-3xl">
+                <span className="font-bold">세컨핸드</span> 렌탈 플랫폼
+              </p>
+              <p className="text-6xl font-bold">
+                <span className="text-[#D1F090]">판다</span> panda
+              </p>
+              <p className="text-textColor-gray-50">
+                Second Hand Rental Platform Panda
               </p>
             </div>
             <div className="relative mt-6 flex items-center">
@@ -44,7 +66,7 @@ const MainLayout: NextPage<{ children: React.ReactNode }> = ({ children }) => {
                 onChange={onChange}
                 onKeyDown={onKeyDown}
                 type="text"
-                className="w-[400px] rounded-full py-4 px-7 text-xl text-gray-700 focus:outline-none"
+                className="w-[400px] rounded-full border-4 border-primary-green py-4 px-7 text-xl text-gray-700 focus:outline-none"
               />
               <button
                 onClick={onSearch}

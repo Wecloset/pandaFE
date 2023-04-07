@@ -1,12 +1,6 @@
 import { atom, AtomEffect, selector, selectorFamily } from "recoil";
 import { v1 } from "uuid";
-import { axiosGet } from "../utils/services";
-
-const getUser = async (email: string) => {
-  console.log("get user");
-  const { data } = await axiosGet(`/api/user?email=${email}`);
-  return data.user;
-};
+import { apiGet } from "../utils/request";
 
 const localStorageEffect: <T>(key: string) => AtomEffect<T> =
   (key: string) =>
@@ -41,11 +35,14 @@ const userInfoQuery = selectorFamily({
   key: `UserInfoQuery/${v1()}`,
   get: userEmail => async () => {
     const email = userEmail as string;
-    const response = await getUser(email);
+    const response = await apiGet.GET_USER(email);
     if (response.error) {
       throw response.error;
     }
-    return response;
+    return response.user;
+  },
+  cachePolicy_UNSTABLE: {
+    eviction: "most-recent",
   },
 });
 
@@ -56,9 +53,6 @@ const currentUserInfoQuery = selector({
     if (currentUserEmail === "") return undefined;
     const userInfo = get(userInfoQuery(currentUserEmail));
     return userInfo;
-  },
-  cachePolicy_UNSTABLE: {
-    eviction: "most-recent",
   },
 });
 

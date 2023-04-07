@@ -6,18 +6,18 @@ import {
   useQuery,
   useQueryClient,
 } from "react-query";
-import Header from "../../components/header";
-import LoadingSpinner from "../../components/loading-spinner";
+import Header from "../../components/ui/header";
+import LoadingSpinner from "../../components/ui/loading-spinner";
 import PostItem from "../../components/lookbook/detail/post-item";
 import { LookbookData } from "../../types/data-type";
-import { axiosGet } from "../../utils/services";
 import { useInView } from "react-intersection-observer";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { FieldValues, useForm } from "react-hook-form";
 import { useRecoilValueLoadable } from "recoil";
 import { currentUserInfoQuery } from "../../recoil/user";
 import { useRouter } from "next/router";
+import useModal from "../../hooks/useModal";
+import { apiGet, apiPost } from "../../utils/request";
 
 const Post: NextPage = () => {
   const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
@@ -36,40 +36,26 @@ const Post: NextPage = () => {
   const { ref, inView } = useInView();
   const { register, handleSubmit } = useForm();
 
+  const { Modal, setModalState, show } = useModal();
+
   const [showInput, setShowInput] = useState<boolean>(false);
   const [commentValue, setCommentValue] = useState<string>("");
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [postId, setPostId] = useState<number>(0);
   const [commentId, setCommentId] = useState<number>(0);
-  const [confirm, setConfirm] = useState<boolean>(false);
-
-  const getOnePost = async () => {
-    try {
-      const { data } = await axiosGet(`/api/look/${lookbookId}`);
-      return data;
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const { data: postData, isLoading } = useQuery<LookbookData>(
     "getPost",
-    getOnePost,
+    () => apiGet.GET_POST(lookbookId as string),
     {
       enabled: !!lookbookId,
       notifyOnChangeProps: "tracked",
     },
   );
 
-  const getAllPost = async ({ pageParam = "" }: { pageParam: string }) => {
-    try {
-      const { data } = await axios.post(`/api/look/post?cursor=${pageParam}`, {
-        lookbookId,
-      });
-      return data;
-    } catch (err) {
-      console.log(err);
-    }
+  const getAllPost = ({ pageParam = "" }: { pageParam: string }) => {
+    const response = apiPost.GET_ALL_POST(lookbookId as string, pageParam);
+    return response;
   };
 
   const {
@@ -97,30 +83,25 @@ const Post: NextPage = () => {
     setCommentValue("");
     setIsUpdating(false);
     setShowInput(false);
-    setConfirm(false);
   };
 
   const submitComment = async (comment?: string) => {
     const payload = { comment, userId };
-    const url = isUpdating
-      ? `/api/look/comment?commentId=${commentId}`
-      : `/api/look/comment?postId=${postId}`;
-
-    const { data } = await axios.post(url, payload);
-    return data;
+    const response = !isUpdating
+      ? await apiPost.CREATE_COMMENT(postId, payload)
+      : await apiPost.UPDATE_COMMENT(commentId, payload);
+    return response;
   };
 
   const { mutate: commentMutate, isLoading: loadingComment } = useMutation(
     "comment",
     submitComment,
     {
-      onSuccess: data => {
-        alert(data.message);
+      onSuccess: ({ message }) => {
         queryClient.invalidateQueries("getPost");
         reset();
       },
-      onError: ({ response }) => {
-        alert(response.data.message);
+      onError: () => {
         reset();
       },
     },
@@ -133,12 +114,6 @@ const Post: NextPage = () => {
     setIsUpdating(true);
   };
 
-  const deleteComment = (commentId: number) => {
-    setConfirm(true);
-    setIsUpdating(true);
-    setCommentId(commentId);
-  };
-
   const setInput = (postId: number, val?: boolean) => {
     reset();
     setShowInput(val as boolean);
@@ -146,12 +121,23 @@ const Post: NextPage = () => {
   };
 
   const submit = async (data: FieldValues) => {
-    if (!data.comment) {
+    if (!data?.comment) {
       commentMutate(undefined);
       return;
     }
     if (data.comment.trim === "") return;
     commentMutate(data.comment);
+  };
+
+  const deleteComment = (commentId: number) => {
+    setModalState({
+      message: "댓글을 삭제할까요?",
+      btnText: "삭제",
+      cancel: reset,
+      submit: submit,
+    });
+    setIsUpdating(true);
+    setCommentId(commentId);
   };
 
   return (
@@ -163,11 +149,11 @@ const Post: NextPage = () => {
           <PostItem
             userData={userContents}
             setInput={setInput}
-            modal={confirm}
-            submit={submit}
+            isModal={show}
+            modal={<Modal />}
+            setModal={setModalState}
             updateComment={updateComment}
             deleteComment={deleteComment}
-            reset={reset}
             {...postData}
           />
         )}
@@ -179,11 +165,11 @@ const Post: NextPage = () => {
                   key={look.id}
                   userData={userContents}
                   setInput={setInput}
-                  modal={confirm}
-                  submit={submit}
+                  isModal={show}
+                  modal={<Modal />}
+                  setModal={setModalState}
                   updateComment={updateComment}
                   deleteComment={deleteComment}
-                  reset={reset}
                   {...look}
                 />
               ))}

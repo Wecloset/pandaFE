@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;700&display=swap");
 
 @layer base {
   body {
@@ -11,6 +12,14 @@
   }
   textarea {
     @apply focus:outline-none;
+  }
+
+  .myfont {
+    font-family: "Work Sans", sans-serif;
+  }
+
+  .signup-minheight {
+    min-height: 70vh;
   }
 }
 
