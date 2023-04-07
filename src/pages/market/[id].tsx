@@ -94,8 +94,8 @@ const Product: NextPage = () => {
     setInitialFav();
 
     if (!userContents) return;
-    updateViews(userContents.email, Number(productId), product.view);
-  }, [userInfo, product]);
+    updateViews(userContents.id, Number(productId), product.view);
+  }, [product]);
 
   return (
     <>

@@ -62,7 +62,7 @@ const RecommendList: NextPage<RecommendProps> = ({ productsData }) => {
       setKeywordItems({ 추천아이템: products });
       setRecommendList({ 추천아이템: randomList });
     } else {
-      console.log(userContents);
+      // console.log(userContents);
       setRecommends(products);
     }
     setIsLoading(false);
