@@ -54,18 +54,23 @@ const Search: NextPage = () => {
   useEffect(() => {
     if (session.status !== "unauthenticated") {
       caches.open(`my-cache-${session.data?.user?.name}`).then(cache => {
-        const expirationDate = new Date().getTime() + EXPIRATION_TIME;
-        const cacheHeaders = new Headers({
-          "Content-Type": "application/json",
-          Expires: new Date(expirationDate).toUTCString(),
+        cache.match(CACHE_KEY).then(response => {
+          console.log(response);
+          if (response) {
+            const expirationDate = new Date().getTime() + EXPIRATION_TIME;
+            const cacheHeaders = new Headers({
+              "Content-Type": "application/json",
+              Expires: new Date(expirationDate).toUTCString(),
+            });
+            const cacheOptions = {
+              headers: cacheHeaders,
+            };
+            cache.put(
+              new Request(CACHE_KEY),
+              new Response(JSON.stringify(searches), cacheOptions),
+            );
+          }
         });
-        const cacheOptions = {
-          headers: cacheHeaders,
-        };
-        cache.put(
-          new Request(CACHE_KEY),
-          new Response(JSON.stringify(searches), cacheOptions),
-        );
       });
     }
   }, [searches]);
@@ -132,7 +137,7 @@ const Search: NextPage = () => {
 
   return (
     <>
-      <Header text="SEARCH" goBack />
+      <Header text="SEARCH" goBack goHome />
       <Toast />
       <div className="px-5 py-5">
         <form className="relative flex items-center" onSubmit={handleSubmit}>
@@ -172,7 +177,7 @@ const Search: NextPage = () => {
                 {session.status !== "unauthenticated" && (
                   <ul className="cursor-pointer space-y-2 text-lg text-textColor-gray-50">
                     <>
-                      {searches.slice(0, 10).map(query => (
+                      {searches.slice(0, 10).map((query, index) => (
                         <li
                           className="flex items-center justify-between"
                           key={query}
@@ -183,8 +188,8 @@ const Search: NextPage = () => {
                             aria-label="검색어 삭제"
                             onClick={() => {
                               const newSearches = [...searches];
-                              newSearches.splice(searches.indexOf(query), 1);
-                              newSearches;
+                              newSearches.splice(index, 1);
+                              setSearches(newSearches);
                             }}
                           />
                         </li>
