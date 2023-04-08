@@ -13,6 +13,7 @@ import { useEffect, useRef } from "react";
 import { useMutation } from "react-query";
 import axios from "axios";
 import useModal from "../../hooks/useModal";
+import existUser from "../existUser";
 
 const Login: NextPage = () => {
   const { data: session } = useSession();
@@ -111,4 +112,4 @@ const Login: NextPage = () => {
   );
 };
 
-export default Login;
+export default existUser(Login);

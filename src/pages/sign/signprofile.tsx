@@ -13,6 +13,7 @@ import Button from "../../components/ui/button";
 import { cls } from "../../utils/class";
 import useToast from "../../hooks/useToast";
 import { apiGet, apiPost } from "../../utils/request";
+import existUser from "../existUser";
 
 interface CredentialProps {
   region: string;
@@ -20,7 +21,7 @@ interface CredentialProps {
   secretKey: string;
 }
 
-const SignProfile: NextPage<CredentialProps> = ({
+const SignProfile: NextPage<CredentialProps | any> = ({
   region,
   accessKey,
   secretKey,
@@ -201,4 +202,4 @@ export const getStaticProps: GetStaticProps = async () => {
   };
 };
 
-export default SignProfile;
+export default existUser(SignProfile);

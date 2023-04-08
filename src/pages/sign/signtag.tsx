@@ -8,6 +8,7 @@ import { useMutation, useQuery } from "react-query";
 import Button from "../../components/ui/button";
 import useToast from "../../hooks/useToast";
 import { apiGet, apiPost } from "../../utils/request";
+import existUser from "../existUser";
 
 interface TagData {
   userId: number;
@@ -139,4 +140,4 @@ const SignTag: NextPage = () => {
   );
 };
 
-export default SignTag;
+export default existUser(SignTag);
