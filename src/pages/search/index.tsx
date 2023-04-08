@@ -172,7 +172,7 @@ const Search: NextPage = () => {
                 {session.status !== "unauthenticated" && (
                   <ul className="cursor-pointer space-y-2 text-lg text-textColor-gray-50">
                     <>
-                      {searches.map((query, index) => (
+                      {searches.slice(0, 10).map(query => (
                         <li
                           className="flex items-center justify-between"
                           key={query}
@@ -183,7 +183,7 @@ const Search: NextPage = () => {
                             aria-label="검색어 삭제"
                             onClick={() => {
                               const newSearches = [...searches];
-                              newSearches.splice(index, 1);
+                              newSearches.splice(searches.indexOf(query), 1);
                               newSearches;
                             }}
                           />
