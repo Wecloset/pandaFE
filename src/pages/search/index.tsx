@@ -23,9 +23,7 @@ const Search: NextPage = () => {
 
   const [keywords, setKeywords] = useState<string[]>([]);
 
-  const [inputValue, setInputValue] = useState<string | undefined | string[]>(
-    "",
-  );
+  const [inputValue, setInputValue] = useState<string>("");
 
   const [searchData, setSearchData] = useState<ProductDataMin[]>([]);
 
@@ -124,6 +122,7 @@ const Search: NextPage = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (inputValue.trim() === "") return;
     router.push({
       pathname: router.pathname,
       query: { word: inputValue },
@@ -185,7 +184,7 @@ const Search: NextPage = () => {
                             onClick={() => {
                               const newSearches = [...searches];
                               newSearches.splice(index, 1);
-                              setSearches(newSearches);
+                              newSearches;
                             }}
                           />
                         </li>

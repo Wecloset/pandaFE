@@ -13,6 +13,7 @@ const MainLayout: NextPage<{ children: React.ReactNode }> = ({ children }) => {
     setSearch(event.target.value);
   };
   const onSearch = () => {
+    if (search.trim() === "") return;
     router
       .push({
         pathname: "/search",
