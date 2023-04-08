@@ -54,23 +54,19 @@ const Search: NextPage = () => {
   useEffect(() => {
     if (session.status !== "unauthenticated") {
       caches.open(`my-cache-${session.data?.user?.name}`).then(cache => {
-        cache.match(CACHE_KEY).then(response => {
-          console.log(response);
-          if (response) {
-            const expirationDate = new Date().getTime() + EXPIRATION_TIME;
-            const cacheHeaders = new Headers({
-              "Content-Type": "application/json",
-              Expires: new Date(expirationDate).toUTCString(),
-            });
-            const cacheOptions = {
-              headers: cacheHeaders,
-            };
-            cache.put(
-              new Request(CACHE_KEY),
-              new Response(JSON.stringify(searches), cacheOptions),
-            );
-          }
+        const expirationDate = new Date().getTime() + EXPIRATION_TIME;
+        const cacheHeaders = new Headers({
+          "Content-Type": "application/json",
+          Expires: new Date(expirationDate).toUTCString(),
         });
+        const cacheOptions = {
+          headers: cacheHeaders,
+        };
+        const uniqueSearches = [...new Set(searches)]; // 중복 제거
+        cache.put(
+          new Request(CACHE_KEY),
+          new Response(JSON.stringify(uniqueSearches), cacheOptions),
+        );
       });
     }
   }, [searches]);
@@ -182,7 +178,17 @@ const Search: NextPage = () => {
                           className="flex items-center justify-between"
                           key={query}
                         >
-                          <span className="text-common-black">{query}</span>
+                          <span
+                            onClick={() =>
+                              router.push({
+                                pathname: router.pathname,
+                                query: { word: query },
+                              })
+                            }
+                            className=" w-full text-common-black"
+                          >
+                            {query}
+                          </span>
                           <Icon
                             icon="ic:baseline-clear"
                             aria-label="검색어 삭제"
