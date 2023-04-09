@@ -38,7 +38,6 @@ const useUpload = ({ region, accessKey, secretKey }: credentialProps) => {
 
     try {
       const response = await s3Client.send(new PutObjectCommand(bucketParams));
-      console.log(response);
     } catch (err) {
       console.log("Error", err);
     }

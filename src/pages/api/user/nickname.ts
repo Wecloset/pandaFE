@@ -19,21 +19,24 @@ const nickNameHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.json(nickChange);
   } else {
     // find nickname
-    const hasNickname = await client.user.findMany({
-      where: {
-        nickname,
-      },
-    });
-    if (hasNickname.length === 0) {
-      res.status(201).json({
-        message: "닉네임을 사용할 수 있습니다.",
-        hasNickname,
-        nickname,
+    try {
+      const hasNickname = await client.user.findMany({
+        where: {
+          nickname,
+        },
+      });
+      if (hasNickname.length === 0) {
+        res.status(201).json({
+          message: "닉네임을 사용할 수 있습니다.",
+          hasNickname,
+          nickname,
+        });
+      }
+    } catch {
+      res.status(500).json({
+        message: "이미 존재하는 닉네임입니다.,다른 닉네임을 설정해주세요!",
       });
     }
-    res.status(500).json({
-      message: "이미 존재하는 닉네임입니다.,다른 닉네임을 설정해주세요!",
-    });
   }
 };
 

@@ -41,8 +41,6 @@ const SignProfile: NextPage<CredentialProps> = ({
   //유저 정보를 query 로 전달받아서 signUser 의 user.id 을 이용해 다음단계이어감
   const { data: signUser } = useQuery("userData", getUser);
 
-  console.log(signUser);
-
   const {
     register,
     handleSubmit,
