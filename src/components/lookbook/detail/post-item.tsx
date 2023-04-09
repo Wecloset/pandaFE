@@ -54,7 +54,6 @@ const PostItem: NextPage<PostItemProps> = ({
 
   const { mutate } = useMutation(updateFav, {
     onSuccess: ({ data }) => {
-      console.log(data.message);
       changeCount();
     },
     onError: ({ response }) => {

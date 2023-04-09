@@ -57,7 +57,6 @@ const Product: NextPage = () => {
 
   const { mutate } = useMutation(updateFav, {
     onSuccess: ({ message }) => {
-      console.log(message);
       changeCount();
     },
     onError: ({ response }) => {

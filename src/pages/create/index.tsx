@@ -88,7 +88,6 @@ const Create: NextPage<CredentialProps> = ({
 
   const { mutate, isLoading } = useMutation(createProduct, {
     onSuccess: ({ message }) => {
-      console.log(message);
       setToast(message, false);
       refreshUserInfo();
       setTimeout(() => router.replace("/mypage"), 1500);
