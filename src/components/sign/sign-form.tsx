@@ -29,8 +29,8 @@ const SignForm: NextPage = () => {
     mode: "onChange",
   });
 
-  const createUser = (userData: SignProps) => {
-    const response = apiPost.CREATE_USER(userData);
+  const createUser = async (userData: SignProps) => {
+    const response = await apiPost.CREATE_USER(userData);
     return response;
   };
 
