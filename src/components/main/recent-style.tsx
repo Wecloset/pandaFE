@@ -19,7 +19,7 @@ const RecentStyle: NextPage<{ productsData: ProductData[] }> = ({
 
   useEffect(() => {
     if (productsData) {
-      const recents = productsData.slice(productsData.length - 10);
+      const recents = productsData.slice(-10);
       setRecentItems(recents.reverse());
     }
   }, [productsData]);
