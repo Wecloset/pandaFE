@@ -77,7 +77,6 @@ export interface UserData {
     tag: string;
   }[];
   nickname: string;
-  password: string;
   profileImg?: string;
   followers: number[];
   followings: number[];
