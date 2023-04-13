@@ -23,10 +23,10 @@
 
 ### Project
 
-📌 [프로젝트 칸반보드](https://github.com/orgs/Wecloset/projects/1/views/2). 
-📌 [페이지 기획/UI](https://www.figma.com/file/z9rKNkQ6Z6JiOrGszUICR9/PANDA?node-id=0-1&t=OregN4Mb2nRLsCBV-0). 
-📌 [기능명세서, API설계](https://low-individual-829.notion.site/dad94466f07d4681b851daf1be13139d). 
-📌 [db model](https://www.prismabuilder.io/schemas/panda/graph). 
+- 📌 [프로젝트 칸반보드](https://github.com/orgs/Wecloset/projects/1/views/2)
+- 📌 [페이지 기획/UI](https://www.figma.com/file/z9rKNkQ6Z6JiOrGszUICR9/PANDA?node-id=0-1&t=OregN4Mb2nRLsCBV-0)
+- 📌 [기능명세서, API설계](https://low-individual-829.notion.site/dad94466f07d4681b851daf1be13139d)
+- 📌 [db model](https://www.prismabuilder.io/schemas/panda/graph)
  
 ### Main Features
 
