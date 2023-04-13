@@ -19,8 +19,9 @@ import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
 import Overlay from "../../components/ui/overlay";
 import useToast from "../../hooks/useToast";
 import { apiPost } from "../../utils/request";
+import noExistUser from "../noExistUser";
 
-const Create: NextPage<CredentialProps> = ({
+const Create: NextPage<CredentialProps | any> = ({
   region,
   accessKey,
   secretKey,
@@ -254,4 +255,4 @@ export const getStaticProps: GetStaticProps = async () => {
   };
 };
 
-export default Create;
+export default noExistUser(Create);

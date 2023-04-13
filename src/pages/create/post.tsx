@@ -19,8 +19,9 @@ import { useRouter } from "next/router";
 import Overlay from "../../components/ui/overlay";
 import useToast from "../../hooks/useToast";
 import { apiPost } from "../../utils/request";
+import noExistUser from "../noExistUser";
 
-const CreatePost: NextPage<CredentialProps> = ({
+const CreatePost: NextPage<CredentialProps | any> = ({
   region,
   accessKey,
   secretKey,
@@ -220,4 +221,4 @@ export const getStaticProps: GetStaticProps = async () => {
   };
 };
 
-export default CreatePost;
+export default noExistUser(CreatePost);

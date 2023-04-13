@@ -23,9 +23,7 @@ const Search: NextPage = () => {
 
   const [keywords, setKeywords] = useState<string[]>([]);
 
-  const [inputValue, setInputValue] = useState<string | undefined | string[]>(
-    "",
-  );
+  const [inputValue, setInputValue] = useState<string>("");
 
   const [searchData, setSearchData] = useState<ProductDataMin[]>([]);
 
@@ -64,9 +62,10 @@ const Search: NextPage = () => {
         const cacheOptions = {
           headers: cacheHeaders,
         };
+        const uniqueSearches = [...new Set(searches)]; // 중복 제거
         cache.put(
           new Request(CACHE_KEY),
-          new Response(JSON.stringify(searches), cacheOptions),
+          new Response(JSON.stringify(uniqueSearches), cacheOptions),
         );
       });
     }
@@ -124,16 +123,16 @@ const Search: NextPage = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (inputValue.trim() === "") return;
     router.push({
       pathname: router.pathname,
       query: { word: inputValue },
     });
     setFocus(false);
   };
-
   return (
     <>
-      <Header text="SEARCH" goBack />
+      <Header text="SEARCH" goBack goHome />
       <Toast />
       <div className="px-5 py-5">
         <form className="relative flex items-center" onSubmit={handleSubmit}>
@@ -155,7 +154,8 @@ const Search: NextPage = () => {
           />
         </form>
         <div>
-          {router.asPath === "/search" && !focus ? (
+          {/*검색어 없고, input 클릭안할때*/}
+          {searchData.length === 0 && !focus ? (
             <>
               <div className="mt-6">
                 <h2 className="mb-5 text-base font-bold">추천 검색어</h2>
@@ -173,23 +173,35 @@ const Search: NextPage = () => {
                 {session.status !== "unauthenticated" && (
                   <ul className="cursor-pointer space-y-2 text-lg text-textColor-gray-50">
                     <>
-                      {searches.map((query, index) => (
-                        <li
-                          className="flex items-center justify-between"
-                          key={query}
-                        >
-                          <span className="text-common-black">{query}</span>
-                          <Icon
-                            icon="ic:baseline-clear"
-                            aria-label="검색어 삭제"
-                            onClick={() => {
-                              const newSearches = [...searches];
-                              newSearches.splice(index, 1);
-                              setSearches(newSearches);
-                            }}
-                          />
-                        </li>
-                      ))}
+                      {[...new Set(searches)]
+                        .slice(0, 10)
+                        .map((query, index) => (
+                          <li
+                            className="flex items-center justify-between"
+                            key={query}
+                          >
+                            <span
+                              onClick={() =>
+                                router.push({
+                                  pathname: router.pathname,
+                                  query: { word: query },
+                                })
+                              }
+                              className=" w-full text-common-black"
+                            >
+                              {query}
+                            </span>
+                            <Icon
+                              icon="ic:baseline-clear"
+                              aria-label="검색어 삭제"
+                              onClick={() => {
+                                const newSearches = [...searches];
+                                newSearches.splice(index, 1);
+                                setSearches(newSearches);
+                              }}
+                            />
+                          </li>
+                        ))}
                     </>
                   </ul>
                 )}
@@ -197,9 +209,7 @@ const Search: NextPage = () => {
             </>
           ) : (
             <ul className="mt-5 grid grid-cols-2 gap-3">
-              {searchData.length === 0 && !isLoading ? (
-                <li>검색결과가 없습니다</li>
-              ) : !focus ? (
+              {!isLoading ? (
                 searchData.map(data => (
                   <MainProduct
                     key={data.id}
@@ -208,6 +218,8 @@ const Search: NextPage = () => {
                     imgh="h-[190px]"
                   />
                 ))
+              ) : searchData.length === 0 ? (
+                <li>검색결과가 없습니다</li>
               ) : (
                 ""
               )}

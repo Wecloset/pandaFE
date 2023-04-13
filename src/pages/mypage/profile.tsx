@@ -19,8 +19,9 @@ import { CredentialProps } from "../../types/create-type";
 import { cls } from "../../utils/class";
 import { createImageUrl } from "../../utils/image-url";
 import { apiPost } from "../../utils/request";
+import noExistUser from "../noExistUser";
 
-const ProfileEdit: NextPage<CredentialProps> = ({
+const ProfileEdit: NextPage<CredentialProps | any> = ({
   region,
   accessKey,
   secretKey,
@@ -337,4 +338,4 @@ export const getServerSideProps: GetServerSideProps = async () => {
   };
 };
 
-export default ProfileEdit;
+export default noExistUser(ProfileEdit);
