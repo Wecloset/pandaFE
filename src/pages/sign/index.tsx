@@ -8,6 +8,7 @@ import Button from "../../components/ui/button";
 import Header from "../../components/ui/header";
 import SignForm from "../../components/sign/sign-form";
 import useToast from "../../hooks/useToast";
+import existUser from "../existUser";
 
 const Sign: NextPage = () => {
   const router = useRouter();
@@ -98,4 +99,4 @@ const Sign: NextPage = () => {
   );
 };
 
-export default Sign;
+export default existUser(Sign);

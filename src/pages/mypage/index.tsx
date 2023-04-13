@@ -16,6 +16,7 @@ import LoadingSpinner from "../../components/ui/loading-spinner";
 import { currentUserInfoQuery } from "../../recoil/user";
 import MainProduct from "../../components/main/product-item";
 import Link from "next/link";
+import noExistUser from "../noExistUser";
 
 const MyPage: NextPage = () => {
   const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
@@ -157,4 +158,4 @@ const MyPage: NextPage = () => {
   );
 };
 
-export default MyPage;
+export default noExistUser(MyPage);
