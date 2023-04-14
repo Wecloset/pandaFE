@@ -1,15 +1,16 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
 import React, { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import useSlide from "../../hooks/useSlide";
 import { translateClasses } from "../../lib/translate-class";
 import { ProductData } from "../../types/data-type";
 import { cls } from "../../utils/class";
+import { apiGet } from "../../utils/request";
 import MainProduct from "./product-item";
 
-const RecentStyle: NextPage<{ productsData: ProductData[] }> = ({
-  productsData,
-}) => {
+const RecentStyle: NextPage = () => {
+  const { data: products } = useQuery("products", apiGet.GET_ITEMS);
   const [recentItems, setRecentItems] = useState<ProductData[]>([]);
 
   const { next, prev, transitionEnd, translateX, isMoving } = useSlide({
@@ -18,11 +19,11 @@ const RecentStyle: NextPage<{ productsData: ProductData[] }> = ({
   });
 
   useEffect(() => {
-    if (productsData) {
-      const recents = productsData.slice(-10);
+    if (products) {
+      const recents = products.slice(-10);
       setRecentItems(recents.reverse());
     }
-  }, [productsData]);
+  }, [products]);
 
   return (
     <div className="px-5">
