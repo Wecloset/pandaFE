@@ -55,8 +55,11 @@ const Home: NextPage = () => {
         propH={288}
         slideTime={5500}
       />
-      <div className="space-y-10 py-10">
-        <ErrorBoundary fallback={<p>Something went wrong!</p>}>
+      <ErrorBoundary
+        errorFallback={<p>something went wrong...</p>}
+        setModal={setModalState}
+      >
+        <div className="space-y-10 py-10">
           <NextSuspense fallback={loadingfallback}>
             <Recommend />
             <RecentStyle />
@@ -73,10 +76,10 @@ const Home: NextPage = () => {
               />
             </div>
           </NextSuspense>
-        </ErrorBoundary>
-      </div>
-      <Navigation setModal={setModalState} />
-      <FloatingButton path="/create" setModal={setModalState} />
+        </div>
+        <Navigation setModal={setModalState} />
+        <FloatingButton path="/create" setModal={setModalState} />
+      </ErrorBoundary>
     </>
   );
 };
