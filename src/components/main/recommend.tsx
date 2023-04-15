@@ -1,12 +1,11 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
 import React, { useEffect, useState } from "react";
-import { useRecoilValueLoadable } from "recoil";
+import { useRecoilValue } from "recoil";
 import { currentUserInfoQuery } from "../../recoil/user";
 import { ProductData } from "../../types/data-type";
 import { cls } from "../../utils/class";
 import MainProduct from "./product-item";
-import RecommendSkeleton from "../ui/recommend-skeleton";
 import { useQuery } from "react-query";
 import { apiGet } from "../../utils/request";
 
@@ -15,11 +14,12 @@ interface Recommends {
 }
 
 const RecommendList: NextPage = () => {
-  const userData = useRecoilValueLoadable(currentUserInfoQuery);
-  const { state, contents: userContents } = userData;
+  const userData = useRecoilValue(currentUserInfoQuery);
 
-  const { data: products } = useQuery("products", apiGet.GET_ITEMS);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { data: products } = useQuery("products", apiGet.GET_ITEMS, {
+    suspense: true,
+  });
+
   const [keywords, setKeywords] = useState<{ id: number; tag: string }[]>([]);
   const [nickname, setNickname] = useState<string>("");
   const [keyword, setKeyword] = useState<string>("");
@@ -53,22 +53,21 @@ const RecommendList: NextPage = () => {
   };
 
   const setContents = (products: ProductData[]) => {
-    if (!userContents) {
+    if (!userData) {
       const randomList = random(products);
       setKeywordItems({ 추천아이템: products });
       setRecommendList({ 추천아이템: randomList });
     } else {
       setRecommends(products);
     }
-    setIsLoading(false);
   };
 
   const setRecommends = (products: ProductData[]) => {
     const recommends: Recommends = {};
     const randoms: Recommends = {};
 
-    if (userContents.keywords.length > 0)
-      userContents.keywords.forEach(({ tag }: { tag: string }) => {
+    if (userData.keywords.length > 0)
+      userData.keywords.forEach(({ tag }: { tag: string }) => {
         const recommendItems = products.filter(
           product => product.style === tag,
         );
@@ -88,16 +87,14 @@ const RecommendList: NextPage = () => {
   };
 
   useEffect(() => {
-    if (!userContents || Object.entries(userContents).length === 0) return;
-    const { keywords, nickname } = userContents;
+    setContents(products);
+
+    if (!userData || Object.entries(userData).length === 0) return;
+    const { keywords, nickname } = userData;
     setKeyword(keywords[0]?.tag);
     setKeywords(keywords);
     setNickname(nickname);
-  }, [state]);
-
-  useEffect(() => {
-    if (products?.length > 0 && state === "hasValue") setContents(products);
-  }, [products, state]);
+  }, []);
 
   const content =
     keyword && recommendList[keyword]?.length > 0
@@ -136,14 +133,10 @@ const RecommendList: NextPage = () => {
           ))}
         </div>
       )}
-      <div className="grid min-h-[540px] grid-cols-2 gap-3">
-        {!isLoading
-          ? content?.map(data => (
-              <MainProduct {...data} key={data.id} imgh="h-[190px]" />
-            ))
-          : Array(4)
-              .fill(0)
-              .map((_, i) => <RecommendSkeleton key={i} />)}
+      <div className="grid min-h-[540px] grid-cols-2 gap-3 transition">
+        {content?.map(data => (
+          <MainProduct {...data} key={data.id} imgh="h-[190px]" />
+        ))}
       </div>
       <div className="relative h-10">
         <button

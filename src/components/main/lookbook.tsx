@@ -6,7 +6,9 @@ import { apiGet } from "../../utils/request";
 import MainLookBookItem from "./lookbook-item";
 
 const MainLookbook: NextPage = () => {
-  const { data: lookbooks } = useQuery("lookbooks", apiGet.GET_LOOKS);
+  const { data: lookbooks } = useQuery("lookbooks", apiGet.GET_LOOKS, {
+    suspense: true,
+  });
 
   const [sortingLookbook, setSortingLookBook] = useState<LookbookData[]>([]);
 
@@ -18,11 +20,9 @@ const MainLookbook: NextPage = () => {
   };
 
   useEffect(() => {
-    if (lookbooks) {
-      const newArray = sorting();
-      setSortingLookBook(newArray);
-    }
-  }, [lookbooks]);
+    const newArray = sorting();
+    setSortingLookBook(newArray);
+  }, []);
 
   return (
     <div>

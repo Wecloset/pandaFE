@@ -10,7 +10,9 @@ import { apiGet } from "../../utils/request";
 import MainProduct from "./product-item";
 
 const RecentStyle: NextPage = () => {
-  const { data: products } = useQuery("products", apiGet.GET_ITEMS);
+  const { data: products } = useQuery("products", apiGet.GET_ITEMS, {
+    suspense: true,
+  });
   const [recentItems, setRecentItems] = useState<ProductData[]>([]);
 
   const { next, prev, transitionEnd, translateX, isMoving } = useSlide({
@@ -19,11 +21,9 @@ const RecentStyle: NextPage = () => {
   });
 
   useEffect(() => {
-    if (products) {
-      const recents = products.slice(-10);
-      setRecentItems(recents.reverse());
-    }
-  }, [products]);
+    const recents = products.slice(-10);
+    setRecentItems(recents.reverse());
+  }, []);
 
   return (
     <div className="px-5">
