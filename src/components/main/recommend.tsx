@@ -1,29 +1,25 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
 import React, { useEffect, useState } from "react";
-import { useRecoilValueLoadable } from "recoil";
+import { useRecoilValue } from "recoil";
 import { currentUserInfoQuery } from "../../recoil/user";
 import { ProductData } from "../../types/data-type";
 import { cls } from "../../utils/class";
 import MainProduct from "./product-item";
-import RecommendSkeleton from "../ui/recommend-skeleton";
-
-interface RecommendProps {
-  keywords?: { id: number; tag: string }[];
-  nickname?: string;
-  productsData: ProductData[];
-}
+import { useQuery } from "react-query";
+import { apiGet } from "../../utils/request";
 
 interface Recommends {
   [key: string]: ProductData[];
 }
 
-const RecommendList: NextPage<RecommendProps> = ({ productsData }) => {
-  const userData = useRecoilValueLoadable(currentUserInfoQuery);
-  const { state, contents: userContents } = userData;
+const RecommendList: NextPage = () => {
+  const userData = useRecoilValue(currentUserInfoQuery);
 
-  const initialArray = ["1", "2", "3", "4"];
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { data: products } = useQuery("products", apiGet.GET_ITEMS, {
+    suspense: true,
+  });
+
   const [keywords, setKeywords] = useState<{ id: number; tag: string }[]>([]);
   const [nickname, setNickname] = useState<string>("");
   const [keyword, setKeyword] = useState<string>("");
@@ -57,22 +53,21 @@ const RecommendList: NextPage<RecommendProps> = ({ productsData }) => {
   };
 
   const setContents = (products: ProductData[]) => {
-    if (!userContents) {
+    if (!userData) {
       const randomList = random(products);
       setKeywordItems({ 추천아이템: products });
       setRecommendList({ 추천아이템: randomList });
     } else {
       setRecommends(products);
     }
-    setIsLoading(false);
   };
 
   const setRecommends = (products: ProductData[]) => {
     const recommends: Recommends = {};
     const randoms: Recommends = {};
 
-    if (userContents.keywords.length > 0)
-      userContents.keywords.forEach(({ tag }: { tag: string }) => {
+    if (userData.keywords.length > 0)
+      userData.keywords.forEach(({ tag }: { tag: string }) => {
         const recommendItems = products.filter(
           product => product.style === tag,
         );
@@ -92,30 +87,25 @@ const RecommendList: NextPage<RecommendProps> = ({ productsData }) => {
   };
 
   useEffect(() => {
-    if (!userContents || Object.entries(userContents).length === 0) return;
-    const { keywords, nickname } = userContents;
+    setContents(products);
+
+    if (!userData || Object.entries(userData).length === 0) return;
+    const { keywords, nickname } = userData;
     setKeyword(keywords[0]?.tag);
     setKeywords(keywords);
     setNickname(nickname);
-  }, [state]);
+  }, []);
 
-  useEffect(() => {
-    if (productsData?.length > 0 && state === "hasValue")
-      setContents(productsData);
-  }, [productsData, state]);
+  const content =
+    keyword && recommendList[keyword]?.length > 0
+      ? recommendList[keyword]
+      : recommendList["추천아이템"];
 
-  let content, recommendTitle, buttonText;
+  const recommendTitle = nickname
+    ? `${nickname}님의 키워드에 적합한 아이템`
+    : "지금 핫한 아이템";
 
-  if (keyword && recommendList[keyword]?.length > 0)
-    content = recommendList[keyword];
-  else content = recommendList["추천아이템"];
-
-  if (keyword && nickname)
-    recommendTitle = `${nickname}님의 키워드에 적합한 아이템`;
-  else recommendTitle = "지금 핫한 아이템";
-
-  if (keyword !== "") buttonText = `${keyword} 아이템`;
-  else buttonText = "추천 아이템";
+  const buttonText = keyword !== "" ? `${keyword} 아이템` : "추천 아이템";
 
   return (
     <div className="space-y-5 px-5">
@@ -143,19 +133,11 @@ const RecommendList: NextPage<RecommendProps> = ({ productsData }) => {
           ))}
         </div>
       )}
-      {!isLoading && content ? (
-        <div className="grid min-h-[540px] grid-cols-2 gap-3">
-          {content?.map(data => (
-            <MainProduct {...data} key={data.id} imgh="h-[190px]" />
-          ))}
-        </div>
-      ) : (
-        <div className="grid min-h-[540px] grid-cols-2 gap-3 bg-white">
-          {initialArray.map((_, i) => (
-            <RecommendSkeleton key={i} />
-          ))}
-        </div>
-      )}
+      <div className="grid min-h-[540px] grid-cols-2 gap-3 transition">
+        {content?.map(data => (
+          <MainProduct {...data} key={data.id} imgh="h-[190px]" />
+        ))}
+      </div>
       <div className="relative h-10">
         <button
           className="absolute top-0 left-0 z-10 flex h-10 w-full items-center justify-center border border-black bg-white"

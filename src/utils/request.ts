@@ -6,30 +6,18 @@ const client = axios.create({
 });
 
 const axiosPost = async <T>(url: string, payload: T) => {
-  try {
-    const { data } = await client.post(url, payload);
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
+  const { data } = await client.post(url, payload);
+  return data;
 };
 
 const axiosGet = async (url: string) => {
-  try {
-    const { data } = await client.get(url);
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
+  const { data } = await client.get(url);
+  return data;
 };
 
 const axiosDelete = async (id: string) => {
-  try {
-    const data = await client.delete(`/api/user/${id}`);
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
+  const data = await client.delete(`/api/user/${id}`);
+  return data;
 };
 
 const apiGet = {

@@ -1,24 +1,28 @@
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { LookbookData, LookbookDataMin } from "../../types/data-type";
+import { apiGet } from "../../utils/request";
 import MainLookBookItem from "./lookbook-item";
 
-const MainLookbook: NextPage<{ lookbookData: LookbookData[] }> = ({
-  lookbookData,
-}) => {
+const MainLookbook: NextPage = () => {
+  const { data: lookbooks } = useQuery("lookbooks", apiGet.GET_LOOKS, {
+    suspense: true,
+  });
+
   const [sortingLookbook, setSortingLookBook] = useState<LookbookData[]>([]);
 
   const sorting = () => {
-    const newArray = lookbookData.sort((a, b) => b.fav.length - a.fav.length);
+    const newArray = lookbooks.sort(
+      (a: { fav: string }, b: { fav: string }) => b.fav.length - a.fav.length,
+    );
     return newArray;
   };
 
   useEffect(() => {
-    if (lookbookData) {
-      const newArray = sorting();
-      setSortingLookBook(newArray);
-    }
-  }, [lookbookData]);
+    const newArray = sorting();
+    setSortingLookBook(newArray);
+  }, []);
 
   return (
     <div>
