@@ -1,9 +1,9 @@
 import { NextPage } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
-// import logo from "../../public/asset/image/full-logo-white.png";
-import logo from "../../public/asset/image/full-logo.png";
+import logo from "../../public/asset/image/full-logo.svg";
 import graphic5 from "../../public/asset/image/graphic5.svg";
 
 const MainLayout: NextPage<{ children: React.ReactNode }> = ({ children }) => {
@@ -88,7 +88,10 @@ const MainLayout: NextPage<{ children: React.ReactNode }> = ({ children }) => {
               </button>
             </div>
           </div>
-          <button className="flex h-12 w-40 items-center rounded-3xl bg-white px-1 font-bold text-gray-700">
+          <Link
+            href="https://github.com/Wecloset/pandaFE"
+            className="flex h-12 w-40 items-center rounded-3xl bg-white px-1 font-bold text-gray-700"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="1em"
@@ -102,7 +105,7 @@ const MainLayout: NextPage<{ children: React.ReactNode }> = ({ children }) => {
               />
             </svg>
             github 바로가기
-          </button>
+          </Link>
         </div>
         <div className="relative w-[390px] flex-shrink-0 overflow-hidden overflow-y-scroll bg-white scrollbar-hide max-xl:mx-auto">
           {children}
