@@ -30,22 +30,24 @@
  
 ### Main Features
 
-- [Filtering]()
+- [Filtering](https://github.com/Wecloset/pandaFE/issues/69)
+- [Infinite Scrolling](https://github.com/Wecloset/pandaFE/wiki/Infinite-Scrolling)
+- [NextAuth login]()
+- [External api - google, kakao signup]()
 - [Search Engine]()
-- [External api - google, kakao login]()
-- [Infinite Scrolling]()
-- [Error Handling]()
-- [Custom Hooks]()
-- [State Management]()
+- [aws s3 file upload](https://github.com/Wecloset/pandaFE/blob/main/src/hooks/useUpload.tsx)
+- [Custom Hooks](https://github.com/Wecloset/pandaFE/wiki/Custom-hooks)
+- [State Management - recoil(user data fetching)](https://github.com/Wecloset/pandaFE/blob/main/src/recoil/user.ts)
+- [Error Handling](https://github.com/Wecloset/pandaFE/wiki/Error-handling)
 
 ### Trouble Shooting
 
-- [prisma db push error]()
-- [aws s3 file upload]()
+- [recoil 유저데이터 동기화](https://github.com/Wecloset/pandaFE/issues/58)
+- [prisma db push error](https://velog.io/@rlorxl/prisma-db-push-%EC%97%90%EB%9F%AC-%ED%95%B4%EA%B2%B0)
+- [aws s3 file upload issue]()
 - [social signup]()
+- [react-hook-form issue](https://velog.io/@rlorxl/react-hook-form-%EA%B4%80%EB%A0%A8-%EC%9D%B4%EC%8A%88)
 - [useMutation & useForm & axios]()
-- [sync user data]()
-- [react hook form issue]()
 - [localStorage is not defined error]()
 - [next.js hydration error]()
 
