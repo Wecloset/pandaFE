@@ -17,7 +17,7 @@
 - **Library** : file based routing, api routing, nextauth, SSR과 webpack, bundling을 지원하는 **Next.js**를 사용
 - **CSS** : **Tailwind**사용으로 style작성 코드 컨벤션을 맞춤.
 - **State Management** : **Recoil**로 client-state, 비동기쿼리를 관리, **React-query**로 서버 데이터 fetching
-- **Server** : 관계형 데이터베이스 모델을 작성하는데 편리하고 보일러 플레이트가 적은 **Prisma** ORM을 사용하여 테이블을 정의.
+- **DB** : 클라우드 기반의 서버리스 데이터베이스인 **PlanetScale**을 사용했고 **Prisma**로 테이블을 정의하고 db와 연결.
 - **Storage** : 사용자 프로필, 업로드한 이미지들의 관리를 위한 스토리지로 **AWS S3**선택.
 - **Deploy**: Next.js, prisma에 친화적이고 빠른 배포를 위해 **Vercel**로 배포.
 
