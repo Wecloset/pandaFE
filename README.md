@@ -9,7 +9,7 @@
 - sns형식의 룩북을 제공하여 내 스타일을 공유하고 사진에서 입고있는 아이템을 매칭.
 
 💻 데모 사이트
-[Panda Demo]()
+[Panda Demo](https://panda-vert.vercel.app/)
 
 ### Tech Stack
 
@@ -24,8 +24,9 @@
 ### Project
 
 - 📌 [프로젝트 칸반보드](https://github.com/orgs/Wecloset/projects/1/views/2)
-- 📌 [페이지 기획/UI](https://www.figma.com/file/z9rKNkQ6Z6JiOrGszUICR9/PANDA?node-id=0-1&t=OregN4Mb2nRLsCBV-0)
-- 📌 [기능명세서, API설계](https://low-individual-829.notion.site/dad94466f07d4681b851daf1be13139d)
+- 📌 [페이지 UI기획](https://www.figma.com/file/z9rKNkQ6Z6JiOrGszUICR9/PANDA?node-id=0-1&t=OregN4Mb2nRLsCBV-0)
+- 📌 [기능명세서](https://github.com/Wecloset/pandaFE/wiki/%EA%B8%B0%EB%8A%A5-%EB%AA%85%EC%84%B8%EC%84%9C)
+- 📌 [API설계](https://low-individual-829.notion.site/API-381a4ece8d854a4fa1ff4ec1b5a46727)
 - 📌 [db model](https://www.prismabuilder.io/schemas/panda/graph)
  
 ### Main Features
