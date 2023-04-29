@@ -11,6 +11,10 @@
 💻 데모 사이트
 [Panda Demo](https://panda-vert.vercel.app/)
 
+|test ID|test PW|
+|:---:|:---:|
+|panda@test.com|panda123!|
+
 ### Tech Stack
 
 - **Language** : **React**를 사용해 프로젝트를 생성하고 **TypeScript**를 사용한 정적 타입 지정으로 코드 작성 효율을 높임
