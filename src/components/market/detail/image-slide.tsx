@@ -28,8 +28,8 @@ const ImageSlide: NextPage<{
       slideTime: slideTime,
     });
 
-  const lastImageClone = images.at(-1)?.img as string;
-  const firstImageClone = images.at(0)?.img as string;
+  const lastImageClone = images[images.length - 1]?.img as string;
+  const firstImageClone = images[0]?.img as string;
 
   return (
     <div className="relative">

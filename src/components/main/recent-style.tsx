@@ -48,13 +48,14 @@ const RecentStyle: NextPage = () => {
         <ul
           onTransitionEnd={transitionEnd}
           className={cls(
-            `flex gap-3 [&>li]:w-[140px] [&>li]:flex-shrink-0 ${translateX}`,
+            `flex [&>li]:w-[140px] [&>li]:flex-shrink-0 ${translateX} [&>li]:last: mr-0
+            [&>li]:mr-3`,
             isMoving ? "transition duration-700 ease-in-out" : "",
           )}
         >
           <li>
             <MainProduct
-              {...(recentItems.at(-1) as ProductData)}
+              {...(recentItems[recentItems.length - 1] as ProductData)}
               imgw="w-[140px]"
               imgh="h-[160px]"
             />
@@ -66,21 +67,21 @@ const RecentStyle: NextPage = () => {
           ))}
           <li>
             <MainProduct
-              {...(recentItems.at(0) as ProductData)}
+              {...(recentItems[0] as ProductData)}
               imgw="w-[140px]"
               imgh="h-[160px]"
             />
           </li>
           <li>
             <MainProduct
-              {...(recentItems.at(1) as ProductData)}
+              {...(recentItems[1] as ProductData)}
               imgw="w-[140px]"
               imgh="h-[160px]"
             />
           </li>
           <li>
             <MainProduct
-              {...(recentItems.at(2) as ProductData)}
+              {...(recentItems[2] as ProductData)}
               imgw="w-[140px]"
               imgh="h-[160px]"
             />
