@@ -20,7 +20,7 @@ const MainProduct: NextPage<MainListProps> = ({
   return (
     <div>
       <Link href={`/market/${id}`}>
-        <div className="mb-2 border border-common-black bg-borderColor-gray">
+        <div className="mb-2 border border-common-black bg-slate-200">
           {imgurl && (
             <img
               src={imgurl[0]?.img}

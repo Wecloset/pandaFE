@@ -5,16 +5,19 @@ import { ThreeDots } from "react-loader-spinner";
 
 const LoadingSpinner: NextPage<{ width?: string }> = ({ width }) => {
   return (
-    <div className="flex items-center justify-center">
-      <ThreeDots
-        height="80"
-        width={width ? Number(width) : 80}
-        radius="9"
-        color="#B095FF"
-        ariaLabel="three-dots-loading"
-        wrapperStyle={{}}
-        visible={true}
-      />
+    <div className="flex flex-col items-center justify-center">
+      <div>
+        <ThreeDots
+          height="80"
+          width={width ? Number(width) : 80}
+          radius="9"
+          color="#B095FF"
+          ariaLabel="three-dots-loading"
+          wrapperStyle={{}}
+          visible={true}
+        />
+      </div>
+      <p className="text-primary-violet">열심히 가져오고 있어요...!</p>
     </div>
   );
 };

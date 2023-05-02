@@ -1,15 +1,18 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
 import React, { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import useSlide from "../../hooks/useSlide";
 import { translateClasses } from "../../lib/translate-class";
 import { ProductData } from "../../types/data-type";
 import { cls } from "../../utils/class";
+import { apiGet } from "../../utils/request";
 import MainProduct from "./product-item";
 
-const RecentStyle: NextPage<{ productsData: ProductData[] }> = ({
-  productsData,
-}) => {
+const RecentStyle: NextPage = () => {
+  const { data: products } = useQuery("products", apiGet.GET_ITEMS, {
+    suspense: true,
+  });
   const [recentItems, setRecentItems] = useState<ProductData[]>([]);
 
   const { next, prev, transitionEnd, translateX, isMoving } = useSlide({
@@ -18,11 +21,9 @@ const RecentStyle: NextPage<{ productsData: ProductData[] }> = ({
   });
 
   useEffect(() => {
-    if (productsData) {
-      const recents = productsData.slice(-10);
-      setRecentItems(recents.reverse());
-    }
-  }, [productsData]);
+    const recents = products.slice(-10);
+    setRecentItems(recents.reverse());
+  }, []);
 
   return (
     <div className="px-5">
@@ -47,13 +48,14 @@ const RecentStyle: NextPage<{ productsData: ProductData[] }> = ({
         <ul
           onTransitionEnd={transitionEnd}
           className={cls(
-            `flex gap-3 [&>li]:w-[140px] [&>li]:flex-shrink-0 ${translateX}`,
+            `flex [&>li]:w-[140px] [&>li]:flex-shrink-0 ${translateX} [&>li]:last: mr-0
+            [&>li]:mr-3`,
             isMoving ? "transition duration-700 ease-in-out" : "",
           )}
         >
           <li>
             <MainProduct
-              {...(recentItems.at(-1) as ProductData)}
+              {...(recentItems[recentItems.length - 1] as ProductData)}
               imgw="w-[140px]"
               imgh="h-[160px]"
             />
@@ -65,21 +67,21 @@ const RecentStyle: NextPage<{ productsData: ProductData[] }> = ({
           ))}
           <li>
             <MainProduct
-              {...(recentItems.at(0) as ProductData)}
+              {...(recentItems[0] as ProductData)}
               imgw="w-[140px]"
               imgh="h-[160px]"
             />
           </li>
           <li>
             <MainProduct
-              {...(recentItems.at(1) as ProductData)}
+              {...(recentItems[1] as ProductData)}
               imgw="w-[140px]"
               imgh="h-[160px]"
             />
           </li>
           <li>
             <MainProduct
-              {...(recentItems.at(2) as ProductData)}
+              {...(recentItems[2] as ProductData)}
               imgw="w-[140px]"
               imgh="h-[160px]"
             />

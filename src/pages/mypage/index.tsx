@@ -17,6 +17,7 @@ import { currentUserInfoQuery } from "../../recoil/user";
 import MainProduct from "../../components/main/product-item";
 import Link from "next/link";
 import noExistUser from "../noExistUser";
+import emptybox from "../../../public/asset/image/emptybox.svg";
 
 const MyPage: NextPage = () => {
   const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
@@ -127,14 +128,24 @@ const MyPage: NextPage = () => {
           </button>
         </div>
       </div>
-      {category === "items" && (
+      {category === "items" && userData?.product.length !== 0 && (
         <div className="mx-4 grid grid-cols-2 gap-4 pt-5 pb-20">
           {userData?.product.map((item: ProductDataMin) => (
             <MainProduct {...item} key={item.id} imgh="h-[190px]" />
           ))}
         </div>
       )}
-      {category === "looks" && (
+      {category === "items" && userData?.product.length === 0 && (
+        <div className="flex min-h-[420px] items-center justify-center text-center">
+          <div>
+            <div className="mx-auto mb-2 h-20 w-20">
+              <Image src={emptybox} alt="" width={80} height={80} />
+            </div>
+            <p>등록한 상품이 없어요!</p>
+          </div>
+        </div>
+      )}
+      {category === "looks" && userData?.look.length !== 0 && (
         <div className="mx-4 grid grid-cols-2 gap-4 pt-5 pb-20">
           {userData?.look.map((item: LookbookDataMin) => (
             <Link href={`lookbook/${item.id}`} key={item.id}>
@@ -150,6 +161,16 @@ const MyPage: NextPage = () => {
               </div>
             </Link>
           ))}
+        </div>
+      )}
+      {category === "looks" && userData?.look.length === 0 && (
+        <div className="flex min-h-[420px] items-center justify-center text-center">
+          <div>
+            <div className="mx-auto mb-2 h-20 w-20">
+              <Image src={emptybox} alt="" width={80} height={80} />
+            </div>
+            <p>업로드한 포스트가 없어요!</p>
+          </div>
         </div>
       )}
       {isLoading && <LoadingSpinner />}
