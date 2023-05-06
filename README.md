@@ -32,29 +32,31 @@
 - 📌 [기능명세서](https://github.com/Wecloset/pandaFE/wiki/%EA%B8%B0%EB%8A%A5-%EB%AA%85%EC%84%B8%EC%84%9C)
 - 📌 [API설계](https://low-individual-829.notion.site/API-381a4ece8d854a4fa1ff4ec1b5a46727)
 - 📌 [db model](https://www.prismabuilder.io/schemas/panda/graph)
+
+### Sitemap
+
+<img src="https://user-images.githubusercontent.com/90922593/235641787-6ec289aa-ec7a-42df-85fc-a92460a4b3c5.png" width="650"/>
  
 ### Main Features
 
 - [Filtering](https://github.com/Wecloset/pandaFE/issues/69)
 - [Infinite Scrolling](https://github.com/Wecloset/pandaFE/wiki/Infinite-Scrolling)
-- [NextAuth login]()
-- [External api - google, kakao signup]()
+- [NextAuth login](https://github.com/Wecloset/pandaFE/blob/main/src/pages/api/auth/%5B...nextauth%5D.ts)
+- [External api - google, kakao signup](https://github.com/Wecloset/pandaFE/blob/main/src/pages/sign/index.tsx)
 - [Search Engine]()
 - [aws s3 file upload](https://github.com/Wecloset/pandaFE/blob/main/src/hooks/useUpload.tsx)
-- [Custom Hooks](https://github.com/Wecloset/pandaFE/wiki/Custom-hooks)
 - [State Management - recoil(user data fetching)](https://github.com/Wecloset/pandaFE/blob/main/src/recoil/user.ts)
-- [Error Handling](https://github.com/Wecloset/pandaFE/wiki/Error-handling)
 
 ### Trouble Shooting
 
-- [recoil 유저데이터 동기화](https://github.com/Wecloset/pandaFE/issues/58)
-- [prisma db push error](https://velog.io/@rlorxl/prisma-db-push-%EC%97%90%EB%9F%AC-%ED%95%B4%EA%B2%B0)
-- [aws s3 file upload issue]()
-- [social signup]()
-- [react-hook-form issue](https://velog.io/@rlorxl/react-hook-form-%EA%B4%80%EB%A0%A8-%EC%9D%B4%EC%8A%88)
-- [useMutation & useForm & axios]()
-- [localStorage is not defined error]()
-- [next.js hydration error]()
+- [로그인된 유저의 데이터를 유지하고 동기화하는 방법에 대한 고민](https://github.com/Wecloset/pandaFE/issues/58)
+- [prisma db push할 때 에러 해결방법](https://velog.io/@rlorxl/prisma-db-push-%EC%97%90%EB%9F%AC-%ED%95%B4%EA%B2%B0)
+- [aws s3 bucket에 파일 업로드하기](https://github.com/Wecloset/pandaFE/wiki/aws-s3-file-upload-issue)
+- [소셜 회원가입 구현하기]()
+- [react-hook-form적용 이슈](https://velog.io/@rlorxl/react-hook-form-%EA%B4%80%EB%A0%A8-%EC%9D%B4%EC%8A%88)
+- [useMutation & useForm & axios](https://github.com/Wecloset/pandaFE/wiki/useMutation-&-useForm-&-axios)
+- [Custom hooks로 비즈니스 로직 분리하기](https://github.com/Wecloset/pandaFE/wiki/Custom-hooks)
+- [Error Handling에 ErrorBoundary적용하기](https://github.com/Wecloset/pandaFE/wiki/Error-handling)
 
 ### Members
 
