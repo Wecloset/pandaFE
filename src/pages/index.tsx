@@ -37,13 +37,13 @@ const Home: NextPage = () => {
     fetchSession();
   }, []);
 
-  const loadingfallback = (
-    <div className="relative min-h-[540px]">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        <LoadingSpinner />
-      </div>
-    </div>
-  );
+  // const loadingfallback = (
+  //   <div className="relative min-h-[540px]">
+  //     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+  //       <LoadingSpinner />
+  //     </div>
+  //   </div>
+  // );
 
   return (
     <>
@@ -60,22 +60,20 @@ const Home: NextPage = () => {
         setModal={setModalState}
       >
         <div className="space-y-10 py-10">
-          <NextSuspense fallback={loadingfallback}>
-            <Recommend />
-            <RecentStyle />
-            <MainLookbook />
-            <div className="flex h-52 w-full flex-col items-center justify-center bg-gradient py-10 text-white">
-              <p className="text-base">매일 수익이 발생하는 옷장공유</p>
-              <p className="mt-1 mb-5 text-2xl">지금 시작해보세요!</p>
-              <Button
-                type="button"
-                text="바로가기"
-                fontColor="text-white"
-                classes="bg-black"
-                divWidth="w-32"
-              />
-            </div>
-          </NextSuspense>
+          <Recommend />
+          <RecentStyle />
+          <MainLookbook />
+          <div className="flex h-52 w-full flex-col items-center justify-center bg-gradient py-10 text-white">
+            <p className="text-base">매일 수익이 발생하는 옷장공유</p>
+            <p className="mt-1 mb-5 text-2xl">지금 시작해보세요!</p>
+            <Button
+              type="button"
+              text="바로가기"
+              fontColor="text-white"
+              classes="bg-black"
+              divWidth="w-32"
+            />
+          </div>
         </div>
         <Navigation setModal={setModalState} />
         <FloatingButton path="/create" setModal={setModalState} />
