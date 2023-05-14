@@ -17,7 +17,6 @@ const LoadingSpinner: NextPage<{ width?: string }> = ({ width }) => {
           visible={true}
         />
       </div>
-      <p className="text-primary-violet">열심히 가져오고 있어요...!</p>
     </div>
   );
 };
