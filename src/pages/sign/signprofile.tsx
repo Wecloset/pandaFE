@@ -1,4 +1,4 @@
-import { GetStaticProps, NextPage } from "next";
+import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { FieldValues, useForm } from "react-hook-form";
 import Header from "../../components/ui/header";
@@ -14,22 +14,11 @@ import { cls } from "../../utils/class";
 import useToast from "../../hooks/useToast";
 import { apiGet, apiPost } from "../../utils/request";
 import existUser from "../existUser";
+import { credentials } from "../../lib/credentials";
 
-interface CredentialProps {
-  region: string;
-  accessKey: string;
-  secretKey: string;
-}
-
-const SignProfile: NextPage<CredentialProps | any> = ({
-  region,
-  accessKey,
-  secretKey,
-}) => {
+const SignProfile: NextPage = () => {
   const router = useRouter();
   const userEmail = router.query.email;
-
-  const credentials = { region, accessKey, secretKey };
 
   const { uploadImage, encodeFile, imgsrc } = useUpload(credentials);
 
@@ -184,20 +173,6 @@ const SignProfile: NextPage<CredentialProps | any> = ({
       </form>
     </>
   );
-};
-
-export const getStaticProps: GetStaticProps = async () => {
-  const REGION = process.env.AWS_REGION ? process.env.AWS_REGION : null;
-  const ACCESS_KEY = process.env.AWS_KEY ? process.env.AWS_KEY : null;
-  const SECRECT_KEY = process.env.AWS_SECRET ? process.env.AWS_SECRET : null;
-
-  return {
-    props: {
-      region: REGION,
-      accessKey: ACCESS_KEY,
-      secretKey: SECRECT_KEY,
-    },
-  };
 };
 
 export default existUser(SignProfile);

@@ -1,4 +1,4 @@
-import type { GetStaticProps, NextPage } from "next";
+import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { ChangeEvent, useState } from "react";
 import { Icon } from "@iconify/react";
@@ -14,21 +14,16 @@ import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
 import useUpload from "../../hooks/useUpload";
 import useOptions from "../../hooks/useOptions";
 import { tabData } from "../../lib/fake-data";
-import { CreateState, CredentialProps, Options } from "../../types/create-type";
+import { CreateState, Options } from "../../types/create-type";
 import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
 import Overlay from "../../components/ui/overlay";
 import useToast from "../../hooks/useToast";
 import { apiPost } from "../../utils/request";
 import noExistUser from "../noExistUser";
+import { credentials } from "../../lib/credentials";
 
-const Create: NextPage<CredentialProps | any> = ({
-  region,
-  accessKey,
-  secretKey,
-}) => {
+const Create: NextPage = () => {
   const router = useRouter();
-
-  const credentials = { region, accessKey, secretKey };
 
   const userData = useRecoilValueLoadable(currentUserInfoQuery);
   const { state, contents } = userData;
@@ -239,20 +234,6 @@ const Create: NextPage<CredentialProps | any> = ({
       </div>
     </>
   );
-};
-
-export const getStaticProps: GetStaticProps = async () => {
-  const REGION = process.env.AWS_REGION ? process.env.AWS_REGION : null;
-  const ACCESS_KEY = process.env.AWS_KEY ? process.env.AWS_KEY : null;
-  const SECRECT_KEY = process.env.AWS_SECRET ? process.env.AWS_SECRET : null;
-
-  return {
-    props: {
-      region: REGION,
-      accessKey: ACCESS_KEY,
-      secretKey: SECRECT_KEY,
-    },
-  };
 };
 
 export default noExistUser(Create);

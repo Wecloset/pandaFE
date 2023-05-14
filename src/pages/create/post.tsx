@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { GetStaticProps, NextPage } from "next";
+import { NextPage } from "next";
 import { ChangeEvent, useState } from "react";
 import { FieldErrors, useForm } from "react-hook-form";
 import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
@@ -9,7 +9,7 @@ import UploadImages from "../../components/create/upload-images";
 import Header from "../../components/ui/header";
 import useOptions from "../../hooks/useOptions";
 import useUpload from "../../hooks/useUpload";
-import { CreateState, CredentialProps } from "../../types/create-type";
+import { CreateState } from "../../types/create-type";
 import { ProductDataMin } from "../../types/data-type";
 import { cls } from "../../utils/class";
 import ProductTagTab from "../../components/create/product-tab";
@@ -20,13 +20,9 @@ import Overlay from "../../components/ui/overlay";
 import useToast from "../../hooks/useToast";
 import { apiPost } from "../../utils/request";
 import noExistUser from "../noExistUser";
+import { credentials } from "../../lib/credentials";
 
-const CreatePost: NextPage<CredentialProps | any> = ({
-  region,
-  accessKey,
-  secretKey,
-}) => {
-  const credentials = { region, accessKey, secretKey };
+const CreatePost: NextPage = () => {
   const userData = useRecoilValueLoadable(currentUserInfoQuery);
   const { state, contents } = userData;
 
@@ -205,20 +201,6 @@ const CreatePost: NextPage<CredentialProps | any> = ({
       </div>
     </>
   );
-};
-
-export const getStaticProps: GetStaticProps = async () => {
-  const REGION = process.env.AWS_REGION ? process.env.AWS_REGION : null;
-  const ACCESS_KEY = process.env.AWS_KEY ? process.env.AWS_KEY : null;
-  const SECRECT_KEY = process.env.AWS_SECRET ? process.env.AWS_SECRET : null;
-
-  return {
-    props: {
-      region: REGION,
-      accessKey: ACCESS_KEY,
-      secretKey: SECRECT_KEY,
-    },
-  };
 };
 
 export default noExistUser(CreatePost);

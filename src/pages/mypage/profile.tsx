@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import type { GetServerSideProps, NextPage } from "next";
+import type { NextPage } from "next";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -15,19 +15,15 @@ import useToast from "../../hooks/useToast";
 import useUpload from "../../hooks/useUpload";
 import { taglist } from "../../lib/tag-data";
 import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
-import { CredentialProps } from "../../types/create-type";
 import { cls } from "../../utils/class";
 import { createImageUrl } from "../../utils/image-url";
 import { apiPost } from "../../utils/request";
 import noExistUser from "../noExistUser";
+import { credentials } from "../../lib/credentials";
 
-const ProfileEdit: NextPage<CredentialProps | any> = ({
-  region,
-  accessKey,
-  secretKey,
-}) => {
+const ProfileEdit: NextPage = () => {
+  console.log(credentials);
   const userInfo = useRecoilValueLoadable(currentUserInfoQuery);
-  const credentials = { region, accessKey, secretKey };
   const { uploadImage, encodeFile, imgsrc } = useUpload(credentials);
   const { state, contents: userContents } = userInfo;
 
@@ -322,20 +318,6 @@ const ProfileEdit: NextPage<CredentialProps | any> = ({
       <Navigation />
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const REGION = process.env.AWS_REGION ? process.env.AWS_REGION : null;
-  const ACCESS_KEY = process.env.AWS_KEY ? process.env.AWS_KEY : null;
-  const SECRECT_KEY = process.env.AWS_SECRET ? process.env.AWS_SECRET : null;
-
-  return {
-    props: {
-      region: REGION,
-      accessKey: ACCESS_KEY,
-      secretKey: SECRECT_KEY,
-    },
-  };
 };
 
 export default noExistUser(ProfileEdit);
