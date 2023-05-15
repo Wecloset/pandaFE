@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
-import { ChangeEvent, useState } from "react";
-import { FieldErrors, useForm } from "react-hook-form";
+import { ChangeEvent, useEffect, useState } from "react";
+import { FieldErrors, FormProvider, useForm } from "react-hook-form";
 import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
 import { currentUserInfoQuery, userInfoQuery } from "../../recoil/user";
 import Button from "../../components/ui/button";
@@ -35,16 +35,24 @@ const CreatePost: NextPage = () => {
   const [isText, setIsText] = useState<boolean>(false);
   const [tagItems, setTagItems] = useState<ProductDataMin[]>([]);
 
-  const { register, handleSubmit } = useForm<CreateState>({
+  const method = useForm<CreateState>({
     mode: "onSubmit",
   });
+
+  const { register, handleSubmit, watch } = method;
 
   const { uploadImage, deleteImage, encodeFile, imgsrc } =
     useUpload(credentials);
 
   const { isTabOpen, openTab, closeTab } = useOptions({});
 
-  const { setToast, Toast } = useToast();
+  const { setToast, Toast, closeModal } = useToast();
+
+  useEffect(() => {
+    if (isTabOpen) closeModal();
+    const watches = watch((_, { type }) => type === "change" && closeModal());
+    return () => watches.unsubscribe();
+  }, [watch, isTabOpen]);
 
   const textAreaValue = (event: ChangeEvent<HTMLTextAreaElement>) => {
     event.target.value !== "" ? setIsText(true) : setIsText(false);
@@ -113,12 +121,13 @@ const CreatePost: NextPage = () => {
       {isTabOpen && <Overlay />}
       <div className="px-5 py-5">
         <form onSubmit={handleSubmit(valid, inValid)}>
-          <UploadImages
-            register={register}
-            deleteImage={deleteImage}
-            encodeFile={encodeFile}
-            imgsrc={imgsrc}
-          />
+          <FormProvider {...method}>
+            <UploadImages
+              deleteImage={deleteImage}
+              encodeFile={encodeFile}
+              imgsrc={imgsrc}
+            />
+          </FormProvider>
           <div className="border-t border-b border-borderColor-gray pb-2 [&>input]:h-[52px] [&>input]:border-b [&>input]:px-4">
             <div className="relative h-auto w-full p-5">
               <textarea
@@ -131,7 +140,6 @@ const CreatePost: NextPage = () => {
                   "peer w-full resize-none",
                   isText ? "is-valid" : "",
                 )}
-                onChange={textAreaValue}
               />
               <div className="pointer-events-none absolute top-5 left-5 bg-transparent text-common-gray peer-focus:hidden peer-[.is-valid]:hidden">
                 <p>문구를 작성해주세요.</p>
