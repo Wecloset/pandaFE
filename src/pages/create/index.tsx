@@ -1,8 +1,8 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import { useForm, FieldErrors } from "react-hook-form";
+import { useForm, FieldErrors, FormProvider } from "react-hook-form";
 import { useMutation } from "react-query";
 import Button from "../../components/ui/button";
 import Header from "../../components/ui/header";
@@ -49,19 +49,13 @@ const Create: NextPage = () => {
     rental: { name: "대여 가능", current: false, list: tabData.rental },
   });
 
-  const { setToast, Toast } = useToast();
+  const { setToast, Toast, closeModal } = useToast();
 
-  const { register, handleSubmit } = useForm<CreateState>({
-    mode: "onSubmit",
-  });
+  const method = useForm<CreateState>({ mode: "onSubmit" });
+
+  const { register, handleSubmit, watch } = method;
 
   const [isText, setIsText] = useState<boolean>(false);
-
-  const [isValid, setIsValid] = useState<boolean | null>(null);
-
-  const textAreaValue = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    event.target.value !== "" ? setIsText(true) : setIsText(false);
-  };
 
   const createProduct = async (payload: {
     data: any;
@@ -93,32 +87,22 @@ const Create: NextPage = () => {
     },
   });
 
-  const validation = (data: CreateState) => {
-    let isNotTag;
-    if (typeof data.tag === "string" && data.tag.length > 0) {
-      if (data.tag.includes(" ")) isNotTag = true;
-      else
-        isNotTag = !data.tag
-          ?.toString()
-          .trim()
-          .split(" ")
-          .every((tag: string) => tag.includes("#"));
-    }
-    const numberCheck = /[0-9]/g;
-    if (!numberCheck.test(data.price as string)) {
-      return setToast("상품가격을 숫자로 기입해주세요.", true);
-    } else if (options.category.name === "카테고리") {
-      return setToast("카테고리를 선택해 주세요.", true);
-    } else if (isNotTag) {
-      return setToast("태그는 공백을 포함할 수 없습니다.", true);
-    }
-    return true;
+  // close toast ui
+  useEffect(() => {
+    if (isTabOpen) closeModal();
+    const watches = watch((_, { type }) => type === "change" && closeModal());
+    return () => watches.unsubscribe();
+  }, [watch, isTabOpen]);
+
+  const textAreaValue = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    event.target.value !== "" ? setIsText(true) : setIsText(false);
   };
 
   const valid = async (data: CreateState) => {
-    if (!validation(data)) return;
-
-    setIsValid(true);
+    if (options.category.name === "카테고리") {
+      setToast("카테고리를 선택해 주세요.", true);
+      return;
+    }
 
     const imageurlList: string[] = [];
     imgsrc.forEach(item => {
@@ -132,15 +116,24 @@ const Create: NextPage = () => {
   };
 
   const inValid = (error: FieldErrors) => {
-    setIsValid(false);
-    console.log(error);
-    const message =
-      error.desc?.message ||
-      error.title?.message ||
-      error.price?.message ||
-      error.image?.message;
+    console.log("invalid", error);
+    const message = error.tag
+      ? "태그는 공백을 포함할 수 없습니다."
+      : error.desc?.message ||
+        error.title?.message ||
+        error.price?.message ||
+        error.image?.message;
     setToast(message as string, true);
   };
+
+  const validateTag = (tag: string) => {
+    if (typeof tag !== "string" || tag.trim() === "") return;
+
+    const tagWithSpace = tag.trim();
+    return tagWithSpace.split(" ").every(tag => tag.includes("#"));
+  };
+
+  const checkAsNumber = /[0-9]/g;
 
   return (
     <>
@@ -149,15 +142,18 @@ const Create: NextPage = () => {
       {isTabOpen && <Overlay />}
       <div className=" px-5 py-5">
         <form onSubmit={handleSubmit(valid, inValid)}>
-          <UploadImages
-            register={register}
-            deleteImage={deleteImage}
-            encodeFile={encodeFile}
-            imgsrc={imgsrc}
-          />
+          <FormProvider {...method}>
+            <UploadImages
+              deleteImage={deleteImage}
+              encodeFile={encodeFile}
+              imgsrc={imgsrc}
+            />
+          </FormProvider>
           <div className="border-t border-b border-borderColor-gray pb-2 [&>input]:h-[52px] [&>input]:border-b [&>input]:px-4">
             <input
-              {...register("title", { required: "제목을 입력해주세요." })}
+              {...register("title", {
+                required: "제목을 입력해주세요.",
+              })}
               type="text"
               name="title"
               placeholder="제목"
@@ -165,8 +161,12 @@ const Create: NextPage = () => {
             <input
               {...register("price", {
                 required: "상품의 가격을 입력해주세요.",
+                pattern: {
+                  value: checkAsNumber,
+                  message: "상품가격을 숫자로 기입해주세요.",
+                },
               })}
-              type="text"
+              type="number"
               name="price"
               placeholder="가격"
               autoComplete="off"
@@ -183,7 +183,6 @@ const Create: NextPage = () => {
                   "peer w-full resize-none",
                   isText ? "is-valid" : "",
                 )}
-                onChange={textAreaValue}
               />
               <div
                 className="pointer-events-none absolute top-5 left-5 bg-transparent text-common-gray 
@@ -196,7 +195,9 @@ const Create: NextPage = () => {
               </div>
             </div>
             <input
-              {...register("tag")}
+              {...register("tag", {
+                validate: val => validateTag(val as string),
+              })}
               type="text"
               name="tag"
               placeholder="검색에 사용될 태그를 작성해주세요. Ex. #빈티지"
