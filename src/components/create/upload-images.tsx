@@ -1,11 +1,10 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
 import React from "react";
-import { UseFormRegister } from "react-hook-form";
+import { useForm, useFormContext } from "react-hook-form";
 import { CreateState } from "../../types/create-type";
 
 interface UploadImagesProps {
-  register: UseFormRegister<CreateState>;
   deleteImage: (selectedImage: string) => void;
   encodeFile: (event: React.ChangeEvent<HTMLInputElement>) => void;
   imgsrc: {
@@ -16,11 +15,12 @@ interface UploadImagesProps {
 }
 
 const UploadImages: NextPage<UploadImagesProps> = ({
-  register,
   deleteImage,
   encodeFile,
   imgsrc,
 }) => {
+  const { register } = useFormContext();
+
   return (
     <div className="mb-6 flex">
       <label className="mr-2 mt-2 flex h-[100px] w-[100px] flex-shrink-0 cursor-pointer flex-col items-center justify-center gap-1 border bg-gray-100 text-textColor-gray-100">
@@ -28,11 +28,12 @@ const UploadImages: NextPage<UploadImagesProps> = ({
           type="file"
           {...register("image", {
             required: "1개 이상의 이미지를 등록해주세요.",
+            onChange: e => encodeFile(e),
           })}
+          name="image"
           accept="image/png, image/jpeg"
           multiple
           className="hidden"
-          onChange={encodeFile}
         />
         <Icon icon="bxs:image-add" className="text-2xl" />
         <p>

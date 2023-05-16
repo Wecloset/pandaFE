@@ -78,7 +78,7 @@ const useToast = () => {
     );
   };
 
-  return { setToast, Toast };
+  return { setToast, Toast, closeModal };
 };
 
 export default useToast;
