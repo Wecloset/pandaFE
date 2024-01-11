@@ -18,7 +18,7 @@
 ### Tech Stack
 
 - **Language** : **React**를 사용해 프로젝트를 생성하고 **TypeScript**를 사용한 정적 타입 지정으로 코드 작성 효율을 높임
-- **Library** : file based routing, api routing, nextauth, SSR과 webpack, bundling을 지원하는 **Next.js**를 사용
+- **Framework** : file based routing, api routing, nextauth, SSR과 webpack, bundling을 지원하는 **Next.js**를 사용
 - **CSS** : **Tailwind**사용으로 style작성 코드 컨벤션을 맞춤.
 - **State Management** : **Recoil**로 client-state, 비동기쿼리를 관리, **React-query**로 서버 데이터 fetching
 - **DB** : 클라우드 기반의 서버리스 데이터베이스인 **PlanetScale**을 사용했고 **Prisma**로 테이블을 정의하고 db와 연결.
