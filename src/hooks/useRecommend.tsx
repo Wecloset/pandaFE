@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { random } from "../utils/random";
-import { ProductData } from "../types/data-type";
+import { ProductData, UserData } from "../types/data-type";
 
-const useRecommend = () => {
-  const [keywords, setKeywords] = useState<{ id: number; tag: string }[]>([]);
+const useRecommend = (user: { userState: string; userData: UserData }) => {
+  const { userState, userData } = user;
+
   const [keyword, setKeyword] = useState<string>("");
+  const [keywords, setKeywords] = useState<{ id: number; tag: string }[]>([]);
   const [keywordItems, setKeywordItems] = useState<{
     [key: string]: ProductData[];
   }>({});
@@ -13,7 +15,15 @@ const useRecommend = () => {
     [key: string]: ProductData[];
   }>({});
 
-  const refresh = () => {
+  const setKeywordHandler = (tagName: string) => setKeyword(tagName);
+
+  const setKeywordItemsHandler = (items: { [key: string]: ProductData[] }) =>
+    setKeywordItems(items);
+
+  const setRecommendHandler = (list: { [key: string]: ProductData[] }) =>
+    setRecommendList(list);
+
+  const refreshKeywords = () => {
     const key = keyword !== "" ? keyword : "추천아이템";
     const newRandomItems = random(keywordItems[key]);
     setRecommendList((prev: { [key: string]: ProductData[] }) => ({
@@ -22,15 +32,21 @@ const useRecommend = () => {
     }));
   };
 
+  useEffect(() => {
+    if (userState !== "hasValue" || !userData) return;
+
+    setKeyword(userData.keywords[0]?.tag);
+    setKeywords(userData.keywords);
+  }, [userState]);
+
   return {
     keyword,
     keywords,
     recommendList,
-    setKeyword,
-    setKeywords,
-    setKeywordItems,
-    setRecommendList,
-    refresh,
+    setKeyword: setKeywordHandler,
+    setKeywordItems: setKeywordItemsHandler,
+    setRecommendList: setRecommendHandler,
+    refreshKeywords,
   };
 };
 

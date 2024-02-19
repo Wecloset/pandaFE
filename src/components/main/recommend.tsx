@@ -9,7 +9,7 @@ import RecommendSkeleton from "../ui/recommend-skeleton";
 
 import NextSuspense from "../../hooks/suspense";
 import { currentUserInfoQuery } from "../../recoil/user";
-import { ProductData, UserData } from "../../types/data-type";
+import { UserData } from "../../types/data-type";
 import Keywords from "./keywords";
 import useRecommend from "../../hooks/useRecommend";
 
@@ -26,24 +26,13 @@ const Recommend: NextPage = () => {
     setKeyword,
     setKeywordItems,
     setRecommendList,
-    setKeywords,
-    refresh,
-  } = useRecommend();
-
-  const clickKeywordHandler = (tagName: string) => setKeyword(tagName);
-
-  const setKeywordHandler = (items: { [key: string]: ProductData[] }) =>
-    setKeywordItems(items);
-
-  const setRecommendHandler = (list: { [key: string]: ProductData[] }) =>
-    setRecommendList(list);
+    refreshKeywords,
+  } = useRecommend({ userState, userData });
 
   useEffect(() => {
     if (userState !== "hasValue" || !userData) return;
-    const { keywords, nickname } = userData;
-    setKeyword(keywords[0]?.tag);
-    setKeywords(keywords);
-    setNickname(nickname);
+
+    setNickname(userData.nickname);
   }, [userState]);
 
   const recommendContents =
@@ -66,7 +55,7 @@ const Recommend: NextPage = () => {
       <div>
         <h2 className="text-xl">Style for You</h2>
         <p className="mt-1 text-textColor-gray-100">
-          {nickname
+          {userState === "hasValue" && nickname
             ? `${nickname}님의 키워드에 적합한 아이템`
             : "지금 핫한 아이템"}
         </p>
@@ -75,20 +64,20 @@ const Recommend: NextPage = () => {
         <Keywords
           keywords={keywords}
           keyword={keyword}
-          onClickKeyword={clickKeywordHandler}
+          onClickKeyword={setKeyword}
         />
       )}
       <NextSuspense fallback={loadingfallback}>
         <RecommendList
           content={recommendContents}
-          onSetKeywords={setKeywordHandler}
-          onSetRecommends={setRecommendHandler}
+          onSetKeywords={setKeywordItems}
+          onSetRecommends={setRecommendList}
         />
       </NextSuspense>
       <div className="relative h-10">
         <button
           className="absolute top-0 left-0 z-10 flex h-10 w-full items-center justify-center border border-black bg-white"
-          onClick={refresh}
+          onClick={refreshKeywords}
         >
           <Icon icon="ic:baseline-refresh" className="mr-1 -mt-1 text-lg" />
           {keyword !== "" ? `${keyword} 아이템` : "추천 아이템"}
