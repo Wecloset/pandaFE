@@ -14,6 +14,7 @@ const Keywords: NextPage<KeywordsProps> = ({
       {keywords.map(({ tag, id }: { tag: string; id: number }) => (
         <div key={id} className="relative h-9 min-w-[65px] rounded-lg px-3">
           <button
+            type="button"
             className={cls(
               "absolute top-0 left-0 z-10 h-full w-full rounded-lg border border-common-black",
               keyword === tag
