@@ -1,21 +1,22 @@
 import type { NextPage } from "next";
 import React, { useEffect } from "react";
+import { getSession } from "next-auth/react";
+
 import { useSetRecoilState } from "recoil";
 import { userEmailState } from "../recoil/user";
-import { getSession } from "next-auth/react";
+
 import Button from "../components/ui/button";
 import RecentStyle from "../components/main/recent-style";
 import MainLookbook from "../components/main/lookbook";
 import Header from "../components/ui/header";
 import Navigation from "../components/ui/navigation";
 import FloatingButton from "../components/ui/floating-button";
-import useModal from "../hooks/useModal";
 import ImageSlide from "../components/market/detail/image-slide";
-import { bannerImages } from "../lib/banner-images";
 import Recommend from "../components/main/recommend";
-import LoadingSpinner from "../components/ui/loading-spinner";
 import ErrorBoundary from "./error-boundary";
-import NextSuspense from "../hooks/suspense";
+
+import useModal from "../hooks/useModal";
+import { bannerImages } from "../lib/banner-images";
 
 const Home: NextPage = () => {
   const setEmail = useSetRecoilState(userEmailState);
@@ -36,14 +37,6 @@ const Home: NextPage = () => {
     };
     fetchSession();
   }, []);
-
-  // const loadingfallback = (
-  //   <div className="relative min-h-[540px]">
-  //     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-  //       <LoadingSpinner />
-  //     </div>
-  //   </div>
-  // );
 
   return (
     <>

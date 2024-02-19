@@ -14,7 +14,6 @@ const noExistUser = (WrappedComponent: NextPage) => {
     const router = useRouter();
 
     useEffect(() => {
-      // session === null
       if (session === null) {
         router.push("/");
       }

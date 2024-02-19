@@ -9,9 +9,11 @@ import graphic5 from "../../public/asset/image/graphic5.svg";
 const MainLayout: NextPage<{ children: React.ReactNode }> = ({ children }) => {
   const [search, setSearch] = useState<string>("");
   const router = useRouter();
+
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
   };
+
   const onSearch = () => {
     if (search.trim() === "") return;
     router
