@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import notfind from "../../public/asset/image/full-logo.png";
+
 import Button from "../components/ui/button";
 
 const Error404: NextPage = () => {

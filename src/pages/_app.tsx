@@ -1,11 +1,11 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { QueryClient, QueryClientProvider } from "react-query";
 import { SessionProvider } from "next-auth/react";
-import { RecoilRoot } from "recoil";
-import MainLayout from "../styles/global-layout";
-import React from "react";
 
+import { QueryClient, QueryClientProvider } from "react-query";
+import { RecoilRoot } from "recoil";
+
+import MainLayout from "../styles/global-layout";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const queryClient = new QueryClient();

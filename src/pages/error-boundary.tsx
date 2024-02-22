@@ -1,5 +1,6 @@
 import Error from "next/error";
 import React, { ErrorInfo, ReactNode } from "react";
+
 import { setModalProps } from "../types/modal-type";
 
 interface Props {
