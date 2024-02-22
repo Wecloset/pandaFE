@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import { random } from "../utils/random";
 import { ProductData, UserData } from "../types/data-type";
 
-const useRecommend = (user: { userState: string; userData: UserData }) => {
-  const { userState, userData } = user;
-
+const useRecommend = ({
+  userData,
+}: {
+  userData?: { message: string; user: UserData };
+}) => {
   const [keyword, setKeyword] = useState<string>("");
   const [keywords, setKeywords] = useState<{ id: number; tag: string }[]>([]);
   const [keywordItems, setKeywordItems] = useState<{
@@ -33,11 +35,12 @@ const useRecommend = (user: { userState: string; userData: UserData }) => {
   };
 
   useEffect(() => {
-    if (userState !== "hasValue" || !userData) return;
+    if (!userData) return;
 
-    setKeyword(userData.keywords[0]?.tag);
-    setKeywords(userData.keywords);
-  }, [userState]);
+    const { user } = userData;
+    setKeyword(user.keywords[0]?.tag);
+    setKeywords(user.keywords);
+  }, [userData]);
 
   return {
     keyword,

@@ -1,23 +1,21 @@
 import { NextPage } from "next";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
-import { Icon } from "@iconify/react";
-import { useRecoilValueLoadable } from "recoil";
+import { useMutation } from "react-query";
 
 import RecommendList from "./recommend-list";
-import RecommendSkeleton from "../ui/recommend-skeleton";
-
-import NextSuspense from "../../hooks/suspense";
-import { currentUserInfoQuery } from "../../recoil/user";
-import { UserData } from "../../types/data-type";
+import RecommendSkeleton from "./recommend-skeleton";
 import Keywords from "./keywords";
+
 import useRecommend from "../../hooks/useRecommend";
+import NextSuspense from "../../hooks/suspense";
+import { apiGet } from "../../utils/request";
+import RecommendButton from "./recommend-button";
 
-const Recommend: NextPage = () => {
-  const { state: userState, contents: userData } =
-    useRecoilValueLoadable<UserData>(currentUserInfoQuery);
-
-  const [nickname, setNickname] = useState<string>("");
+const Recommend: NextPage<{ email?: string }> = ({ email }) => {
+  const { data: userData, mutate } = useMutation({
+    mutationFn: (key: string) => apiGet.GET_USER(key),
+  });
 
   const {
     keyword,
@@ -27,13 +25,12 @@ const Recommend: NextPage = () => {
     setKeywordItems,
     setRecommendList,
     refreshKeywords,
-  } = useRecommend({ userState, userData });
+  } = useRecommend({ userData });
 
   useEffect(() => {
-    if (userState !== "hasValue" || !userData) return;
-
-    setNickname(userData.nickname);
-  }, [userState]);
+    if (!email) return;
+    mutate(email);
+  }, [email]);
 
   const recommendContents =
     keyword && recommendList[keyword]?.length > 0
@@ -55,8 +52,8 @@ const Recommend: NextPage = () => {
       <div>
         <h2 className="text-xl">Style for You</h2>
         <p className="mt-1 text-textColor-gray-100">
-          {userState === "hasValue" && nickname
-            ? `${nickname}님의 키워드에 적합한 아이템`
+          {userData
+            ? `${userData.user.nickname}님의 키워드에 적합한 아이템`
             : "지금 핫한 아이템"}
         </p>
       </div>
@@ -74,18 +71,9 @@ const Recommend: NextPage = () => {
           onSetRecommends={setRecommendList}
         />
       </NextSuspense>
-      <div className="relative h-10">
-        <button
-          className="absolute top-0 left-0 z-10 flex h-10 w-full items-center justify-center border border-black bg-white"
-          onClick={refreshKeywords}
-        >
-          <Icon icon="ic:baseline-refresh" className="mr-1 -mt-1 text-lg" />
-          {keyword !== "" ? `${keyword} 아이템` : "추천 아이템"}
-        </button>
-        <span className="absolute top-1 left-1 h-full w-full bg-common-black" />
-        <span className="absolute top-[2px] -right-[4px] h-[3px] w-[6px] rotate-45 bg-common-black" />
-        <span className="absolute -bottom-[2px] left-0 h-[3px] w-[6px] rotate-45 bg-common-black" />
-      </div>
+      {recommendContents && (
+        <RecommendButton refresh={refreshKeywords} keyword={keyword} />
+      )}
     </div>
   );
 };

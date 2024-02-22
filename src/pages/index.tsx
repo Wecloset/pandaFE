@@ -1,9 +1,7 @@
 import type { NextPage } from "next";
-import React, { useEffect } from "react";
-import { getSession } from "next-auth/react";
-
-import { useSetRecoilState } from "recoil";
-import { userEmailState } from "../recoil/user";
+import React, { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 import Button from "../components/ui/button";
 import RecentStyle from "../components/main/recent-style";
@@ -19,24 +17,37 @@ import useModal from "../hooks/useModal";
 import { bannerImages } from "../lib/banner-images";
 
 const Home: NextPage = () => {
-  const setEmail = useSetRecoilState(userEmailState);
+  const [userEmail, setUserEmail] = useState<string>();
+
+  const { data, status } = useSession();
 
   const { show, setModalState, Modal } = useModal();
 
+  const router = useRouter();
+
+  const goLoginPage = () => router.push("/login");
+
   useEffect(() => {
-    const fetchSession = async () => {
-      getSession().then(session => {
-        if (session) {
-          const email = session.user?.email as string;
-          setEmail(email);
-        } else {
-          setEmail("");
-          localStorage.removeItem("current_user");
-        }
-      });
-    };
-    fetchSession();
-  }, []);
+    // 메인페이지로 라우팅될 때마다 인증처리.
+    console.log(status);
+    if (status === "authenticated") {
+      console.log("login");
+      setUserEmail(data.user?.email as string);
+      return;
+    }
+
+    if (status === "unauthenticated") {
+      console.log("사용자 인증 오류!");
+      const modalProps = {
+        message:
+          "사용자 인증이 해제되어 재로그인이 필요합니다.,로그인페이지로 이동할까요?",
+        btnText: "재로그인하기",
+        submit: goLoginPage,
+      };
+      setModalState(modalProps);
+      return;
+    }
+  }, [status]);
 
   return (
     <>
@@ -53,7 +64,7 @@ const Home: NextPage = () => {
         setModal={setModalState}
       >
         <div className="space-y-10 py-10">
-          <Recommend />
+          <Recommend email={userEmail} />
           <RecentStyle />
           <MainLookbook />
           <div className="flex h-52 w-full flex-col items-center justify-center bg-gradient py-10 text-white">
