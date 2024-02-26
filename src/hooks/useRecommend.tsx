@@ -1,55 +1,31 @@
 import { useEffect, useState } from "react";
-
+import { ProductData } from "../types/data-type";
 import { random } from "../utils/random";
-import { ProductData, UserData } from "../types/data-type";
 
-const useRecommend = ({
-  userData,
-}: {
-  userData?: { message: string; user: UserData };
-}) => {
-  const [keyword, setKeyword] = useState<string>("");
-  const [keywords, setKeywords] = useState<{ id: number; tag: string }[]>([]);
-  const [keywordItems, setKeywordItems] = useState<{
-    [key: string]: ProductData[];
+const useRecommend = ({ keyword }: { keyword: string }) => {
+  const [randomItems, setRandomItems] = useState<{
+    [key: string]: ProductData[]; // 랜덤하게 뽑은 아이템 리스트 (모든 키워드에 해당하는)
   }>({});
-  const [recommendList, setRecommendList] = useState<{
+  const [recommendList, setRecommendList] = useState<ProductData[]>([]); // 선택한 키워드에 해당하는 아이템 리스트
+
+  const setRecommendItems = (keywordItemList: {
     [key: string]: ProductData[];
-  }>({});
+  }) => {
+    const randomItems: { [key: string]: ProductData[] } = {};
+    Object.entries(keywordItemList).forEach(([key, value]) => {
+      randomItems[key] = random(value);
+    });
 
-  const setKeywordHandler = (tagName: string) => setKeyword(tagName);
-
-  const setKeywordItemsHandler = (items: { [key: string]: ProductData[] }) =>
-    setKeywordItems(items);
-
-  const setRecommendHandler = (list: { [key: string]: ProductData[] }) =>
-    setRecommendList(list);
-
-  const refreshKeywords = () => {
-    const key = keyword !== "" ? keyword : "추천아이템";
-    const newRandomItems = random(keywordItems[key]);
-    setRecommendList((prev: { [key: string]: ProductData[] }) => ({
-      ...prev,
-      [key]: newRandomItems,
-    }));
+    setRandomItems(randomItems);
   };
 
   useEffect(() => {
-    if (!userData) return;
-
-    const { user } = userData;
-    setKeyword(user.keywords[0]?.tag);
-    setKeywords(user.keywords);
-  }, [userData]);
+    setRecommendList(randomItems[keyword]);
+  }, [randomItems]);
 
   return {
-    keyword,
-    keywords,
     recommendList,
-    setKeyword: setKeywordHandler,
-    setKeywordItems: setKeywordItemsHandler,
-    setRecommendList: setRecommendHandler,
-    refreshKeywords,
+    setRecommendItems,
   };
 };
 

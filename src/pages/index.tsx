@@ -29,7 +29,6 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     // 메인페이지로 라우팅될 때마다 인증처리.
-    console.log(status);
     if (status === "authenticated") {
       console.log("login");
       setUserEmail(data.user?.email as string);

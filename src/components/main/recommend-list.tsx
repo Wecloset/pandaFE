@@ -1,77 +1,34 @@
+import { NextPage } from "next";
 import Image from "next/image";
 import React, { useEffect } from "react";
-import MainProduct from "./product-item";
 import emptybox from "../../../public/asset/image/emptybox.svg";
-import { NextPage } from "next";
-import { ProductData, UserData } from "../../types/data-type";
-import { useQuery } from "react-query";
-import { apiGet } from "../../utils/request";
-import { random } from "../../utils/random";
-import { useRecoilValue } from "recoil";
-import { currentUserInfoQuery } from "../../recoil/user";
 
-interface Recommends {
-  [key: string]: ProductData[];
-}
+import MainProduct from "./product-item";
+import RecommendButton from "./ui/recommend-button";
+
+import useRecommend from "../../hooks/useRecommend";
+import { ProductData } from "../../types/data-type";
 
 interface RecommendListProps {
-  content: ProductData[];
-  onSetKeywords: (keywords: Recommends) => void;
-  onSetRecommends: (recommends: Recommends) => void;
+  clickedKeyword: string;
+  keywordItemList: { [key: string]: ProductData[] };
 }
 
 const RecommendList: NextPage<RecommendListProps> = ({
-  content,
-  onSetKeywords,
-  onSetRecommends,
+  clickedKeyword,
+  keywordItemList,
 }) => {
-  const userData = useRecoilValue<UserData>(currentUserInfoQuery);
-
-  const { data: products } = useQuery("products", apiGet.GET_ITEMS, {
-    suspense: true,
+  const { recommendList, setRecommendItems } = useRecommend({
+    keyword: clickedKeyword,
   });
 
-  const setRecommends = (products: ProductData[]) => {
-    const recommends: Recommends = {};
-    const randoms: Recommends = {};
-
-    if (userData.keywords.length > 0)
-      userData.keywords.forEach(({ tag }: { tag: string }) => {
-        const recommendItems = products.filter(
-          product => product.style === tag,
-        );
-        recommends[tag] = recommendItems;
-      });
-
-    onSetKeywords(recommends);
-
-    Object.entries(recommends).forEach(
-      ([key, value]: [key: string, value: ProductData[]]) => {
-        const randomItems = random(value);
-        randoms[key] = randomItems;
-      },
-    );
-
-    onSetRecommends(randoms);
-  };
-
-  const setContents = (products: ProductData[]) => {
-    if (!userData) {
-      const randomList = random(products);
-      onSetKeywords({ 추천아이템: products });
-      onSetRecommends({ 추천아이템: randomList });
-    } else {
-      setRecommends(products);
-    }
-  };
-
   useEffect(() => {
-    setContents(products);
-  }, []);
+    setRecommendItems(keywordItemList);
+  }, [clickedKeyword]);
 
   return (
     <>
-      {!content ? (
+      {recommendList && recommendList.length === 0 && (
         <div className="flex min-h-[540px] items-center justify-center text-center">
           <div>
             <div className="mx-auto mb-4 h-20 w-20">
@@ -80,12 +37,18 @@ const RecommendList: NextPage<RecommendListProps> = ({
             <p>해당 키워드에 준비된 상품이 없습니다.</p>
           </div>
         </div>
-      ) : (
-        <div className="grid min-h-[540px] grid-cols-2 gap-3 transition">
-          {content?.map(data => (
-            <MainProduct {...data} key={data.id} imgh="h-[190px]" />
-          ))}
-        </div>
+      )}
+      <div className="grid min-h-[540px] grid-cols-2 gap-3 transition">
+        {recommendList?.map(data => (
+          <MainProduct {...data} key={data.id} imgh="h-[190px]" />
+        ))}
+      </div>
+      {keywordItemList[clickedKeyword] && (
+        <RecommendButton
+          refreshRecommends={setRecommendItems}
+          keywordItemList={keywordItemList}
+          keyword={clickedKeyword}
+        />
       )}
     </>
   );
