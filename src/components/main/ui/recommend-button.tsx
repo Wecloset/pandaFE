@@ -1,15 +1,22 @@
 import { Icon } from "@iconify/react";
 import { NextPage } from "next";
 
-const RecommendButton: NextPage<{ refresh: () => void; keyword: string }> = ({
-  refresh,
-  keyword,
-}) => {
+import { ProductData } from "../../../types/data-type";
+
+const RecommendButton: NextPage<{
+  refreshRecommends: (keywordItemList: {
+    [key: string]: ProductData[];
+  }) => void;
+  keywordItemList: {
+    [key: string]: ProductData[];
+  };
+  keyword: string;
+}> = ({ refreshRecommends, keywordItemList, keyword }) => {
   return (
     <div className="relative h-10">
       <button
         className="absolute top-0 left-0 z-10 flex h-10 w-full items-center justify-center border border-black bg-white"
-        onClick={refresh}
+        onClick={() => refreshRecommends(keywordItemList)}
       >
         <Icon icon="ic:baseline-refresh" className="mr-1 -mt-1 text-lg" />
         {keyword !== "" ? `${keyword} 아이템` : "추천 아이템"}

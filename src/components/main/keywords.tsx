@@ -7,7 +7,7 @@ const Keywords: NextPage<KeywordsProps> = ({
   keyword,
   onClickKeyword,
 }) => {
-  const clickKeyword = (tagName: string) => onClickKeyword(tagName);
+  const clickKeyword = (tagName: string) => () => onClickKeyword(tagName);
 
   return (
     <div className="flex h-11 w-full items-center gap-2 overflow-hidden overflow-x-scroll font-bold text-common-gray scrollbar-hide">
@@ -21,7 +21,7 @@ const Keywords: NextPage<KeywordsProps> = ({
                 ? "border-common-black bg-common-black text-white"
                 : "border-common-black bg-white",
             )}
-            onClick={clickKeyword.bind(null, tag)}
+            onClick={clickKeyword(tag)}
           >
             {tag}
           </button>
