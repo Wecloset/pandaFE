@@ -10,21 +10,21 @@ import useRecommend from "../../hooks/useRecommend";
 import { ProductData } from "../../types/data-type";
 
 interface RecommendListProps {
-  clickedKeyword: string;
+  selectedKeyword: string;
   keywordItemList: { [key: string]: ProductData[] };
 }
 
 const RecommendList: NextPage<RecommendListProps> = ({
-  clickedKeyword,
+  selectedKeyword,
   keywordItemList,
 }) => {
   const { recommendList, setRecommendItems } = useRecommend({
-    keyword: clickedKeyword,
+    keyword: selectedKeyword,
   });
 
   useEffect(() => {
-    setRecommendItems(keywordItemList);
-  }, [clickedKeyword]);
+    if (selectedKeyword) setRecommendItems(keywordItemList);
+  }, [selectedKeyword]);
 
   return (
     <>
@@ -43,11 +43,11 @@ const RecommendList: NextPage<RecommendListProps> = ({
           <MainProduct {...data} key={data.id} imgh="h-[190px]" />
         ))}
       </div>
-      {keywordItemList[clickedKeyword] && (
+      {keywordItemList[selectedKeyword] && (
         <RecommendButton
           refreshRecommends={setRecommendItems}
           keywordItemList={keywordItemList}
-          keyword={clickedKeyword}
+          keyword={selectedKeyword}
         />
       )}
     </>

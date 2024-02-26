@@ -5,24 +5,21 @@ import { apiGet } from "../utils/request";
 import { ProductData, UserData } from "../types/data-type";
 import { useSession } from "next-auth/react";
 
-const useKeyword = ({
-  userData,
-}: {
-  userData?: { message: string; user: UserData };
-}) => {
+const useKeyword = ({ userData }: { userData: UserData }) => {
   const { status: session } = useSession();
 
   const { data: products, status } = useQuery<ProductData[]>({
     queryKey: ["products"],
     queryFn: apiGet.GET_ITEMS,
+    enabled: !!userData,
   });
 
-  const [clickedKeyword, setClickedKeyword] = useState<string>("");
+  const [selectedKeyword, setSelectedKeyword] = useState<string>("");
   const [keywordItemList, setKeywordItemList] = useState<{
     [key: string]: ProductData[];
   }>({});
 
-  const setKeyword = (tagName: string) => setClickedKeyword(tagName);
+  const setKeyword = (tagName: string) => setSelectedKeyword(tagName);
 
   const setKeywordItems = (
     keywords: { id: number; tag: string }[],
@@ -43,11 +40,11 @@ const useKeyword = ({
   };
 
   useEffect(() => {
-    if (!userData || status !== "success") return;
+    if (status !== "success") return;
 
-    setKeyword(userData.user.keywords[0]?.tag);
-    setKeywordItems(userData.user.keywords, products);
-  }, [userData, status]);
+    setKeyword(userData.keywords[0]?.tag);
+    setKeywordItems(userData.keywords, products);
+  }, [status]);
 
   useEffect(() => {
     if (session === "unauthenticated" && status === "success") {
@@ -56,7 +53,7 @@ const useKeyword = ({
   }, [session, status]);
 
   return {
-    clickedKeyword,
+    selectedKeyword,
     keywordItemList,
     setKeyword,
   };

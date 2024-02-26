@@ -1,7 +1,4 @@
 import type { NextPage } from "next";
-import React, { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 
 import Button from "../components/ui/button";
 import RecentStyle from "../components/main/recent-style";
@@ -13,45 +10,19 @@ import ImageSlide from "../components/market/detail/image-slide";
 import Recommend from "../components/main/recommend";
 import ErrorBoundary from "./error-boundary";
 
-import useModal from "../hooks/useModal";
 import { bannerImages } from "../lib/banner-images";
+import useAuth from "../hooks/useAuth";
+import useModal from "../hooks/useModal";
 
 const Home: NextPage = () => {
-  const [userEmail, setUserEmail] = useState<string>();
+  const { userData, mutateStatus } = useAuth();
 
-  const { data, status } = useSession();
-
-  const { show, setModalState, Modal } = useModal();
-
-  const router = useRouter();
-
-  const goLoginPage = () => router.push("/login");
-
-  useEffect(() => {
-    // 메인페이지로 라우팅될 때마다 인증처리.
-    if (status === "authenticated") {
-      console.log("login");
-      setUserEmail(data.user?.email as string);
-      return;
-    }
-
-    if (status === "unauthenticated") {
-      console.log("사용자 인증 오류!");
-      const modalProps = {
-        message:
-          "사용자 인증이 해제되어 재로그인이 필요합니다.,로그인페이지로 이동할까요?",
-        btnText: "재로그인하기",
-        submit: goLoginPage,
-      };
-      setModalState(modalProps);
-      return;
-    }
-  }, [status]);
+  const { show: showModal, setModalState, Modal } = useModal();
 
   return (
     <>
       <Header />
-      {show && <Modal />}
+      {showModal && <Modal />}
       <ImageSlide
         images={bannerImages}
         imgH="h-72"
@@ -63,7 +34,7 @@ const Home: NextPage = () => {
         setModal={setModalState}
       >
         <div className="space-y-10 py-10">
-          <Recommend email={userEmail} />
+          {mutateStatus === "success" && <Recommend userData={userData.user} />}
           <RecentStyle />
           <MainLookbook />
           <div className="flex h-52 w-full flex-col items-center justify-center bg-gradient py-10 text-white">
