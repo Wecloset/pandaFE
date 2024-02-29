@@ -8,7 +8,8 @@
     "pscale": "pscale connect panda-project dev",
     "studio": "npx prisma studio",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "all": "npm run studio & npm run dev & npm run test"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.272.0",
@@ -32,6 +33,7 @@
     "recoil": "^0.7.7",
     "recoil-persist": "^4.2.0",
     "tailwind-scrollbar-hide": "^1.1.7",
+    "ts-node": "^10.9.2",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
