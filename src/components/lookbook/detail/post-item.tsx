@@ -14,9 +14,9 @@ interface PostItemProps extends LookbookData {
   setInput: (postId: number, val?: boolean) => void;
   updateComment: (commentId: number, text: string) => void;
   deleteComment: (commentId: number) => void;
-  isModal: boolean;
+  isModal?: boolean;
   modal: React.ComponentType | JSX.Element;
-  setModal: setModalProps;
+  setModal: () => void;
 }
 
 const PostItem: NextPage<PostItemProps> = ({
@@ -65,11 +65,7 @@ const PostItem: NextPage<PostItemProps> = ({
 
   const clickComment = () => {
     if (!currentUserId) {
-      setModal({
-        message: "로그인 후 이용 가능합니다.,로그인페이지로 이동할까요?",
-        btnText: "로그인 하기",
-        submit: goLoginPage,
-      });
+      setModal();
       return;
     }
     setInput(id, true);
@@ -77,11 +73,7 @@ const PostItem: NextPage<PostItemProps> = ({
 
   const toggleFavButton = async () => {
     if (currentUserId === 0) {
-      setModal({
-        message: "로그인 후 이용 가능합니다.,로그인페이지로 이동할까요?",
-        btnText: "로그인 하기",
-        submit: goLoginPage,
-      });
+      setModal();
       return;
     }
     changeButtonSytle();

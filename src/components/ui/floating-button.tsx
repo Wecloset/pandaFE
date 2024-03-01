@@ -1,30 +1,19 @@
 import { NextPage } from "next";
-import { Icon } from "@iconify/react";
 import Link from "next/link";
-import { setModalProps } from "../../types/modal-type";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 
-interface FloatingButtonProps {
-  path: string;
-  setModal: setModalProps;
-}
+import { Icon } from "@iconify/react";
 
-const FloatingButton: NextPage<FloatingButtonProps> = ({ path, setModal }) => {
+import useModal from "../../hooks/useModal";
+
+const FloatingButton: NextPage<{ path: string }> = ({ path }) => {
   const { data: session } = useSession();
-  const router = useRouter();
-
-  const goLoginPage = () => router.push("/login");
+  const { setLoginModalState } = useModal();
 
   const modalHandler = () => {
-    if (!session) {
-      setModal({
-        message: "로그인 후 이용 가능합니다.,로그인페이지로 이동할까요?",
-        btnText: "로그인 하기",
-        submit: goLoginPage,
-      });
-    }
+    if (!session) setLoginModalState();
   };
+
   return (
     <Link
       href={!session ? "" : path}

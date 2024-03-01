@@ -16,13 +16,12 @@ import useModal from "../hooks/useModal";
 
 const Home: NextPage = () => {
   const { userData, mutateStatus } = useAuth();
-
-  const { show: showModal, setModalState, Modal } = useModal();
+  const { ModalUI, setModalState } = useModal();
 
   return (
     <>
       <Header />
-      {showModal && <Modal />}
+      <ModalUI />
       <ImageSlide
         images={bannerImages}
         imgH="h-72"
@@ -49,8 +48,8 @@ const Home: NextPage = () => {
             />
           </div>
         </div>
-        <Navigation setModal={setModalState} />
-        <FloatingButton path="/create" setModal={setModalState} />
+        <Navigation />
+        <FloatingButton path="/create" />
       </ErrorBoundary>
     </>
   );

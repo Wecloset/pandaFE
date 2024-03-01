@@ -1,50 +1,58 @@
-import React, { createContext, useCallback, useState } from "react";
-
-import Modal from "../components/ui/modal";
+import React, { createContext, useState } from "react";
 
 import { ModalProps } from "../types/modal-type";
 
-const modalContext = createContext({
-  modal: <></>,
+export const modalContext = createContext({
   show: false,
+  modal: {},
+  cancel: () => {},
+  submit: () => {},
   setModalState: (props: ModalProps) => {},
-  showModal: (status: boolean) => {},
+  openModal: (status: boolean) => {},
 });
 
-const modalContextProvider = ({ children }: { children: React.ReactNode }) => {
+const ModalContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [show, setShow] = useState<boolean>(false);
   const [modal, setModal] = useState<ModalProps>({
     message: "",
     btnText: "",
+    cancelText: "",
     cancelFn: null,
     submitFn: null,
   });
 
-  const showModal = (status: boolean) => setShow(status);
+  const openModal = () => setShow(true);
 
-  const setModalState = useCallback(
-    ({ message, btnText, cancelFn, submitFn }: ModalProps) => {
-      setModal({ message, btnText, cancelFn, submitFn });
-      setShow(true);
-    },
-    [],
-  );
+  const closeModal = () => setShow(false);
+
+  const setModalState = ({
+    message,
+    btnText,
+    cancelText,
+    cancelFn,
+    submitFn,
+  }: ModalProps) => {
+    setModal({ message, btnText, cancelText, cancelFn, submitFn });
+    openModal();
+  };
 
   const cancel = () => {
     if (modal.cancelFn) modal.cancelFn();
-    setShow(false);
+    closeModal();
   };
 
   const submit = () => {
     if (modal.submitFn) modal.submitFn();
-    setShow(false);
+    closeModal();
   };
 
   const value = {
-    modal: <Modal modal={modal} submit={submit} cancel={cancel} />,
     show,
+    modal,
+    cancel,
+    submit,
     setModalState,
-    showModal,
+    openModal,
   };
 
   return (
@@ -52,4 +60,4 @@ const modalContextProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default modalContextProvider;
+export default ModalContextProvider;

@@ -20,7 +20,7 @@ const Market: NextPage = () => {
   const marketList = useRecoilValueLoadable(filteredMarketListState);
   const { state, contents } = marketList;
 
-  const { show, setModalState, Modal } = useModal();
+  const { ModalUI } = useModal();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isFilterOpen, setFilterOpen] = useState<boolean>(false);
@@ -50,7 +50,7 @@ const Market: NextPage = () => {
         </div>
       )}
       <Header />
-      {show && <Modal />}
+      <ModalUI />
       <CategoryNavigation />
       <div>
         <div className="mb-3 px-5 py-4">
@@ -75,8 +75,8 @@ const Market: NextPage = () => {
         </div>
       )}
       <MarketList marketData={filteredList} isLoading={isLoading} />
-      <Navigation setModal={setModalState} />
-      <FloatingButton path="/create" setModal={setModalState} />
+      <Navigation />
+      <FloatingButton path="/create" />
     </div>
   );
 };

@@ -1,24 +1,17 @@
 import { NextPage } from "next";
+import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { setModalProps } from "../../types/modal-type";
 
-const Navigation: NextPage<{ setModal?: setModalProps }> = ({ setModal }) => {
+import useModal from "../../hooks/useModal";
+
+const Navigation: NextPage = () => {
   const { pathname } = useRouter();
   const { data: session } = useSession();
-  const router = useRouter();
-
-  const goLoginPage = () => router.push("/login");
+  const { setLoginModalState } = useModal();
 
   const modalHandler = () => {
-    if (!session && setModal) {
-      setModal({
-        message: "로그인 후 이용 가능합니다.,로그인페이지로 이동할까요?",
-        btnText: "로그인 하기",
-        submit: goLoginPage,
-      });
-    }
+    if (!session) setLoginModalState();
   };
 
   return (

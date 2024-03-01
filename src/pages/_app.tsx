@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { RecoilRoot } from "recoil";
 
 import MainLayout from "../styles/global-layout";
+import ModalContextProvider from "../context/modal-context";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const queryClient = new QueryClient();
@@ -13,9 +14,11 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     <QueryClientProvider client={queryClient}>
       <SessionProvider session={session}>
         <RecoilRoot>
-          <MainLayout>
-            <Component {...pageProps} />
-          </MainLayout>
+          <ModalContextProvider>
+            <MainLayout>
+              <Component {...pageProps} />
+            </MainLayout>
+          </ModalContextProvider>
         </RecoilRoot>
       </SessionProvider>
     </QueryClientProvider>

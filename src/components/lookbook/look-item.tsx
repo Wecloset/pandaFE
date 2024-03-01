@@ -2,16 +2,14 @@ import { Icon } from "@iconify/react";
 import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useMutation } from "react-query";
 import useFav from "../../hooks/useFav";
 import { LookbookData } from "../../types/data-type";
-import { setModalProps } from "../../types/modal-type";
 
 interface LookItemProps extends LookbookData {
   userId: number;
-  setModal: setModalProps;
+  setModal: () => void;
 }
 
 const LookItem: NextPage<LookItemProps> = ({
@@ -22,9 +20,6 @@ const LookItem: NextPage<LookItemProps> = ({
   userId,
   setModal,
 }) => {
-  const router = useRouter();
-  const goLoginPage = () => router.push("/login");
-
   const { isFavActive, updateFav, changeButtonSytle, initialButtonStyle } =
     useFav(userId);
 
@@ -39,11 +34,7 @@ const LookItem: NextPage<LookItemProps> = ({
 
   const toggleFavButton = async () => {
     if (userId === 0) {
-      setModal({
-        message: "로그인 후 이용 가능합니다.,로그인페이지로 이동할까요?",
-        btnText: "로그인 하기",
-        submit: goLoginPage,
-      });
+      setModal();
       return;
     }
     changeButtonSytle();

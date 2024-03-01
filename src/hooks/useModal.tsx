@@ -1,74 +1,90 @@
-import React, { useCallback, useState } from "react";
-import Overlay from "../components/ui/overlay";
+import { useRouter } from "next/router";
+import { useContext } from "react";
 
-interface ModalProps {
-  message: string;
-  btnText: string;
-  cancel?: ((param?: any) => void) | null;
-  submit?: ((param?: any) => void) | null;
-}
+import Modal from "../components/ui/modal";
+
+import { modalContext } from "../context/modal-context";
+import { ModalProps } from "../types/modal-type";
+import { useSession } from "next-auth/react";
 
 const useModal = () => {
-  const [show, setShow] = useState<boolean>(false);
-  const [modal, setModal] = useState<ModalProps>({
-    message: "",
-    btnText: "",
-    cancel: null,
-    submit: null,
-  });
+  const { show, modal, submit, cancel, setModalState } =
+    useContext(modalContext);
 
-  const showModal = (status: boolean) => {
-    setShow(status);
+  const { data: session } = useSession();
+
+  const router = useRouter();
+
+  const goLoginPage = () => router.push("/login");
+
+  const goSigninPage = () => {
+    router.push(
+      {
+        pathname: "/signtag",
+        query: {
+          email: session?.user?.email,
+        },
+      },
+      "/signtag",
+    );
   };
 
-  const setModalState = useCallback(
-    ({ message, cancel, submit, btnText }: ModalProps) => {
-      setModal({ message, btnText, cancel, submit });
-      setShow(true);
+  const modalState = {
+    auth: {
+      message:
+        "사용자 인증이 해제되어 재로그인이 필요합니다.,로그인페이지로 이동할까요?",
+      btnText: "재로그인하기",
+      cancelText: "둘러보기",
+      submitFn: goLoginPage,
     },
-    [],
-  );
-
-  const cancel = () => {
-    if (modal.cancel) modal.cancel();
-    setShow(false);
+    login: {
+      message: "로그인 후 이용 가능합니다.,로그인페이지로 이동할까요?",
+      btnText: "로그인하기",
+      submitFn: goLoginPage,
+    },
+    signin: {
+      message: "유저 정보가 존재하지 않습니다.,회원가입을 진행할까요?",
+      btnText: "회원가입하기",
+      submitFn: goSigninPage,
+    },
+    comment: {
+      message: "댓글을 삭제할까요?",
+      btnText: "삭제",
+    },
   };
 
-  const submit = () => {
-    if (modal.submit) modal.submit();
-    setShow(false);
+  const setAuthModalState = () => setModalState(modalState.auth);
+  const setLoginModalState = () => setModalState(modalState.login);
+  const setSigninModalState = () => setModalState(modalState.signin);
+  const setCommentModalState = (fn: {
+    cancel: () => void;
+    submit: () => void;
+  }) => {
+    const newModalState = Object.assign(
+      { cancelFn: fn.cancel, submitFn: fn.submit },
+      modalState.comment,
+    );
+    setModalState(newModalState);
   };
 
-  const Modal = () => {
+  const ModalUI = () => {
     return (
       <>
-        <div className="fixed top-1/2 z-50 w-64 translate-x-[70px] -translate-y-1/2 rounded-lg bg-black py-5 text-center text-white shadow-md">
-          <div className="mb-4">
-            {modal.message.split(",").map((text, i) => (
-              <p key={`${text}-${i}`}>{text}</p>
-            ))}
-          </div>
-          <div className="flex w-full gap-2 px-5">
-            <button
-              onClick={cancel}
-              className="w-1/2 cursor-pointer rounded-md bg-common-black py-3 transition hover:bg-textColor-gray-100"
-            >
-              취소
-            </button>
-            <button
-              onClick={submit}
-              className="w-1/2 cursor-pointer rounded-md bg-white py-3 text-black transition hover:bg-primary-violet"
-            >
-              {modal.btnText}
-            </button>
-          </div>
-        </div>
-        <Overlay />
+        {show && (
+          <Modal modal={modal as ModalProps} submit={submit} cancel={cancel} />
+        )}
       </>
     );
   };
 
-  return { Modal, setModalState, show, showModal };
+  return {
+    ModalUI,
+    setModalState,
+    setAuthModalState,
+    setLoginModalState,
+    setSigninModalState,
+    setCommentModalState,
+  };
 };
 
 export default useModal;
