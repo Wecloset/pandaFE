@@ -15,7 +15,7 @@ import useAuth from "../hooks/useAuth";
 import useModal from "../hooks/useModal";
 
 const Home: NextPage = () => {
-  const { userData, mutateStatus } = useAuth();
+  const { userData } = useAuth();
   const { ModalUI, setModalState } = useModal();
 
   return (
@@ -33,7 +33,7 @@ const Home: NextPage = () => {
         setModal={setModalState}
       >
         <div className="space-y-10 py-10">
-          {mutateStatus === "success" && <Recommend userData={userData.user} />}
+          <Recommend userData={userData?.user} />
           <RecentStyle />
           <MainLookbook />
           <div className="flex h-52 w-full flex-col items-center justify-center bg-gradient py-10 text-white">

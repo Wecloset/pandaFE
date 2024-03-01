@@ -13,7 +13,7 @@ const Modal: NextPage<IModal> = ({ modal, submit, cancel }) => {
 
   return (
     <>
-      <div className="absolute top-1/2 left-1/2 z-50 w-fit -translate-y-1/2 -translate-x-1/2 rounded-lg bg-black py-5 text-center text-white shadow-md">
+      <div className="fixed bottom-1/2 left-1/2 z-50 w-80 translate-y-1/2 -translate-x-1/2 rounded-lg bg-black py-5 text-center text-white shadow-md">
         <div className="mb-4 px-5">
           {message.split(",").map((text, i) => (
             <p key={`${text}-${i}`} className="whitespace-nowrap">

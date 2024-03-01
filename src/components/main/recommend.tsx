@@ -9,7 +9,7 @@ import useKeyword from "../../hooks/useKeyword";
 import { UserData } from "../../types/data-type";
 
 const Recommend: NextPage<{
-  userData: UserData;
+  userData?: UserData;
 }> = ({ userData }) => {
   const { selectedKeyword, keywordItemList, setKeyword } = useKeyword({
     userData,
@@ -27,11 +27,13 @@ const Recommend: NextPage<{
       </div>
       <NextSuspense fallback={<LoadingFallback />}>
         <>
-          <Keywords
-            keywords={userData.keywords}
-            keyword={selectedKeyword}
-            onClickKeyword={setKeyword}
-          />
+          {userData && (
+            <Keywords
+              keywords={userData.keywords}
+              keyword={selectedKeyword}
+              onClickKeyword={setKeyword}
+            />
+          )}
           <RecommendList
             selectedKeyword={selectedKeyword}
             keywordItemList={keywordItemList}
