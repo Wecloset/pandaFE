@@ -36,7 +36,7 @@ const Post: NextPage = () => {
   const { ref, inView } = useInView();
   const { register, handleSubmit } = useForm();
 
-  const { ModalUI, setCommentModalState, setLoginModalState } = useModal();
+  const { ModalUI, setLoginModalState, setCommentModalState } = useModal();
 
   const [showInput, setShowInput] = useState<boolean>(false);
   const [commentValue, setCommentValue] = useState<string>("");
@@ -130,6 +130,7 @@ const Post: NextPage = () => {
   };
 
   const deleteComment = (commentId: number) => {
+    setCommentModalState({ cancel: reset, submit: submit });
     setIsUpdating(true);
     setCommentId(commentId);
   };

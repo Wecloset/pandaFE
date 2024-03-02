@@ -53,12 +53,20 @@ const useModal = () => {
     },
   };
 
-  const setAuthModalState = () => setModalState(modalState.auth);
   const setLoginModalState = () => setModalState(modalState.login);
   const setSigninModalState = () => setModalState(modalState.signin);
+  const setAuthModalState = (fn: {
+    cancel: (name: string, val: any, time: number) => void;
+  }) => {
+    const newModalState = Object.assign(
+      { cancelFn: () => fn.cancel("panda_visitor", true, 3) },
+      modalState.auth,
+    );
+    setModalState(newModalState);
+  };
   const setCommentModalState = (fn: {
     cancel: () => void;
-    submit: () => void;
+    submit: (data: any) => void;
   }) => {
     const newModalState = Object.assign(
       { cancelFn: fn.cancel, submitFn: fn.submit },
