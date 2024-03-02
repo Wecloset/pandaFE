@@ -20,7 +20,7 @@ const Login: NextPage = () => {
   const alerted = useRef(false);
   const router = useRouter();
 
-  const { show, setModalState, Modal } = useModal();
+  const { setSigninModalState } = useModal();
 
   const findUser = async (userEmail: string) => {
     const { data: response } = await axios.get(`/api/user?email=${userEmail}`);
@@ -36,18 +36,6 @@ const Login: NextPage = () => {
     await signIn("kakao");
   };
 
-  const goSignPage = (session: { user: { email: string } }) => {
-    router.push(
-      {
-        pathname: "/signtag",
-        query: {
-          email: session.user?.email,
-        },
-      },
-      "/signtag",
-    );
-  };
-
   useEffect(() => {
     session && mutate(session?.user?.email as string);
   }, [session]);
@@ -56,11 +44,7 @@ const Login: NextPage = () => {
     if (session && data) {
       if (data.user.keywords.length === 0 && !alerted.current) {
         alerted.current = true;
-        setModalState({
-          message: "유저 정보가 존재하지 않습니다.,회원가입을 진행할까요?",
-          btnText: "회원가입 하기",
-          submit: goSignPage,
-        });
+        setSigninModalState();
         return;
       } else {
         router.push("/");

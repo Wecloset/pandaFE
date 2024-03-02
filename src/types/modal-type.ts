@@ -1,10 +1,11 @@
 export interface ModalProps {
   message: string;
   btnText: string;
-  cancel?: ((param?: any) => void) | null;
-  submit?: ((param?: any) => void) | null;
+  cancelText?: string;
+  cancelFn?: ((param?: any) => void) | null;
+  submitFn?: ((param?: any) => void) | null;
 }
 
 export interface setModalProps {
-  ({ message, cancel, submit, btnText }: ModalProps): void;
+  ({ message, btnText, cancelFn, submitFn }: ModalProps): void;
 }

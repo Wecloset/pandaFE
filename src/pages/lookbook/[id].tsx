@@ -36,7 +36,7 @@ const Post: NextPage = () => {
   const { ref, inView } = useInView();
   const { register, handleSubmit } = useForm();
 
-  const { Modal, setModalState, show } = useModal();
+  const { ModalUI, setLoginModalState, setCommentModalState } = useModal();
 
   const [showInput, setShowInput] = useState<boolean>(false);
   const [commentValue, setCommentValue] = useState<string>("");
@@ -130,12 +130,7 @@ const Post: NextPage = () => {
   };
 
   const deleteComment = (commentId: number) => {
-    setModalState({
-      message: "댓글을 삭제할까요?",
-      btnText: "삭제",
-      cancel: reset,
-      submit: submit,
-    });
+    setCommentModalState({ cancel: reset, submit: submit });
     setIsUpdating(true);
     setCommentId(commentId);
   };
@@ -149,9 +144,9 @@ const Post: NextPage = () => {
           <PostItem
             userData={userContents}
             setInput={setInput}
-            isModal={show}
-            modal={<Modal />}
-            setModal={setModalState}
+            // isModal={show}
+            modal={<ModalUI />}
+            setModal={setLoginModalState}
             updateComment={updateComment}
             deleteComment={deleteComment}
             {...postData}
@@ -165,9 +160,9 @@ const Post: NextPage = () => {
                   key={look.id}
                   userData={userContents}
                   setInput={setInput}
-                  isModal={show}
-                  modal={<Modal />}
-                  setModal={setModalState}
+                  // isModal={show}
+                  modal={<ModalUI />}
+                  setModal={setLoginModalState}
                   updateComment={updateComment}
                   deleteComment={deleteComment}
                   {...look}

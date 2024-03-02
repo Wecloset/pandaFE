@@ -24,7 +24,7 @@ const RecommendList: NextPage<RecommendListProps> = ({
 
   useEffect(() => {
     if (selectedKeyword) setRecommendItems(keywordItemList);
-  }, [selectedKeyword]);
+  }, [selectedKeyword, keywordItemList]);
 
   return (
     <>

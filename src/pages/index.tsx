@@ -15,14 +15,13 @@ import useAuth from "../hooks/useAuth";
 import useModal from "../hooks/useModal";
 
 const Home: NextPage = () => {
-  const { userData, mutateStatus } = useAuth();
-
-  const { show: showModal, setModalState, Modal } = useModal();
+  const { userData } = useAuth();
+  const { ModalUI, setModalState } = useModal();
 
   return (
     <>
       <Header />
-      {showModal && <Modal />}
+      <ModalUI />
       <ImageSlide
         images={bannerImages}
         imgH="h-72"
@@ -34,7 +33,7 @@ const Home: NextPage = () => {
         setModal={setModalState}
       >
         <div className="space-y-10 py-10">
-          {mutateStatus === "success" && <Recommend userData={userData.user} />}
+          <Recommend userData={userData?.user} />
           <RecentStyle />
           <MainLookbook />
           <div className="flex h-52 w-full flex-col items-center justify-center bg-gradient py-10 text-white">
@@ -49,8 +48,8 @@ const Home: NextPage = () => {
             />
           </div>
         </div>
-        <Navigation setModal={setModalState} />
-        <FloatingButton path="/create" setModal={setModalState} />
+        <Navigation />
+        <FloatingButton path="/create" />
       </ErrorBoundary>
     </>
   );

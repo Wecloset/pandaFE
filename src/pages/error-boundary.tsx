@@ -40,7 +40,7 @@ class ErrorBoundary extends React.Component<Props, State> {
         this.props.setModal({
           message: "네트워크 오류가 발생했습니다.",
           btnText: "다시시도",
-          submit: () => {
+          submitFn: () => {
             this.setState({ hasError: false });
             window.location.replace("/");
           },

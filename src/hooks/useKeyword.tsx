@@ -5,7 +5,7 @@ import { apiGet } from "../utils/request";
 import { ProductData, UserData } from "../types/data-type";
 import { useSession } from "next-auth/react";
 
-const useKeyword = ({ userData }: { userData: UserData }) => {
+const useKeyword = ({ userData }: { userData?: UserData }) => {
   const { status: session } = useSession();
 
   const { data: products, status } = useQuery<ProductData[]>({
@@ -40,14 +40,15 @@ const useKeyword = ({ userData }: { userData: UserData }) => {
   };
 
   useEffect(() => {
-    if (status !== "success") return;
+    if (status !== "success" || !userData) return;
 
     setKeyword(userData.keywords[0]?.tag);
     setKeywordItems(userData.keywords, products);
-  }, [status]);
+  }, [status, userData]);
 
   useEffect(() => {
     if (session === "unauthenticated" && status === "success") {
+      setKeyword("추천아이템");
       setKeywordItemList({ 추천아이템: products });
     }
   }, [session, status]);

@@ -39,7 +39,7 @@ const Product: NextPage = () => {
     initialButtonStyle,
   } = useFav(currentUserId);
 
-  const { Modal, show, setModalState } = useModal();
+  const { ModalUI, setLoginModalState } = useModal();
 
   useEffect(() => {
     if (userContents) setCurrentUserId(userContents.id);
@@ -64,15 +64,9 @@ const Product: NextPage = () => {
     },
   });
 
-  const goLoginPage = () => router.push("/login");
-
   const toggleFavButton = async () => {
     if (!currentUserId) {
-      setModalState({
-        message: "로그인 후 이용하실 수 있습니다.,로그인페이지로 이동할까요?",
-        btnText: "로그인 하기",
-        submit: goLoginPage,
-      });
+      setLoginModalState();
       return;
     }
 
@@ -99,12 +93,7 @@ const Product: NextPage = () => {
   return (
     <>
       <Header goBack />
-      {show && (
-        <>
-          <Modal />
-          <Overlay />
-        </>
-      )}
+      <ModalUI />
       {isLoading && (
         <div className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
           <LoadingSpinner />
